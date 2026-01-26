@@ -1,0 +1,10 @@
+id,name,stacks,grade,type,recipe
+wheat,Wheat,25,common,Farm,
+ore,Ore,25,common,Mine,
+meat,Meat,25,common,Ranch,
+fish,Fish,25,common,Fishery,
+bread,Bread,10,uncommon,Farm,"{""outputCount"":1,""materials"":[{""itemId"":""wheat"",""count"":2}]}"
+steel,Steel,10,rare,Mine,"{""outputCount"":1,""materials"":[{""itemId"":""ore"",""count"":3}]}"
+cookedmeat,Cooked Meat,10,uncommon,Ranch,"{""outputCount"":1,""materials"":[{""itemId"":""meat"",""count"":2}]}"
+cannedfish,Canned Fish,10,uncommon,Fishery,"{""outputCount"":1,""materials"":[{""itemId"":""fish"",""count"":2}]}"
+gold,Gold,999999,legendary,Special,

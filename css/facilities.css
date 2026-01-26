@@ -1,0 +1,4779 @@
+/* ============================================================================ */
+/* FACILITIES - Facility Systems, Stash, Processing, Trading, Workers, Grid */
+/* ============================================================================ */
+
+.sidebar {
+    width: 263px;
+    background-color: #252525;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid #404040;
+    overflow-y: auto;
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Navigation Indicators */
+.nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-indicators {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+
+/* Upgrade Available Badge - Light Green Square */
+.upgrade-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: #90ee90; /* Light green */
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #1a1a1a;
+    flex-shrink: 0;
+}
+
+/* Storage/Worker Count Badge */
+.status-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.85em;
+    font-weight: bold;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Active nav-item badge styling */
+.nav-item.active .status-badge {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Storage warning states */
+.status-badge.warning {
+    background-color: rgba(255, 152, 0, 0.3); /* Orange tint */
+}
+
+/* Facility Views */
+.facility-view {
+    animation: fadeIn 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Facility Details Container */
+.facility-details-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* Lodge Container and Navigation */
+.lodge-container {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+    width: auto;
+}
+
+/* Full-width buttons in panels and sections */
+.facility-actions .btn,
+.facility-info .btn,
+.product-management-panel .btn,
+.storage-panel-section .btn,
+.modal-footer .btn {
+    width: 100%;
+}
+
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Main Area */
+.main-area {
+    flex: 1;
+    background-color: #252525;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    border: 1px solid #404040;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Stash Section */
+.stash-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.stash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.stash-header h2 {
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+.stash-info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.95em;
+    color: #bdc3c7;
+}
+
+.stash-info span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Stash Container - Two Panel Layout */
+.stash-container {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Stash Filter Sidebar - Left Panel */
+.stash-filter-sidebar {
+    width: 110px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+/* Filter Button Styling - Used in Processing Plant and Stash */
+.filter-btn {
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    color: #bdc3c7;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    background-color: #252525;
+    border-color: #3498db;
+    color: #ffffff;
+}
+
+.filter-btn.active {
+    background-color: #3498db;
+    border-color: #2980b9;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Stash Item Panel - Right Panel Container */
+.stash-item-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}
+
+/* Stash Grid - Right Panel */
+.stash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 80px);
+    gap: 8px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    flex: 1;
+    overflow-y: auto;
+    align-content: start;
+}
+
+.stash-slot {
+    width: 80px;
+    height: 80px;
+    background-color: #1a1a1a;
+    border: 2px solid #404040;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    transition: all 0.2s ease;
+    position: relative;
+    padding: 4px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.stash-slot:hover {
+    border-color: #3498db;
+    background-color: #252525;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.stash-slot.occupied {
+    background-color: #2a2a2a;
+    border-color: #2ecc71;
+}
+
+.stash-slot.occupied:hover {
+    border-color: #27ae60;
+    background-color: #323232;
+}
+
+.stash-slot.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    border-color: #e74c3c;
+    background-color: #252525;
+}
+
+.stash-slot.drag-over {
+    background-color: #3498db;
+    border-color: #2980b9;
+    box-shadow: inset 0 0 10px rgba(52, 152, 219, 0.4);
+}
+
+/* Item rarity border styles - using gradient scheme for consistency with workers */
+.stash-slot.grade-common {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) 1;
+}
+
+.stash-slot.grade-uncommon {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #3498db 0%, #2980b9 100%) 1;
+}
+
+.stash-slot.grade-rare {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) 1;
+}
+
+.stash-slot.grade-epic {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) 1;
+}
+
+.stash-slot.grade-legendary {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) 1;
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.5);
+}
+
+/* Grade-specific hover effects */
+.stash-slot.grade-common:hover {
+    box-shadow: 0 0 8px rgba(149, 165, 166, 0.5);
+}
+
+.stash-slot.grade-uncommon:hover {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+.stash-slot.grade-rare:hover {
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+}
+
+.stash-slot.grade-epic:hover {
+    box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
+}
+
+.stash-slot.grade-legendary:hover {
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+}
+
+/* Item Placeholder - First letter of item name */
+.slot-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    font-size: 2em;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.slot-item-name {
+    display: none;
+}
+
+.slot-item-quantity {
+    font-size: 0.85em;
+    color: #ffffff;
+    font-weight: bold;
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.slot-index {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.6em;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+    z-index: 2;
+}
+
+/* Grade-specific background colors for item placeholders */
+.stash-slot.grade-common .slot-item-icon {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.stash-slot.grade-uncommon .slot-item-icon {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.stash-slot.grade-rare .slot-item-icon {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.stash-slot.grade-epic .slot-item-icon {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.stash-slot.grade-legendary .slot-item-icon {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+/* Resources Grid */
+.resources-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.resource-name {
+    color: #bdc3c7;
+    font-weight: 500;
+}
+
+.resource-count {
+    color: #f39c12;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* Processing Grid */
+.processing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.recipe-card {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.recipe-card:hover {
+    background-color: #313131;
+    border-color: #3498db;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+}
+
+.recipe-card h4 {
+    color: #2ecc71;
+    margin-bottom: 10px;
+}
+
+.recipe-input,
+.recipe-output {
+    color: #bdc3c7;
+    font-size: 0.95em;
+    margin: 8px 0;
+}
+
+.recipe-input {
+    color: #e74c3c;
+}
+
+.recipe-output {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Trading Grid */
+.trading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.trade-card {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.trade-card:hover {
+    background-color: #313131;
+    border-color: #3498db;
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+}
+
+.trade-card h4 {
+    color: #2ecc71;
+    margin-bottom: 10px;
+}
+
+.trade-price {
+    color: #f39c12;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.trade-stock {
+    color: #bdc3c7;
+    margin: 8px 0;
+    font-size: 0.95em;
+}
+
+.trade-card input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    color: #e0e0e0;
+    font-size: 0.9em;
+}
+
+.trade-card input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+/* Time Control Bar */
+.time-control-bar {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    border-top: 3px solid #3498db;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-height: 300px;
+    }
+
+    .resources-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Product Grid Styles */
+.facility-grid-container {
+    flex: 1;
+    background-color: #252525;
+    border-radius: 8px;
+    border: 1px solid #404040;
+    padding: 15px;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+    max-height: 100%;
+    gap: 15px;
+}
+
+/* Three-Panel Layout for Production Facilities */
+.facility-three-panel-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    gap: 15px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Left Panel: Worker Placement & Area Placement */
+.facility-panel-left {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+    min-height: 0;
+    max-height: 100%;
+    padding-right: 8px;
+}
+
+/* Center Panel: Facility Grid */
+.facility-panel-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    min-width: 0;
+}
+
+/* Right Panel: Products & Collect All */
+.facility-panel-right {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+    min-height: 0;
+    max-height: 100%;
+    padding-right: 8px;
+}
+
+/* Panel Section Styling */
+.facility-panel-section {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.facility-panel-section h3 {
+    margin: 0 0 12px 0;
+    color: #3498db;
+    font-size: 1em;
+    border-bottom: 1px solid #404040;
+    padding-bottom: 8px;
+}
+
+/* Worker Placement Section */
+.facility-worker-placement {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Area Placement Section */
+.facility-area-placement {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Edit Mode Toggle Switch Container - Centered at top of Left Panel */
+.edit-mode-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 0;
+    margin-bottom: 12px;
+}
+
+/* Checkbox input - styled as toggle switch */
+.edit-mode-toggle-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 50px;
+    height: 28px;
+    background-color: #404040;
+    border: 2px solid #505050;
+    border-radius: 14px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 0;
+    margin: 0;
+}
+
+/* Toggle switch - unchecked state (OFF) */
+.edit-mode-toggle-checkbox::before {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background-color: #2a2a2a;
+    border-radius: 50%;
+    top: 1px;
+    left: 1px;
+    transition: all 0.3s ease;
+}
+
+/* Toggle switch - checked state (ON) */
+.edit-mode-toggle-checkbox:checked {
+    background-color: #2ecc71;
+    border-color: #27ae60;
+}
+
+.edit-mode-toggle-checkbox:checked::before {
+    left: 23px;
+    background-color: #ffffff;
+}
+
+/* Hover effects */
+.edit-mode-toggle-checkbox:hover {
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+}
+
+.edit-mode-toggle-checkbox:checked:hover {
+    box-shadow: 0 0 6px rgba(46, 204, 113, 0.5);
+}
+
+/* Focus state */
+.edit-mode-toggle-checkbox:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* Label - positioned to the right of toggle switch */
+.edit-mode-toggle-label {
+    font-size: 0.95em;
+    font-weight: 500;
+    color: #e0e0e0;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Edit Mode Toggle - Match the width of the product-areas-sidebar */
+.edit-mode-toggle {
+    width: fit-content;
+    align-self: flex-start;
+}
+
+/* Products Section */
+.facility-products-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+    min-height: 0;
+}
+
+.product-grid-content {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    min-height: 0;
+    flex: 1;
+}
+
+.product-grid-areas-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.grid-display-wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    min-height: 0;
+}
+
+.product-grid-right-section {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 100%;
+    flex-shrink: 0;
+}
+
+.product-facility-info {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    flex: 0 0 auto;
+}
+
+.product-facility-info h3 {
+    color: #3498db;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    color: #bdc3c7;
+    font-size: 0.95em;
+}
+
+.info-label {
+    font-weight: 500;
+}
+
+.info-value {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.worker-control-section {
+    margin: 15px 0;
+    padding: 12px 0;
+    border-top: 1px solid #404040;
+    border-bottom: 1px solid #404040;
+}
+
+.control-label {
+    color: #bdc3c7;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.worker-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.stepper-btn {
+    background-color: #404040;
+    border: 1px solid #505050;
+    color: #bdc3c7;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    min-width: 36px;
+}
+
+.stepper-btn:hover {
+    background-color: #3498db;
+    border-color: #2980b9;
+    color: #ffffff;
+}
+
+.stepper-btn:active {
+    transform: scale(0.95);
+}
+
+.worker-count {
+    color: #2ecc71;
+    font-weight: bold;
+    font-size: 1.1em;
+    min-width: 30px;
+    text-align: center;
+}
+
+.product-areas-sidebar {
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 12px;
+    background-color: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    gap: 8px;
+}
+
+.product-areas-sidebar h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: #3498db;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 0;
+}
+
+.areas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.area-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px;
+    border: 2px solid #404040;
+    border-radius: 6px;
+    background-color: #1a1a1a;
+    cursor: move;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    overflow: visible;
+    width: fit-content;
+}
+
+.area-name-label {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 0 0 auto;
+    color: #bdc3c7;
+    max-width: 120px;
+}
+
+.area-name-label strong {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9em;
+    min-width: 0;
+}
+
+.area-details-column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 0 0 auto;
+    justify-content: flex-start;
+}
+
+.area-item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    gap: 1px;
+    width: 130px;
+    height: auto;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.area-item-slot {
+    aspect-ratio: 1 / 1;
+    background-color: #323232;
+    border: 1px solid #404040;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 0.7em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.area-item-slot:hover {
+    border-color: #2ecc71;
+    background-color: #3a3a3a;
+}
+
+.area-item-slot.empty-slot {
+    background-color: #1a1a1a;
+    border-color: #2a2a2a;
+    cursor: default;
+}
+
+.area-item-slot.empty-slot:hover {
+    border-color: #404040;
+    background-color: #1a1a1a;
+}
+
+.area-item-slot.hidden-count-slot {
+    background-color: #404040;
+    border-color: #505050;
+}
+
+.area-item-slot.hidden-count-slot:hover {
+    background-color: #4a4a4a;
+    border-color: #606060;
+}
+
+.item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-weight: bold;
+    color: #2ecc71;
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05));
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.8), 0 0 2px rgba(0, 0, 0, 0.9);
+    font-size: 1.5em;
+}
+
+.item-quantity-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background-color: transparent;
+    color: #fff;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 0.65em;
+    font-weight: bold;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.9), 0 0 1px rgba(0, 0, 0, 1);
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.7);
+}
+
+.hidden-count {
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.area-item:hover {
+    border-color: #2ecc71;
+    background-color: #252525;
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
+}
+
+.area-item.dragging {
+    opacity: 0.7;
+    background-color: #323232;
+    border-color: #3498db;
+}
+
+/* Idle Workers Panel - Matches Available Areas styling */
+.idle-workers-panel {
+    width: 100%;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.idle-worker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    min-height: 0;
+}
+
+.idle-worker-card {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid #404040;
+    border-radius: 6px;
+    background-color: #1a1a1a;
+    cursor: move;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.idle-worker-card:hover {
+    border-color: #3498db;
+    background-color: #252525;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+}
+
+.idle-worker-card.dragging {
+    opacity: 0.7;
+    background-color: #323232;
+    border-color: #3498db;
+}
+
+/* Revert worker portrait to fixed size in idle worker list */
+.idle-worker-card .worker-portrait {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.worker-portrait {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.1em;
+    position: relative;
+    overflow: hidden;
+}
+
+.worker-portrait.grade-common {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.worker-portrait.grade-uncommon {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.worker-portrait.grade-rare {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.worker-portrait.grade-epic {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.worker-portrait.grade-legendary {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.worker-initial {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.worker-level-badge {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65em;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 1px 3px;
+    border-radius: 2px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.worker-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    color: #bdc3c7;
+    font-size: 0.9em;
+    min-width: 0;
+}
+
+.worker-name {
+    font-weight: bold;
+    color: #e0e0e0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.worker-grade {
+    font-size: 0.85em;
+    color: #999;
+}
+
+.worker-level {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.empty-message {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+.preview-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.area-footprint {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-width, 4), var(--cell-size, 6px));
+    gap: 2px;
+    padding: 8px;
+    background-color: #323232;
+    border-radius: 4px;
+    width: 60px;
+    height: 60px;
+    place-items: center;
+    align-content: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.grid-size-label {
+    font-size: 0.85em;
+    color: #bdc3c7;
+    text-align: center;
+}
+
+.footprint-cell {
+    background-color: #2ecc71;
+    width: var(--cell-size, 6px);
+    height: var(--cell-size, 6px);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.area-info {
+    font-size: 0.9em;
+    color: #bdc3c7;
+}
+
+.area-info strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #e0e0e0;
+}
+
+.product-grid {
+    display: grid;
+    gap: 1px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    border: 1px solid #404040;
+    transform: scale(var(--grid-scale, 1));
+    transform-origin: top left;
+    flex-shrink: 1;
+}
+
+.grid-cell {
+    width: var(--cell-size, 40px);
+    height: var(--cell-size, 40px);
+    background-color: #252525;
+    cursor: cell;
+    position: relative;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.grid-cell:hover {
+    background-color: #313131;
+}
+
+.grid-cell.drop-valid {
+    background-color: #27ae60;
+    border-color: #2ecc71;
+}
+
+.grid-cell.drop-invalid {
+    background-color: #c0392b;
+    border-color: #e74c3c;
+}
+
+.placed-area {
+    grid-column: auto;
+    grid-row: auto;
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border: 1px solid #1e8449;
+    border-radius: 4px;
+    padding: 8px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    cursor: grab;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+    gap: 4px;
+}
+
+.placed-area:hover {
+    box-shadow: 0 4px 8px rgba(46, 204, 113, 0.5);
+}
+
+.placed-area.dragging {
+    opacity: 0.7;
+    cursor: grabbing;
+}
+
+/* Valid drop target - Area has available slots */
+.placed-area.worker-drop-valid {
+    background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%) !important;
+    border: 2px solid #00ff00 !important;
+    box-shadow: 0 0 12px rgba(0, 255, 0, 0.6), inset 0 0 12px rgba(0, 255, 0, 0.3) !important;
+}
+
+/* Invalid drop target - Area is full */
+.placed-area.worker-drop-invalid {
+    background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%) !important;
+    border: 2px solid #ff3333 !important;
+    box-shadow: 0 0 12px rgba(255, 51, 51, 0.6), inset 0 0 12px rgba(255, 51, 51, 0.3) !important;
+}
+
+/* Inactive zone styling (no workers assigned) */
+.placed-area.needs-workers {
+    background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+    border: 1px solid #7f8c8d;
+    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3);
+}
+
+.placed-area.needs-workers:hover {
+    box-shadow: 0 4px 8px rgba(127, 140, 141, 0.5);
+}
+
+.area-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    text-align: center;
+}
+
+.area-content strong {
+    font-size: 0.85em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.area-content small {
+    font-size: 0.75em;
+    opacity: 0.9;
+}
+
+.area-remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #f44336;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.placed-area:hover .area-remove-btn {
+    display: flex;
+}
+
+.area-remove-btn:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Placed Area Sections - Three section layout */
+.placed-area-top-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.placed-area-bottom-section {
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* ==================== PRODUCT MANAGEMENT PANEL STYLES ==================== */
+
+/* Product Management Panel Styles */
+.product-management-panel {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.product-management-panel .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.product-management-panel h3 {
+    margin: 0;
+    color: #ffd700;
+    font-size: 18px;
+}
+
+.product-management-panel h4 {
+    margin: 0 0 8px 0;
+    color: #ffd700;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+}
+
+/* Production List */
+.production-list-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+    min-height: 0;
+}
+
+.production-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+    flex: 0 0 auto;
+}
+
+.production-item {
+    padding: 8px 10px;
+    background: rgba(76, 175, 80, 0.2);
+    border-left: 3px solid #4CAF50;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 13px;
+}
+
+/* Production Grid Layout */
+.production-grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.production-grid-empty {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.production-grid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(76, 175, 80, 0.15);
+    border-left: 3px solid #4CAF50;
+    border-radius: 4px;
+    align-items: center;
+}
+
+.production-grid-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #e0e0e0;
+}
+
+.item-name-cell {
+    min-width: 0;
+}
+
+.item-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: rgba(76, 175, 80, 0.3);
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 11px;
+    color: #4CAF50;
+    flex-shrink: 0;
+}
+
+.item-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.yield-cell {
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.yield-label {
+    color: #a0a0a0;
+    font-size: 11px;
+}
+
+.yield-value {
+    font-weight: bold;
+    color: #4CAF50;
+    min-width: 35px;
+    text-align: right;
+}
+
+.yield-staffing {
+    font-size: 10px;
+    color: #f59e0b;
+    margin-left: 4px;
+    font-style: italic;
+}
+
+/* Inventory List */
+.inventory-list-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.inventory-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.inventory-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.inventory-item .item-name {
+    color: #fff;
+}
+
+.inventory-item .item-quantity {
+    color: #8BC34A;
+    font-weight: bold;
+}
+
+/* Capacity Meter */
+.capacity-meter-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.capacity-meter {
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 5px;
+}
+
+.capacity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.3s ease, background 0.3s ease;
+    border-radius: 10px;
+}
+
+.capacity-text {
+    text-align: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* Zone Progress Indicators on Grid */
+.zone-progress-container {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.zone-progress-bar {
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.zone-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.1s linear;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* Full Storage State - Red gradient when storage is full */
+.zone-progress-fill.progress-bar-full {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+/* Progress bar overlay text - positioned over the progress bar */
+.zone-progress-overlay {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #fff;
+    font-weight: bold;
+    width: 100%;
+    padding: 0 6px;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.zone-time {
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.zone-percentage {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+/* Empty Message */
+.empty-message {
+    color: #888;
+    font-size: 12px;
+    font-style: italic;
+    margin: 10px 0;
+    text-align: center;
+}
+
+/* Edit Mode Toggle */
+.product-management-panel .btn {
+    margin-top: 5px;
+}
+
+/* Worker Sections */
+.worker-section {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    min-height: 0;
+}
+
+.worker-section h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #3498db;
+    font-size: 1.2em;
+    flex-shrink: 0;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 12px;
+}
+
+.worker-list, .worker-roster {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    overflow: visible;
+    width: 100%;
+}
+
+.worker-card {
+    background: #252525;
+    border: 2px solid #404040;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.2s;
+    color: #e0e0e0;
+}
+
+.worker-card:hover {
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+    transform: translateY(-2px);
+    border-color: #3498db;
+}
+
+.worker-card.assigned {
+    border-color: #4CAF50;
+    background: #232525;
+}
+
+.worker-card.pending {
+    border-style: dashed;
+}
+
+.worker-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    gap: 10px;
+    position: relative;
+}
+
+.worker-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: #e0e0e0;
+    flex: 1;
+}
+
+.worker-rarity {
+    font-size: 12px;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.worker-level {
+    font-size: 13px;
+    color: #bdc3c7;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.worker-level-full {
+    display: none;
+}
+
+.worker-grade {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    display: none;
+}
+
+.worker-grade.common { background: #9e9e9e; }
+
+.worker-grade.uncommon { background: #4CAF50; }
+
+.worker-grade.rare { background: #2196F3; }
+
+.worker-grade.epic { background: #9C27B0; }
+
+.worker-grade.legendary { background: #FF9800; }
+
+.worker-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin: 8px 0;
+    font-size: 12px;
+}
+
+.worker-stat {
+    display: flex;
+    justify-content: space-between;
+}
+
+.worker-stat-label { color: #bdc3c7; }
+
+.worker-stat-value { font-weight: bold; color: #2ecc71; }
+
+/* Worker Experience Bar Container */
+.worker-exp-bar-container {
+    margin: 8px 0;
+}
+
+.worker-exp-bar-container.max-level {
+    /* Max level still displays the bar, fully filled */
+}
+
+/* Experience Progress Bar - Matches zone-progress-bar styling */
+.worker-exp-bar {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.worker-exp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    transition: width 0.2s ease;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* Overlay text inside progress bar - space-between layout */
+.worker-exp-overlay {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #fff;
+    font-weight: bold;
+    width: 100%;
+    padding: 0 6px;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.exp-level {
+    font-family: monospace;
+    font-size: 10px;
+}
+
+.exp-progress {
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.exp-text {
+    color: #bdc3c7;
+    margin-bottom: 4px;
+    font-size: 11px;
+}
+
+.worker-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.worker-actions button {
+    flex: 1;
+    padding: 6px;
+    font-size: 12px;
+}
+
+.worker-assignment {
+    font-size: 11px;
+    color: #bdc3c7;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.worker-hire-cost {
+    font-size: 12px;
+    color: #f39c12;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;
+    display: none;
+}
+
+.worker-arrival-timer {
+    margin: 15px 0 20px 0;
+}
+
+.worker-arrival-progress {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #404040;
+}
+
+.worker-arrival-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    width: 100%;
+    transition: width 0.1s linear;
+    border-radius: 6px;
+}
+
+.worker-arrival-progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+}
+
+.worker-slot-empty {
+    background: #1f1f1f;
+    border: 2px dashed #505050;
+    cursor: default;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: auto;
+}
+
+.worker-slot-empty:hover {
+    box-shadow: none;
+    transform: none;
+    border-color: #505050;
+}
+
+/* Upgrade Button Styles */
+.btn-upgrade {
+    background-color: #2ecc71;
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Facility Level Badge */
+.facility-level {
+    background-color: #f39c12;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.65em;
+    font-weight: bold;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.facility-upgrade-info {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.upgrade-facility-name {
+    color: #3498db;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+}
+
+.upgrade-level-info {
+    color: #bdc3c7;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin: 0;
+}
+
+.current-level, .next-level {
+    background-color: #1a1a1a;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #f39c12;
+}
+
+.level-arrow {
+    color: #2ecc71;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.upgrade-costs-section {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.upgrade-costs-section h4 {
+    color: #3498db;
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+    border-bottom: 1px solid #404040;
+    padding-bottom: 10px;
+}
+
+.costs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cost-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    color: #bdc3c7;
+}
+
+.cost-item-name {
+    font-weight: 500;
+}
+
+.cost-item-required {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.cost-item-current {
+    color: #2ecc71;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.cost-item.insufficient {
+    border-color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.cost-item.sufficient {
+    border-color: #2ecc71;
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+/* Upgrade Statistics Section */
+.upgrade-statistics-section {
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.upgrade-statistics-section h4 {
+    color: #3498db;
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+    border-bottom: 1px solid #404040;
+    padding-bottom: 10px;
+}
+
+.statistics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    color: #bdc3c7;
+}
+
+.stat-item-label {
+    font-weight: 500;
+    color: #bdc3c7;
+    min-width: 150px;
+}
+
+.stat-item-values {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.stat-before {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.stat-arrow {
+    color: #2ecc71;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.stat-after {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+/* Zone changes styling */
+.zone-changes {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: auto;
+    text-align: right;
+}
+
+.zone-change-item {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.zone-change-item.new {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border-left: 3px solid #2ecc71;
+}
+
+.zone-change-item.removed {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border-left: 3px solid #e74c3c;
+}
+
+.zone-change-item.change {
+    background-color: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+    border-left: 3px solid #3498db;
+}
+
+/* Recipe changes styling */
+.recipe-changes {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: auto;
+    text-align: right;
+}
+
+.recipe-change-item {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.recipe-change-item.unlocked {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+    border-left: 3px solid #2ecc71;
+}
+
+.recipe-change-item.removed {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    border-left: 3px solid #e74c3c;
+}
+
+/* Section Header with Info Button */
+.section-header-with-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Info Button Styling */
+.btn-info-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #3498db;
+    border: 2px solid #2980b9;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+/* Spawn Rate Table Container */
+.spawn-rate-table-container {
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px;
+}
+
+/* Storage Panel Section - Unified Storage UI */
+.storage-panel-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+    max-height: 100%;
+}
+
+/* Collect All Button */
+.btn-collect-all {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* Inventory Grid with scroll */
+.inventory-item-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    align-content: start;
+    min-height: 0;
+}
+
+.inventory-item-grid .inventory-item {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    border: 2px solid #404040;
+    border-radius: 4px;
+    font-size: 11px;
+    position: relative;
+    padding: 4px;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.inventory-item-grid .inventory-item:hover {
+    border-color: #3498db;
+    background-color: #252525;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.inventory-item-grid .inventory-item.occupied {
+    background-color: #2a2a2a;
+    border-color: #2ecc71;
+}
+
+.inventory-item-grid .inventory-item.occupied:hover {
+    border-color: #27ae60;
+    background-color: #323232;
+}
+
+/* Grade-based background colors for storage items */
+.inventory-item-grid .inventory-item.grade-common {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    border-color: #7f8c8d;
+}
+
+.inventory-item-grid .inventory-item.grade-uncommon {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border-color: #27ae60;
+}
+
+.inventory-item-grid .inventory-item.grade-rare {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border-color: #2980b9;
+}
+
+.inventory-item-grid .inventory-item.grade-epic {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    border-color: #8e44ad;
+}
+
+.inventory-item-grid .inventory-item.grade-legendary {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-color: #c0392b;
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.5);
+}
+
+/* Grade-specific hover effects for storage items */
+.inventory-item-grid .inventory-item.grade-common:hover {
+    box-shadow: 0 0 8px rgba(149, 165, 166, 0.5);
+}
+
+.inventory-item-grid .inventory-item.grade-uncommon:hover {
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+}
+
+.inventory-item-grid .inventory-item.grade-rare:hover {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+.inventory-item-grid .inventory-item.grade-epic:hover {
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+}
+
+.inventory-item-grid .inventory-item.grade-legendary:hover {
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+}
+
+/* Item icon - first letter of item name centered */
+.inventory-item-grid .item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+.inventory-item-grid .item-slot-number {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.6em;
+    color: rgba(255, 255, 255, 0.6);
+    z-index: 1;
+}
+
+.inventory-item-grid .item-name {
+    display: none;
+}
+
+.inventory-item-grid .item-quantity {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.9em;
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.inventory-item-grid .empty-message {
+    color: #888;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+/* ============================================================================ */
+/* UI STANDARD: Simplified Item View (Reusable across all item displays) */
+/* Grade Background, First Letter Icon, Quantity Badge, No Name Text */
+/* ============================================================================ */
+
+.simplified-item-view {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 4px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 2px solid #404040;
+    transition: all 0.2s ease;
+}
+
+/* Grade-based background colors */
+.simplified-item-view.grade-common {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    border-color: #7f8c8d;
+}
+
+.simplified-item-view.grade-uncommon {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    border-color: #27ae60;
+}
+
+.simplified-item-view.grade-rare {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    border-color: #2980b9;
+}
+
+.simplified-item-view.grade-epic {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    border-color: #8e44ad;
+}
+
+.simplified-item-view.grade-legendary {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    border-color: #c0392b;
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.5);
+}
+
+/* Grade-specific hover effects */
+.simplified-item-view.grade-common:hover {
+    box-shadow: 0 0 8px rgba(149, 165, 166, 0.5);
+}
+
+.simplified-item-view.grade-uncommon:hover {
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+}
+
+.simplified-item-view.grade-rare:hover {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+.simplified-item-view.grade-epic:hover {
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+}
+
+.simplified-item-view.grade-legendary:hover {
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+}
+
+/* Centered first letter icon */
+.simplified-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+/* Quantity badge at bottom-right */
+.simplified-item-quantity {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.9em;
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* Sidebar Header with Edit Mode Button */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+/* Worker Slots Grid Layout */
+.worker-slots-container {
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    justify-items: center;
+    align-items: center;
+    width: fit-content;
+}
+
+.worker-slot {
+    min-width: 60px;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #404040;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    cursor: grab;
+    padding: 4px;
+    position: relative;
+}
+
+/* Scaled worker slot - 50% larger than before (48px instead of 32px) */
+.worker-slot.worker-slot-scaled {
+    min-width: 48px;
+    min-height: 48px;
+    padding: 3px;
+    gap: 1.5px;
+}
+
+.worker-slot.worker-slot-scaled .worker-portrait {
+    font-size: 0.9em;
+}
+
+.worker-slot.worker-slot-scaled .worker-initial {
+    font-size: 0.9em;
+}
+
+.worker-slot.worker-slot-scaled .empty-slot-icon {
+    font-size: 0.85em;
+}
+
+.worker-slot.worker-slot-scaled .worker-slot-info {
+    font-size: 0.7em;
+    gap: 1.5px;
+}
+
+.worker-slot.worker-slot-scaled .worker-slot-name {
+    font-size: 0.7em;
+}
+
+.worker-slot.worker-slot-scaled .worker-slot-level {
+    font-size: 0.65em;
+}
+
+.worker-slot:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #505050;
+}
+
+.worker-slot.drop-valid {
+    border-color: #2ecc71;
+    background: rgba(46, 204, 113, 0.15);
+    box-shadow: inset 0 0 8px rgba(46, 204, 113, 0.3);
+}
+
+.worker-slot.drop-invalid {
+    border-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.15);
+    cursor: not-allowed;
+}
+
+.worker-slot.dragging {
+    opacity: 0.6;
+    cursor: grabbing;
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.15);
+}
+
+.empty-slot-icon {
+    font-size: 1.5em;
+    color: #666;
+    font-weight: bold;
+}
+
+/* Overflow indicator cell - shows remaining worker count */
+.worker-slot.overflow-cell {
+    background: rgba(255, 165, 0, 0.2);
+    border-color: #ffa500;
+}
+
+.overflow-indicator {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #ffa500;
+    text-align: center;
+}
+
+/* Excess Worker Count Slot */
+.worker-slot.excess-slot {
+    background: rgba(255, 165, 0, 0.2);
+    border-color: #ffa500;
+}
+
+.excess-worker-count {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffa500;
+}
+
+.worker-slot-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 0.75em;
+    text-align: center;
+    line-height: 1.2;
+    overflow: hidden;
+}
+
+.worker-slot-name {
+    color: #e0e0e0;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.worker-slot-level {
+    color: #bdc3c7;
+    font-size: 0.85em;
+}
+
+/* ==================== WORKER GRID REDESIGN ==================== */
+
+/* Worker Grid Wrapper - Three section layout (decoupled from header) */
+.worker-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Worker Grid Header - Area Name and Count (Independent section) */
+.worker-grid-header {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.85em;
+    width: 100%;
+    padding: 4px 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.worker-grid-header-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    flex-wrap: nowrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.worker-grid-area-name {
+    font-weight: bold;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.worker-grid-count {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Worker Grid Overlay Container - DEPRECATED: kept for compatibility */
+.worker-grid-overlay {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Worker Grid - Disabled State (Edit Mode) */
+.worker-grid-overlay.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* New Wrapper Disabled State */
+.worker-grid-wrapper.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.worker-slot.disabled {
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.worker-slot.disabled .worker-portrait,
+.worker-slot.disabled .worker-slot-info {
+    opacity: 0.5;
+}
+
+/* Worker Assignment Success Feedback - Brief animation when worker is assigned */
+@keyframes assignment-success-pulse {
+    0% {
+        background: rgba(46, 204, 113, 0.3);
+        border-color: #2ecc71;
+        box-shadow: 0 0 8px rgba(46, 204, 113, 0.6);
+    }
+    50% {
+        background: rgba(46, 204, 113, 0.5);
+        border-color: #27ae60;
+        box-shadow: 0 0 16px rgba(46, 204, 113, 0.8);
+    }
+    100% {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #404040;
+        box-shadow: none;
+    }
+}
+
+.worker-slot.assignment-success {
+    animation: assignment-success-pulse 0.5s ease-out;
+}
+
+/* Production Starting Animation - Visual feedback when area becomes fully staffed */
+@keyframes production-starting-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(52, 211, 153, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+    }
+}
+
+.placed-area.production-starting {
+    animation: production-starting-glow 0.6s ease-out;
+}
+
+.worker-slot.disabled:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: none;
+}
+
+/* Left Panel - Unassign Drop Zone Mode */
+.left-panel-unassign-zone {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.9) 0%, rgba(192, 57, 43, 0.9) 100%);
+    color: white;
+    border: 2px dashed #e74c3c;
+    border-radius: 6px;
+    font-size: 1.05em;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 150px;
+}
+
+/* Area section when acting as unassign drop target */
+#farm-area-section.unassign-drop-target,
+#mine-area-section.unassign-drop-target,
+#ranch-area-section.unassign-drop-target,
+#fishery-area-section.unassign-drop-target,
+#lodge-area-section.unassign-drop-target {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 2px dashed #e74c3c;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Highlight when dragging over unassign zone */
+#farm-area-section.unassign-drop-target.drop-valid,
+#mine-area-section.unassign-drop-target.drop-valid,
+#ranch-area-section.unassign-drop-target.drop-valid,
+#fishery-area-section.unassign-drop-target.drop-valid,
+#lodge-area-section.unassign-drop-target.drop-valid {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.3) 0%, rgba(192, 57, 43, 0.3) 100%);
+    border-color: #e74c3c;
+    box-shadow: inset 0 0 12px rgba(231, 76, 60, 0.4);
+}
+
+/* Stat Bonus Display */
+.stat-bonus-display {
+    font-size: 0.8em;
+    color: #2ecc71;
+    font-weight: bold;
+    text-align: center;
+    margin: 4px auto 0 auto;
+    padding: 2px 4px;
+    background: rgba(46, 204, 113, 0.1);
+    border-radius: 3px;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    width: fit-content;
+}
+
+/* Production Time Notification - displayed when area becomes fully staffed */
+.production-time-notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.95) 0%, rgba(39, 174, 96, 0.95) 100%);
+    border: 2px solid #2ecc71;
+    border-radius: 8px;
+    padding: 12px 16px;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.4);
+    animation: notification-popup 0.4s ease-out, notification-fade-out 0.5s ease-in 2.5s forwards;
+}
+
+.notification-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.production-speed {
+    font-size: 1.1em;
+    color: #fff;
+}
+
+.production-time {
+    font-size: 0.9em;
+    color: #e0e0e0;
+}
+
+/* ========================================
+   PROCESSING PLANT - TWO PANEL LAYOUT
+   ======================================== */
+
+.processing-container {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Filter Sidebar - Far Left */
+.processing-filter-sidebar {
+    width: 110px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+/* Item Panel - Middle */
+.processing-item-panel {
+    width: 620px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 15px;
+    overflow: hidden;
+}
+
+/* Sort Toolbar */
+.processing-sort-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 10px;
+    background-color: #252525;
+    border-radius: 6px;
+    border: 1px solid #404040;
+}
+
+/* Craftable Items Title */
+.processing-items-title {
+    margin: 0;
+    font-size: 1.1em;
+    color: #3498db;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.processing-panel-right {
+    flex: 1;
+    min-width: 300px;
+    overflow-y: auto;
+    background-color: #252525;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.processing-no-selection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #999;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+/* Item Grid */
+.processing-item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+    align-content: start;
+    width: 100%;
+}
+
+.processing-item-card {
+    aspect-ratio: 1/1;
+    background-color: #2a2a2a;
+    border: 2px solid #404040;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.processing-item-card:hover {
+    border-color: #3498db;
+    background-color: #313131;
+}
+
+.processing-item-card.selected {
+    border-color: #3498db;
+    background-color: #313131;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
+
+.processing-item-card.unavailable {
+    opacity: 0.5;
+}
+
+.processing-item-card.unavailable:hover {
+    border-color: #3498db;
+    background-color: #313131;
+    cursor: pointer;
+}
+
+.processing-item-name {
+    font-size: 0.75em;
+    color: #e0e0e0;
+    margin-top: 6px;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    flex-shrink: 0;
+}
+
+/* Item Icon with Grade Border */
+.processing-item-icon {
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #e0e0e0;
+    background-color: #1a1a1a;
+    flex-shrink: 0;
+}
+
+.processing-item-icon.grade-common {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) 1;
+}
+
+.processing-item-icon.grade-uncommon {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #3498db 0%, #2980b9 100%) 1;
+}
+
+.processing-item-icon.grade-rare {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) 1;
+}
+
+.processing-item-icon.grade-epic {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) 1;
+}
+
+.processing-item-icon.grade-legendary {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) 1;
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.5);
+}
+
+/* Crafting Details Panel */
+.crafting-details-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #404040;
+}
+
+.crafting-details-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    font-weight: bold;
+    background-color: #1a1a1a;
+    flex-shrink: 0;
+}
+
+.crafting-details-icon.grade-common {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%) 1;
+}
+
+.crafting-details-icon.grade-uncommon {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #3498db 0%, #2980b9 100%) 1;
+}
+
+.crafting-details-icon.grade-rare {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) 1;
+}
+
+.crafting-details-icon.grade-epic {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) 1;
+}
+
+.crafting-details-icon.grade-legendary {
+    border: 3px solid;
+    border-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) 1;
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.5);
+}
+
+.crafting-details-name {
+    font-size: 1.5em;
+    color: #ffffff;
+    font-weight: bold;
+    line-height: 1.3;
+}
+
+.crafting-details-type {
+    font-size: 0.8em;
+    color: #707070;
+    font-weight: normal;
+    margin-top: 2px;
+}
+
+/* Ingredients Section */
+.crafting-ingredients {
+    margin-bottom: 20px;
+}
+
+.crafting-ingredients h4 {
+    margin-bottom: 10px;
+    color: #e0e0e0;
+    font-size: 1em;
+}
+
+.ingredients-grid {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.ingredient-item {
+    flex-shrink: 0;
+    width: 70px;
+    text-align: center;
+}
+
+.ingredient-icon {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #404040;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    background-color: #1a1a1a;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+.ingredient-name {
+    font-size: 0.75em;
+    color: #b0b0b0;
+    margin-bottom: 3px;
+    word-break: break-word;
+}
+
+.ingredient-count {
+    font-size: 0.8em;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.ingredient-count.available {
+    color: #7cfc00;
+}
+
+/* Quantity Control */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border-radius: 6px;
+}
+
+.quantity-btn {
+    width: auto;
+    height: 40px;
+    padding: 8px 8px;
+    font-size: 1.2em;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+    box-shadow: none;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+    line-height: 1;
+    position: relative;
+    user-select: none;
+    pointer-events: auto !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quantity-btn * {
+    pointer-events: none !important;
+    user-select: none;
+    display: block;
+}
+
+.quantity-btn:hover {
+    box-shadow: none;
+    border: 1px solid transparent;
+}
+
+.quantity-btn:active {
+    pointer-events: auto;
+}
+
+.quantity-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #3498db;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Craft Button */
+.btn-craft {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+}
+
+/* Trading Post UI Styles */
+
+/* Trading Post Timer */
+.trading-arrival-timer {
+    margin: 12px 0 20px 0;
+}
+
+.trading-arrival-progress {
+    position: relative;
+    width: 100%;
+    height: 24px;
+    background-color: #1a1a1a;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #404040;
+}
+
+.trading-arrival-progress-bar {
+    height: 100%;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+    border-radius: 6px;
+}
+
+.trading-arrival-progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+}
+
+/* Order Cards Container */
+.trading-orders-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.trading-orders-container h3 {
+    margin: 0;
+    flex-shrink: 0;
+    color: #3498db;
+    font-size: 1.2em;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 12px;
+}
+
+/* Active Orders Grid - Responsive grid layout with vertical scrolling */
+.trading-orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    align-content: start;
+    flex-shrink: 0;
+    width: 100%;
+    max-height: 600px;
+}
+
+.trading-orders-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.trading-orders-grid::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.trading-orders-grid::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 4px;
+}
+
+.trading-orders-grid::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
+
+/* Order Card */
+.trading-order-card {
+    background-color: #2c2c2c;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.trading-order-card.unavailable {
+    opacity: 0.6;
+    border-color: #555;
+}
+
+.trading-order-card:hover {
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+/* Empty Order Slot Placeholder - Matches Worker's Lodge empty slot style */
+.trading-order-slot-empty {
+    background: #1f1f1f;
+    border: 2px dashed #505050;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 280px;
+    transition: all 0.2s ease;
+}
+
+.trading-order-slot-empty:hover {
+    box-shadow: none;
+    transform: none;
+    border-color: #505050;
+}
+
+.trading-order-slot-empty span {
+    opacity: 0.3;
+    font-size: 3em;
+    color: #666;
+}
+
+/* Order Card Header - Layout with grade badge positioned top-right */
+.order-card-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+/* Grade badge - positioned in top-right corner */
+.order-grade {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+}
+
+/* Region info - top-left */
+.order-region-info {
+    grid-column: 1;
+    grid-row: 1 / 3;
+}
+
+.order-region-info h4 {
+    margin: 0 0 5px 0;
+    color: #3498db;
+}
+
+.order-region-level {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Trust/Reputation bar - single horizontal line spanning both columns */
+.order-region-credit-bar {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 24px;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 0;
+}
+
+.credit-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.3s ease;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 12px;
+}
+
+.credit-bar-text-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 12px;
+    font-size: 0.85em;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.credit-bar-level {
+    flex-shrink: 0;
+    font-weight: bold;
+}
+
+.credit-bar-xp {
+    flex-shrink: 0;
+    text-align: right;
+}
+
+/* Order Grade Badge */
+.order-grade {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.grade-common { background-color: #95a5a6; color: #fff; }
+
+.grade-uncommon { background-color: #2ecc71; color: #fff; }
+
+.grade-rare { background-color: #3498db; color: #fff; }
+
+.grade-epic { background-color: #9b59b6; color: #fff; }
+
+/* Order Body */
+.order-card-body h5 {
+    margin: 10px 0 8px 0;
+    color: #aaa;
+    font-size: 0.95em;
+}
+
+.order-card-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+
+.order-card-body ul li {
+    padding: 4px 0;
+    font-size: 0.9em;
+}
+
+.order-card-body ul li.available {
+    color: #2ecc71;
+}
+
+.order-card-body ul li.unavailable {
+    color: #e74c3c;
+}
+
+/* Required Items - Horizontal Icon Layout */
+.order-required-items {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px;
+    margin: 0 -4px;
+}
+
+.order-required-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 6px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    min-width: 70px;
+}
+
+.required-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.order-required-item.grade-common .required-item-icon {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.order-required-item.grade-uncommon .required-item-icon {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.order-required-item.grade-rare .required-item-icon {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.order-required-item.grade-epic .required-item-icon {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.order-required-item.grade-legendary .required-item-icon {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+.required-item-name {
+    font-size: 0.75em;
+    color: #bdc3c7;
+    text-align: center;
+    word-break: break-word;
+    max-width: 100%;
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+.required-item-qty {
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.required-item-qty.available {
+    color: #2ecc71;
+}
+
+.required-item-qty.unavailable {
+    color: #e74c3c;
+}
+
+/* Reward Items - Horizontal Icon Layout */
+.order-reward-items {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px;
+    margin: 0 -4px;
+}
+
+.order-reward-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 6px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    min-width: 70px;
+}
+
+.reward-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+.order-reward-item.grade-common .reward-item-icon {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.order-reward-item.grade-uncommon .reward-item-icon {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.order-reward-item.grade-rare .reward-item-icon {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.order-reward-item.grade-epic .reward-item-icon {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.order-reward-item.grade-legendary .reward-item-icon {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+.reward-item-name {
+    font-size: 0.75em;
+    color: #bdc3c7;
+    text-align: center;
+    word-break: break-word;
+    max-width: 100%;
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+.reward-item-qty {
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+    color: #2ecc71;
+}
+
+/* Order Footer */
+.order-card-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Reject Modal Styles */
+.reject-modal-region-info {
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.reject-modal-region-info h4 {
+    margin: 0 0 12px 0;
+    color: #3498db;
+}
+
+/* ========================================
+   TRADING POST CONTAINER & REGION INFO
+   ======================================== */
+
+/* Trading Container - Main layout wrapper */
+.trading-container {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Trading Sidebar - Left panel navigation */
+.trading-sidebar {
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+/* Trading Navigation Button */
+.trading-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
+    background-color: #1a1a1a;
+    border: 2px solid #404040;
+    border-radius: 4px;
+    color: #bbb;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.trading-nav-btn:hover {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.trading-nav-btn.active {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #fff;
+}
+
+/* Trading Content Panel - Right panel with views */
+.trading-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Trading View - Individual view container */
+.trading-view {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.trading-view.active {
+    display: flex;
+}
+
+/* Region Info Container */
+.region-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.region-info-container h3 {
+    margin: 0;
+    flex-shrink: 0;
+    color: #3498db;
+    font-size: 1.2em;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 12px;
+}
+
+/* Region Cards Grid - 3 columns layout */
+.region-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    align-content: start;
+    flex: 1;
+    min-height: 0;
+}
+
+.region-cards-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.region-cards-grid::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.region-cards-grid::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 4px;
+}
+
+.region-cards-grid::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
+
+/* Region Card - Individual region display */
+.region-card {
+    background-color: #2c2c2c;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.region-card:hover {
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Region Card Header */
+.region-card-header {
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.region-name {
+    margin: 0;
+    color: #3498db;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* Region Level and Experience Bar */
+.region-level-exp {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.region-exp-bar {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 24px;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.region-exp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.3s ease;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 12px;
+}
+
+.region-exp-bar-text-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 10px;
+    font-size: 0.8em;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    font-weight: bold;
+}
+
+.region-level {
+    flex-shrink: 0;
+}
+
+.region-xp {
+    flex-shrink: 0;
+    text-align: right;
+    font-size: 0.75em;
+}
+
+/* Region Card Body - Requested Items */
+.region-card-body h5 {
+    margin: 0 0 10px 0;
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+/* Region Items Grid - Icon-based display */
+.region-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 8px;
+}
+
+/* Region Item Icon */
+.region-item-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.region-item-icon:hover {
+    transform: scale(1.05);
+}
+
+.region-item-icon.grade-common {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.region-item-icon.grade-uncommon {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.region-item-icon.grade-rare {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.region-item-icon.grade-epic {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.region-item-icon.grade-legendary {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+.region-item-letter {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.region-item-name {
+    font-size: 0.65em;
+    color: #fff;
+    text-align: center;
+    word-break: break-word;
+    line-height: 1.1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Region Card Footer - Button Container */
+.region-card-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #444;
+}
+
+.region-card-footer .btn {
+    flex: 1;
+}
+
+/* ========================================
+   ORDER LIST MODAL
+   ======================================== */
+
+.order-list-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.order-list-modal.active {
+    display: flex;
+}
+
+.order-list-modal-content {
+    background-color: #2a2a2a;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    width: 85%;
+    max-width: 1200px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.order-list-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #444;
+    flex-shrink: 0;
+}
+
+.order-list-modal-header h2 {
+    margin: 0;
+    color: #3498db;
+    font-size: 1.5em;
+}
+
+.order-list-modal-close {
+    background: none;
+    border: none;
+    color: #3498db;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.order-list-modal-close:hover {
+    color: #2980b9;
+}
+
+.order-list-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    align-content: start;
+}
+
+.order-list-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.order-list-modal-body::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.order-list-modal-body::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 4px;
+}
+
+.order-list-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
+
+/* Order Preview Card - Simplified version */
+.order-preview-card {
+    background-color: #2c2c2c;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.order-preview-card:hover {
+    border-color: #3498db;
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.2);
+}
+
+.order-preview-id {
+    font-size: 0.85em;
+    color: #aaa;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.order-preview-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.order-preview-required,
+.order-preview-reward {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.order-preview-required h6,
+.order-preview-reward h6 {
+    margin: 0;
+    font-size: 0.8em;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-preview-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.order-preview-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex: 0 0 calc(50% - 3px);
+}
+
+.order-preview-item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    font-size: 1.2em;
+}
+
+.order-preview-item-qty {
+    font-size: 0.65em;
+    color: #ccc;
+    text-align: center;
+}
+
+/* ========================================
+   ITEM INFO MODAL
+   ======================================== */
+
+.item-info-modal-content {
+    width: 90%;
+    max-width: 900px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-info-modal-body {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Two-panel layout for multiple items */
+.item-info-list-panel {
+    width: 200px;
+    flex-shrink: 0;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.item-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.item-info-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 2px solid #404040;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.item-info-list-item:hover {
+    border-color: #3498db;
+    background-color: #252525;
+}
+
+.item-info-list-item.selected {
+    border-color: #2ecc71;
+    background-color: #252525;
+}
+
+.item-info-list-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #323232;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #2ecc71;
+    font-size: 1.2em;
+    flex-shrink: 0;
+}
+
+.item-info-list-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.item-info-list-name {
+    color: #e0e0e0;
+    font-weight: bold;
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-info-list-type {
+    color: #888;
+    font-size: 0.8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Details panel */
+.item-info-details-panel {
+    flex: 1;
+    background-color: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 0;
+}
+
+/* Single item mode - center the details */
+.item-info-modal-body:not(:has(.item-info-list-panel[style*="display: block"])) .item-info-details-panel {
+    justify-content: center;
+    align-items: center;
+}
+
+.item-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #404040;
+}
+
+.item-detail-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #323232;
+    border-radius: 6px;
+    font-weight: bold;
+    color: #2ecc71;
+    font-size: 3em;
+    flex-shrink: 0;
+}
+
+.item-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.item-detail-header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.item-detail-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+.item-detail-type {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.item-detail-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.item-detail-description {
+    color: #bdc3c7;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.item-detail-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 4px;
+}
+
+.item-detail-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #bdc3c7;
+    font-size: 0.9em;
+}
+
+.item-detail-stat-label {
+    color: #888;
+}
+
+.item-detail-stat-value {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+.item-detail-recipe {
+    padding: 12px;
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 4px;
+}
+
+.item-detail-recipe h4 {
+    margin: 0 0 12px 0;
+    color: #3498db;
+    font-size: 1em;
+}
+
+.item-detail-recipe .ingredients-grid {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.item-detail-recipe .ingredient-item {
+    flex-shrink: 0;
+    width: 70px;
+    text-align: center;
+}
+
+.item-detail-recipe .ingredient-icon {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #404040;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    background-color: #323232;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+    font-weight: bold;
+}
+
+.item-detail-recipe .ingredient-name {
+    font-size: 0.75em;
+    color: #b0b0b0;
+    margin-bottom: 3px;
+    word-break: break-word;
+}
+
+.item-detail-recipe .ingredient-count {
+    font-size: 0.8em;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.item-detail-recipe .ingredient-count.available {
+    color: #7cfc00;
+}
+
+.item-detail-requirement {
+    padding: 12px;
+    background-color: #1a1a1a;
+    border: 1px solid #404040;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.requirement-label {
+    color: #bdc3c7;
+    font-size: 0.9em;
+}
+
+.requirement-value {
+    color: #f39c12;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.item-info-close-hint {
+    text-align: center;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 12px;
+    padding: 12px 0;
+    border-top: 1px solid #404040;
+    font-style: italic;
+}
+
+/* ============================================================================ */
+/* WORKER DETAILS MODAL */
+/* ============================================================================ */
+
+.worker-details-modal-content {
+    max-width: 600px !important;
+    width: 95% !important;
+}
+
+.worker-details-modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* Worker card in modal (reusing hired worker card design without Fire button) */
+.worker-details-modal-body .worker-card {
+    width: 100%;
+    max-width: 400px;
+    margin: 0;
+}
+
+.worker-details-modal-body .worker-actions {
+    display: none;
+}
+
+/* ============================================================================ */
+/* CONSTRUCTION MODE */
+/* ============================================================================ */
+
+.construction-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    min-height: 400px;
+    overflow-y: auto;
+}
+
+.construction-panel {
+    background-color: #2a2a2a;
+    border: 2px solid #404040;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.construction-panel:hover {
+    border-color: #3498db;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+}
+
+.construction-panel-header {
+    text-align: center;
+}
+
+.construction-panel-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #ecf0f1;
+    margin-bottom: 5px;
+}
+
+.construction-panel.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    background-color: #1f1f1f;
+    border-color: #7f8c8d;
+}
+
+.construction-panel.disabled:hover {
+    border-color: #7f8c8d;
+    box-shadow: none;
+}
+
+.construction-section-label {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #95a5a6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #404040;
+}
+
+.construction-section-label:first-child {
+    margin-top: 0;
+}
+
+.construction-panel-costs {
+    background-color: #1f1f1f;
+    border-left: 3px solid #3498db;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.construction-panel-cost-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    color: #bdc3c7;
+}
+
+.construction-panel-cost-item.insufficient {
+    color: #e74c3c;
+}
+
+.construction-panel-cost-item.sufficient {
+    color: #2ecc71;
+}
+
+.construction-cost-amount {
+    display: flex;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.construction-cost-required {
+    color: inherit;
+}
+
+.construction-cost-current {
+    color: #95a5a6;
+}
+
+.construction-panel-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.btn-construct {
+    flex: 1;
+    padding: 10px 15px;
+    background-color: #27ae60;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-construct:hover:not(:disabled) {
+    background-color: #229954;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.4);
+}
+
+.btn-construct:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Cost Items Grid Layout (Required Materials) - Compact style matching order cards */
+.cost-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.cost-item-grid-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 6px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    min-width: 70px;
+    transition: all 0.2s ease;
+}
+
+/* Grade-based backgrounds for cost grid items - applied to icon only */
+.cost-item-grid-cell.grade-common .cost-item-grid-icon {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.cost-item-grid-cell.grade-uncommon .cost-item-grid-icon {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.cost-item-grid-cell.grade-rare .cost-item-grid-icon {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.cost-item-grid-cell.grade-epic .cost-item-grid-icon {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.cost-item-grid-cell.grade-legendary .cost-item-grid-icon {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+/* Hover effects */
+.cost-item-grid-cell.grade-common .cost-item-grid-icon:hover {
+    box-shadow: 0 0 8px rgba(149, 165, 166, 0.5);
+}
+
+.cost-item-grid-cell.grade-uncommon .cost-item-grid-icon:hover {
+    box-shadow: 0 0 8px rgba(46, 204, 113, 0.5);
+}
+
+.cost-item-grid-cell.grade-rare .cost-item-grid-icon:hover {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+}
+
+.cost-item-grid-cell.grade-epic .cost-item-grid-icon:hover {
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.5);
+}
+
+.cost-item-grid-cell.grade-legendary .cost-item-grid-icon:hover {
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+}
+
+/* Insufficient status styling */
+.cost-item-grid-cell.insufficient .cost-item-grid-icon {
+    opacity: 0.7;
+    border-style: dashed;
+}
+
+/* First letter icon in grid cell - Fixed 50x50 size */
+.cost-item-grid-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+/* Item name in grid cell */
+.cost-item-grid-name {
+    font-size: 0.75em;
+    color: #bdc3c7;
+    text-align: center;
+    word-break: break-word;
+    max-width: 100%;
+    line-height: 1.2;
+    font-weight: 500;
+}
+
+/* Quantity info in grid cell */
+.cost-item-grid-quantity {
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+    color: #bdc3c7;
+}
+
+.cost-item-grid-quantity.available {
+    color: #2ecc71;
+}
+
+.cost-item-grid-quantity.unavailable {
+    color: #e74c3c;
+}
+
+/* Responsive design for construction grid */
+@media (max-width: 1200px) {
+    .construction-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .construction-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

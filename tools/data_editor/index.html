@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estate Simulator - Data Editor</title>
+    <link rel="stylesheet" href="css/editor.css">
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+    <div class="editor-container">
+        <!-- Header -->
+        <header class="editor-header">
+            <div class="header-content">
+                <h1>Estate Simulator - Data Editor</h1>
+                <div class="header-actions">
+                    <button id="openDirBtn" class="btn btn-primary">📁 Open Data Directory</button>
+                    <span id="statusText" class="status-text">Ready to open data directory</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="editor-main">
+            <!-- Left Pane: File Explorer -->
+            <div class="pane pane-left">
+                <div class="pane-header">
+                    <h2>Files</h2>
+                </div>
+                <div class="pane-content">
+                    <div id="fileTree" class="file-tree">
+                        <p class="placeholder">Open a data directory to get started</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Pane: Row List -->
+            <div class="pane pane-middle">
+                <div class="pane-header">
+                    <h2>Rows</h2>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search IDs..." style="display: none;">
+                </div>
+                <div class="pane-content">
+                    <div id="rowList" class="row-list">
+                        <p class="placeholder">Select a CSV file to see rows</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Pane: Data Inspector -->
+            <div class="pane pane-right">
+                <div class="pane-header">
+                    <h2>Inspector</h2>
+                    <button id="inspectorViewToggle" class="btn btn-view-toggle">Table View</button>
+                </div>
+                <div class="pane-content">
+                    <div id="inspector" class="inspector inspector-form-view">
+                        <p class="placeholder">Select a row to inspect</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Modal for "Create New" Enum Value -->
+    <div id="enumModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Value</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Enter new value for <span id="enumFieldName"></span>:</label>
+                <input type="text" id="enumInputField" class="modal-input" placeholder="Enter value...">
+            </div>
+            <div class="modal-footer">
+                <button id="enumCancelBtn" class="btn btn-secondary">Cancel</button>
+                <button id="enumConfirmBtn" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for "Add Header" (CSV Column) -->
+    <div id="addHeaderModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Column</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-form-group">
+                    <label for="headerNameInput">Column Name:</label>
+                    <input type="text" id="headerNameInput" class="modal-input" placeholder="Enter column name...">
+                </div>
+                <div class="modal-form-group">
+                    <label for="headerTypeSelect">Data Type:</label>
+                    <select id="headerTypeSelect" class="modal-input">
+                        <option value="string">String</option>
+                        <option value="number">Number</option>
+                        <option value="enum">Enum</option>
+                        <option value="json">JSON</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="headerCancelBtn" class="btn btn-secondary">Cancel</button>
+                <button id="headerConfirmBtn" class="btn btn-primary">Add Column</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for "Add Column" (JSON Array) -->
+    <div id="addColumnModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Column to Array</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="columnNameInput">Column Name:</label>
+                <input type="text" id="columnNameInput" class="modal-input" placeholder="Enter column name...">
+            </div>
+            <div class="modal-footer">
+                <button id="columnCancelBtn" class="btn btn-secondary">Cancel</button>
+                <button id="columnConfirmBtn" class="btn btn-primary">Add Column</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/csvParser.js"></script>
+    <script src="js/typeInference.js"></script>
+    <script src="js/uiComponents.js"></script>
+    <script src="js/fileExplorer.js"></script>
+    <script src="js/rowList.js"></script>
+    <script src="js/jsonRenderer.js"></script>
+    <script src="js/dataInspector.js"></script>
+    <script src="js/dataEditor.js"></script>
+</body>
+</html>

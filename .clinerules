@@ -1,0 +1,108 @@
+Please read and follow the instructions in the `CLAUDE.md` file located in the root directory.
+
+# Claude Development Guide - Estate Simulator
+
+**Project:** A browser-based incremental/idle game where players manage an estate with workers, production facilities, trading, and crafting systems.
+
+**Entry Point:** `index.html` (opens the game client)
+
+---
+
+## 🚨 CRITICAL WORKFLOW RULES (MANDATORY)
+
+**You MUST follow these 3 rules in every session without exception:**
+
+1. **SESSION INITIALIZATION:** At the start of EVERY task, read this `CLAUDE.md` first to map the project structure.
+2. **DOCUMENTATION MAINTENANCE:** If you change code, you MUST update the relevant documentation. Global changes → `CLAUDE.md`, Feature changes → local `README.md`.
+3. **NO SUMMARY FILES:** Do NOT generate summary.md or log files at the end of the session. Just verbally confirm completion.
+
+---
+
+## Quick Reference
+
+| Task | File |
+|------|------|
+| Start playing | `index.html` |
+| Edit game data | CSV files in `data/` |
+| Rebuild game data | `BuildData.bat` |
+| Fix game logic | `core/` or `systems/` |
+| Fix UI issues | `ui/` |
+| Fix styling | `css/` |
+
+## Module Navigation
+
+Use this Knowledge Map to quickly navigate the codebase by following links to detailed module guides:
+
+| Module | Purpose | README |
+|--------|---------|--------|
+| **core/** | Game state, persistence, inventory | [core/README.md](core/README.md) |
+| **systems/** | Game mechanics (production, workers, trading, crafting) | [systems/README.md](systems/README.md) |
+| **ui/** | User interface rendering and interaction | [ui/README.md](ui/README.md) |
+| **css/** | Stylesheets (design tokens, layouts, components) | [css/README.md](css/README.md) |
+| **data/** | Game configuration and content (CSV format) | [data/README.md](data/README.md) |
+
+### Data Subdirectories
+
+Each subdirectory in `data/` contains CSV files for specific game systems:
+
+| Directory | Content | README |
+|-----------|---------|--------|
+| `data/common/` | Global game configuration | [data/common/README.md](data/common/README.md) |
+| `data/workers/` | Worker definitions, grades, levels | [data/workers/README.md](data/workers/README.md) |
+| `data/facilities/` | Facility types, production areas, upgrades | [data/facilities/README.md](data/facilities/README.md) |
+| `data/items/` | Item definitions, recipes, stacking rules | [data/items/README.md](data/items/README.md) |
+| `data/trading/` | Trading regions, orders, pricing | [data/trading/README.md](data/trading/README.md) |
+
+## How to Use This Knowledge Map
+
+1. **Starting a task?** First identify the module: Are you fixing game logic (core/systems), UI (ui), styling (css), or game content (data)?
+2. **Need module details?** Click the README link for that module to see file descriptions, data flow, and architecture patterns.
+3. **Editing game content?** Look at [data/README.md](data/README.md) to understand CSV structure and rebuild steps.
+4. **Fixing a specific file?** The folder README tells you that file's exact role and how it connects to other systems.
+
+## Key Features Index
+
+Complex features have dedicated documentation:
+
+| Feature | Purpose | Documentation |
+|---------|---------|---|
+| **Product Grid System** | Grid-based production area placement with collision detection | [docs/FEATURE_PRODUCT_GRID.md](docs/FEATURE_PRODUCT_GRID.md) |
+
+## Development Workflow
+
+### For AI Assistants Working on This Project
+
+When assigned a development task:
+
+1. **Identify the relevant functional folder** (core/, systems/, ui/, css/, or data/)
+2. **Read that folder's README.md** to understand its purpose and file organization
+3. **Minimize token usage** by only reading the specific files you need to modify
+4. **Check existing code patterns** in the folder to maintain consistency
+5. **Test data flows** if making changes to multiple systems—gameLoopManager orchestrates all systems
+
+Example: If fixing a bug in worker assignment:
+- Look at [systems/README.md](systems/README.md) to understand the worker system
+- Read `systems/workerSystem.js` to find the issue
+- Update only the necessary code
+
+### Module Communication Patterns
+
+- **gameLoopManager** (core/) orchestrates all systems and runs the game tick
+- **UI systems** (ui/) read from gameState and stashManager, never directly modify state
+- **Game systems** (systems/) only modify gameState and stash, never directly modify UI
+- **Data systems** (data/) provide read-only access to configuration and items
+
+## Important Development Notes
+
+- **Do NOT generate markdown summary files** at the end of every conversation session
+- **Always use relative paths** when creating new files to maintain project structure
+- **Follow existing patterns** in each module—consistency matters for team development
+- **Keep modules focused**—add new functionality to the most relevant existing module or create a new focused system module
+- **Data changes require rebuild:** After editing CSV files, run `BuildData.bat` to regenerate `gameData.js`
+
+## Version History
+
+- **Documentation Refactoring (Jan 2026)**: Restructured documentation to follow Single Responsibility Principle. Moved CSV workflow to [data/README.md](data/README.md) and Product Grid system details to [docs/FEATURE_PRODUCT_GRID.md](docs/FEATURE_PRODUCT_GRID.md). Added CRITICAL WORKFLOW RULES and Key Features Index.
+- **Documentation Refactoring (Jan 2026)**: Created comprehensive Knowledge Map with module-specific READMEs and data subdirectory documentation
+- **Product Grid System Implementation (Jan 2026)**: Added grid-based production area placement with collision detection and drag-and-drop UI
+- **Refactoring Complete (Jan 2026)**: Split monolithic game.js into functional modules across core/, systems/, and ui/ directories. Each folder now contains a README.md for quick reference.

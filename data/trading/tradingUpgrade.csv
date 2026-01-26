@@ -1,0 +1,6 @@
+facility_id,level,cooltime,maxQueueSlots,requirements
+trading,1,360,3,
+trading,2,300,4,"[{""itemId"":""gold"",""count"":500}]"
+trading,3,240,5,"[{""itemId"":""gold"",""count"":1000}]"
+trading,4,180,6,"[{""itemId"":""gold"",""count"":2000}]"
+trading,5,120,8,"[{""itemId"":""gold"",""count"":5000}]"

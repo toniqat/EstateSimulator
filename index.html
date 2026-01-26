@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estate Simulator</title>
+    <!-- Modular CSS Files - Load in specific order -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/facilities.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>Estate Simulator</h1>
+                <div class="speed-controller-compact">
+                    <button class="speed-btn-compact speed-btn-decrease" onclick="game.decreaseGameSpeed()">◀</button>
+                    <span class="speed-display" id="currentSpeed">1x</span>
+                    <button class="speed-btn-compact speed-btn-increase" onclick="game.increaseGameSpeed()">▶</button>
+                </div>
+                <div class="top-stats">
+                    <div class="stat">
+                        <span class="stat-label">Gold:</span>
+                        <span class="stat-value" id="goldDisplay">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Workers:</span>
+                        <span class="stat-value" id="workerCountDisplay">0/0</span>
+                    </div>
+                    <button class="btn btn-primary btn-small" onclick="game.saveGame()">Save Game</button>
+                    <button class="btn btn-danger btn-small" onclick="game.showResetConfirmation()">Reset Game</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Sidebar - Navigation -->
+            <aside class="sidebar">
+                <h2>Facilities</h2>
+                <div class="sidebar-nav">
+                    <!-- Dynamically generated navigation items -->
+                </div>
+            </aside>
+
+            <!-- Main Area - Dynamic Facility Views -->
+            <main class="main-area">
+                <!-- Stash View -->
+                <section class="facility-view hidden" data-view="stash">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2>Stash <span class="facility-level" id="stash-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="stash-upgrade-btn" onclick="game.showUpgradeConfirmation('stash')">Upgrade</button>
+                        </div>
+                    </div>
+                    <div class="stash-header">
+                        <div class="stash-info">
+                            <span>Capacity: <span id="stash-used">0</span>/<span id="stash-capacity">25</span></span>
+                        </div>
+                    </div>
+                    <div class="stash-container">
+                        <!-- Left Panel: Filter Sidebar -->
+                        <div class="stash-filter-sidebar">
+                            <button class="filter-btn active" data-filter="all" onclick="game.filterStashItems('all')">All</button>
+                            <button class="filter-btn" data-filter="farm" onclick="game.filterStashItems('farm')">Farm</button>
+                            <button class="filter-btn" data-filter="mine" onclick="game.filterStashItems('mine')">Mine</button>
+                            <button class="filter-btn" data-filter="ranch" onclick="game.filterStashItems('ranch')">Ranch</button>
+                            <button class="filter-btn" data-filter="fishery" onclick="game.filterStashItems('fishery')">Fishery</button>
+                            <button class="filter-btn" data-filter="etc" onclick="game.filterStashItems('etc')">ETC</button>
+                        </div>
+
+                        <!-- Right Panel: Item Grid -->
+                        <div class="stash-item-panel">
+                            <!-- Sorting Toolbar -->
+                            <div class="processing-sort-toolbar">
+                                <label for="stash-sort-select">Sort:</label>
+                                <select id="stash-sort-select" onchange="game.setStashSortMode(this.value)">
+                                    <option value="id">By ID</option>
+                                    <option value="quantity">By Quantity</option>
+                                </select>
+                            </div>
+
+                            <!-- Item Grid -->
+                            <div class="stash-grid" id="stash-grid">
+                                <!-- Dynamically generated slot divs -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Worker's Lodge View -->
+                <section class="facility-view hidden" data-view="lodge">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2>Worker's Lodge <span class="facility-level" id="lodge-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="lodge-upgrade-btn" onclick="game.showUpgradeConfirmation('lodge')">Upgrade</button>
+                        </div>
+                    </div>
+
+                    <div class="lodge-container">
+                        <!-- Lodge Sidebar Navigation -->
+                        <aside class="lodge-sidebar">
+                            <button class="lodge-nav-btn active" data-view-type="pending" onclick="game.setLodgeView('pending')">
+                                <span class="nav-label">Available for Hire</span>
+                                <span class="nav-count"><span id="lodge-pending-count-nav">0</span><span id="lodge-pending-max-nav">/3</span></span>
+                            </button>
+                            <button class="lodge-nav-btn" data-view-type="hired" onclick="game.setLodgeView('hired')">
+                                <span class="nav-label">Hired Workers</span>
+                                <span class="nav-count"><span id="lodge-hired-count-nav">0</span><span id="lodge-hired-max-nav">/5</span></span>
+                            </button>
+                        </aside>
+
+                        <!-- Lodge Main Content Panel -->
+                        <div class="lodge-content">
+                            <!-- Pending Workers View -->
+                            <div class="lodge-view active" data-lodge-view="pending">
+                                <div class="worker-section">
+                                    <div class="section-header-with-info">
+                                        <h3>Available for Hire (<span class="worker-count-badge"><span id="lodge-pending-count">0</span>/<span id="lodge-pending-max">3</span></span>)</h3>
+                                        <button class="btn-info-icon" title="View spawn rate probabilities" onclick="game.showWorkerSpawnRateInfo()">?</button>
+                                    </div>
+                                    <div class="worker-arrival-timer">
+                                        <div class="worker-arrival-progress">
+                                            <div class="worker-arrival-progress-bar" id="lodge-arrival-progress"></div>
+                                            <div class="worker-arrival-progress-text" id="lodge-arrival-timer">--:--:--</div>
+                                        </div>
+                                    </div>
+                                    <div class="worker-list" id="lodge-pending-workers">
+                                        <!-- Dynamically generated -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hired Workers View -->
+                            <div class="lodge-view" data-lodge-view="hired">
+                                <div class="worker-section">
+                                    <h3>Hired Workers (<span class="worker-count-badge"><span id="lodge-hired-count">0</span>/<span id="lodge-hired-max">5</span></span>)</h3>
+                                    <div class="worker-roster" id="lodge-hired-workers">
+                                        <!-- Dynamically generated -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Farm View -->
+                <section class="facility-view hidden" data-view="farm">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2><span id="farm-name-display">Farm</span> <span class="facility-level" id="farm-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="farm-upgrade-btn" onclick="game.showUpgradeConfirmation('farm')">Upgrade</button>
+                        </div>
+                    </div>
+                    <div class="facility-grid-container" id="farm-grid-container">
+                        <div class="facility-three-panel-layout">
+                            <!-- Left Panel: Worker & Area Placement -->
+                            <div class="facility-panel-left" id="farm-panel-left">
+                                <!-- Worker Placement Section -->
+                                <div class="facility-panel-section facility-worker-placement" id="farm-worker-section">
+                                    <h3>Workers</h3>
+                                    <!-- Edit mode toggle will be added here -->
+                                </div>
+                                <!-- Area Placement Section -->
+                                <div class="facility-panel-section facility-area-placement" id="farm-area-section">
+                                    <h3>Areas</h3>
+                                    <!-- Available areas will be added here -->
+                                </div>
+                            </div>
+                            <!-- Center Panel: Facility Grid -->
+                            <div class="facility-panel-center" id="farm-panel-center">
+                                <!-- Grid will be generated here -->
+                            </div>
+                            <!-- Right Panel: Products & Collect All -->
+                            <div class="facility-panel-right" id="farm-panel-right">
+                                <div class="facility-panel-section facility-products-section" id="farm-products-section">
+                                    <h3>Expected Output <em style="font-weight: normal; font-size: 0.85em;">(based on 24h)</em></h3>
+                                    <!-- Collect All button and production list will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Mine View -->
+                <section class="facility-view hidden" data-view="mine">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2><span id="mine-name-display">Mine</span> <span class="facility-level" id="mine-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="mine-upgrade-btn" onclick="game.showUpgradeConfirmation('mine')">Upgrade</button>
+                        </div>
+                    </div>
+                    <div class="facility-grid-container" id="mine-grid-container">
+                        <div class="facility-three-panel-layout">
+                            <!-- Left Panel: Worker & Area Placement -->
+                            <div class="facility-panel-left" id="mine-panel-left">
+                                <!-- Worker Placement Section -->
+                                <div class="facility-panel-section facility-worker-placement" id="mine-worker-section">
+                                    <h3>Workers</h3>
+                                    <!-- Edit mode toggle will be added here -->
+                                </div>
+                                <!-- Area Placement Section -->
+                                <div class="facility-panel-section facility-area-placement" id="mine-area-section">
+                                    <h3>Areas</h3>
+                                    <!-- Available areas will be added here -->
+                                </div>
+                            </div>
+                            <!-- Center Panel: Facility Grid -->
+                            <div class="facility-panel-center" id="mine-panel-center">
+                                <!-- Grid will be generated here -->
+                            </div>
+                            <!-- Right Panel: Products & Collect All -->
+                            <div class="facility-panel-right" id="mine-panel-right">
+                                <div class="facility-panel-section facility-products-section" id="mine-products-section">
+                                    <h3>Expected Output <em style="font-weight: normal; font-size: 0.85em;">(based on 24h)</em></h3>
+                                    <!-- Collect All button and production list will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ranch View -->
+                <section class="facility-view hidden" data-view="ranch">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2><span id="ranch-name-display">Ranch</span> <span class="facility-level" id="ranch-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="ranch-upgrade-btn" onclick="game.showUpgradeConfirmation('ranch')">Upgrade</button>
+                        </div>
+                    </div>
+                    <div class="facility-grid-container" id="ranch-grid-container">
+                        <div class="facility-three-panel-layout">
+                            <!-- Left Panel: Worker & Area Placement -->
+                            <div class="facility-panel-left" id="ranch-panel-left">
+                                <!-- Worker Placement Section -->
+                                <div class="facility-panel-section facility-worker-placement" id="ranch-worker-section">
+                                    <h3>Workers</h3>
+                                    <!-- Edit mode toggle will be added here -->
+                                </div>
+                                <!-- Area Placement Section -->
+                                <div class="facility-panel-section facility-area-placement" id="ranch-area-section">
+                                    <h3>Areas</h3>
+                                    <!-- Available areas will be added here -->
+                                </div>
+                            </div>
+                            <!-- Center Panel: Facility Grid -->
+                            <div class="facility-panel-center" id="ranch-panel-center">
+                                <!-- Grid will be generated here -->
+                            </div>
+                            <!-- Right Panel: Products & Collect All -->
+                            <div class="facility-panel-right" id="ranch-panel-right">
+                                <div class="facility-panel-section facility-products-section" id="ranch-products-section">
+                                    <h3>Expected Output <em style="font-weight: normal; font-size: 0.85em;">(based on 24h)</em></h3>
+                                    <!-- Collect All button and production list will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Fishery View -->
+                <section class="facility-view hidden" data-view="fishery">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2><span id="fishery-name-display">Fishery</span> <span class="facility-level" id="fishery-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="fishery-upgrade-btn" onclick="game.showUpgradeConfirmation('fishery')">Upgrade</button>
+                        </div>
+                    </div>
+                    <div class="facility-grid-container" id="fishery-grid-container">
+                        <div class="facility-three-panel-layout">
+                            <!-- Left Panel: Worker & Area Placement -->
+                            <div class="facility-panel-left" id="fishery-panel-left">
+                                <!-- Worker Placement Section -->
+                                <div class="facility-panel-section facility-worker-placement" id="fishery-worker-section">
+                                    <h3>Workers</h3>
+                                    <!-- Edit mode toggle will be added here -->
+                                </div>
+                                <!-- Area Placement Section -->
+                                <div class="facility-panel-section facility-area-placement" id="fishery-area-section">
+                                    <h3>Areas</h3>
+                                    <!-- Available areas will be added here -->
+                                </div>
+                            </div>
+                            <!-- Center Panel: Facility Grid -->
+                            <div class="facility-panel-center" id="fishery-panel-center">
+                                <!-- Grid will be generated here -->
+                            </div>
+                            <!-- Right Panel: Products & Collect All -->
+                            <div class="facility-panel-right" id="fishery-panel-right">
+                                <div class="facility-panel-section facility-products-section" id="fishery-products-section">
+                                    <h3>Expected Output <em style="font-weight: normal; font-size: 0.85em;">(based on 24h)</em></h3>
+                                    <!-- Collect All button and production list will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Processing Plant View -->
+                <section class="facility-view hidden" data-view="processing">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2>Processing Plant <span class="facility-level" id="processing-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="processing-upgrade-btn" onclick="game.showUpgradeConfirmation('processing')">Upgrade</button>
+                        </div>
+                    </div>
+                    <div class="processing-container">
+                        <!-- Far Left: Filter Sidebar -->
+                        <div class="processing-filter-sidebar">
+                            <button class="filter-btn active" data-filter="all" onclick="game.filterCraftableItems('all')">All</button>
+                            <button class="filter-btn" data-filter="farm" onclick="game.filterCraftableItems('farm')">Farm</button>
+                            <button class="filter-btn" data-filter="mine" onclick="game.filterCraftableItems('mine')">Mine</button>
+                            <button class="filter-btn" data-filter="ranch" onclick="game.filterCraftableItems('ranch')">Ranch</button>
+                            <button class="filter-btn" data-filter="fishery" onclick="game.filterCraftableItems('fishery')">Fishery</button>
+                            <button class="filter-btn" data-filter="etc" onclick="game.filterCraftableItems('etc')">ETC</button>
+                        </div>
+
+                        <!-- Middle: Item Grid Panel -->
+                        <div class="processing-item-panel">
+                            <!-- Sorting Toolbar -->
+                            <div class="processing-sort-toolbar">
+                                <label for="sort-select">Sort:</label>
+                                <select id="sort-select" onchange="game.setSortMode(this.value)">
+                                    <option value="id">By ID</option>
+                                    <option value="availability">By Availability</option>
+                                </select>
+                            </div>
+
+                            <!-- Craftable Items Title -->
+                            <h3 class="processing-items-title">Craftable Items</h3>
+
+                            <!-- Item Grid -->
+                            <div class="processing-item-grid" id="processing-item-grid">
+                                <!-- Dynamically generated item cards -->
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Crafting Details -->
+                        <div class="processing-panel-right" id="processing-details-panel">
+                            <div class="processing-no-selection">
+                                Select an item to view crafting details
+                            </div>
+                            <!-- Crafting details will be injected here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Trading Post View -->
+                <section class="facility-view hidden" data-view="trading">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2>Trading Post <span class="facility-level" id="trading-level-display">Lv 1</span></h2>
+                            <button class="btn btn-upgrade btn-small" id="trading-upgrade-btn" onclick="game.showTradingUpgradeModal()">Upgrade</button>
+                        </div>
+                    </div>
+
+                    <div class="trading-container">
+                        <!-- Left Sidebar: Navigation -->
+                        <aside class="trading-sidebar">
+                            <button class="trading-nav-btn active" data-view-type="active-orders" onclick="game.setTradingView('active-orders')">
+                                <span class="nav-label">Active Orders</span>
+                            </button>
+                            <button class="trading-nav-btn" data-view-type="region-info" onclick="game.setTradingView('region-info')">
+                                <span class="nav-label">Region Info</span>
+                            </button>
+                        </aside>
+
+                        <!-- Right Content Panel -->
+                        <div class="trading-content">
+                            <!-- Active Orders View -->
+                            <div class="trading-view active" data-trading-view="active-orders">
+                                <!-- Active Orders Grid -->
+                                <div class="trading-orders-container">
+                                    <h3>Active Orders (<span id="active-order-count">0</span>/<span id="max-order-slots">3</span>)</h3>
+                                    <!-- Order Arrival Timer -->
+                                    <div class="trading-arrival-timer">
+                                        <div class="trading-arrival-progress">
+                                            <div class="trading-arrival-progress-bar" id="trading-arrival-progress"></div>
+                                            <div class="trading-arrival-progress-text" id="trading-arrival-text">--:--</div>
+                                        </div>
+                                    </div>
+                                    <div class="trading-orders-grid" id="trading-orders-grid">
+                                        <!-- Dynamically generated order cards -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Region Info View -->
+                            <div class="trading-view" data-trading-view="region-info">
+                                <div class="region-info-container">
+                                    <h3>Region Info</h3>
+                                    <div class="region-cards-grid" id="region-cards-grid">
+                                        <!-- Dynamically generated region cards -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Construction Mode View -->
+                <section class="facility-view hidden" data-view="construction">
+                    <div class="view-header">
+                        <div class="header-title-row">
+                            <h2>Facility Construction</h2>
+                            <button class="btn btn-secondary btn-small" onclick="game.exitConstructionMode()">Back</button>
+                        </div>
+                    </div>
+                    <div class="construction-grid" id="construction-grid">
+                        <!-- Dynamically generated facility panels -->
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Upgrade Confirmation Modal -->
+        <div class="modal hidden" id="upgradeConfirmModal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="upgradeModalTitle">Confirm Upgrade</h2>
+                    <button class="modal-close" onclick="game.closeUpgradeConfirmation()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="facility-upgrade-info">
+                        <p class="upgrade-facility-name" id="upgradeModalFacilityName">Facility Name</p>
+                        <p class="upgrade-level-info">
+                            <span class="current-level" id="upgradeCurrentLevel">Level 1</span>
+                            <span class="level-arrow">→</span>
+                            <span class="next-level" id="upgradeNextLevel">Level 2</span>
+                        </p>
+                    </div>
+
+                    <div class="upgrade-statistics-section">
+                        <h4>Before & After:</h4>
+                        <div class="statistics-list" id="upgradeModalStatistics">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+
+                    <div class="upgrade-costs-section">
+                        <h4>Required Materials:</h4>
+                        <div class="costs-list" id="upgradeModalCosts">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="game.closeUpgradeConfirmation()">Cancel</button>
+                    <button class="btn btn-primary btn-confirm" id="confirmUpgradeBtn" onclick="game.confirmUpgrade()">Confirm Upgrade</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Game Confirmation Modal -->
+        <div class="modal hidden" id="resetConfirmModal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Reset Game</h2>
+                    <button class="modal-close" onclick="game.closeResetConfirmation()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 1.1em; color: #d32f2f; font-weight: bold;">Are you sure you want to reset the game?</p>
+                    <p>This action will delete all your progress and start a new game. <strong>This cannot be undone.</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="game.closeResetConfirmation()">Cancel</button>
+                    <button class="btn btn-danger" onclick="game.confirmReset()">Yes, Reset Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fire Worker Confirmation Modal -->
+        <div class="modal hidden" id="fireConfirmModal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Fire Worker</h2>
+                    <button class="modal-close" onclick="game.closeFireConfirmation()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 1.1em; color: #d32f2f; font-weight: bold;">Are you sure you want to fire <span id="fireWorkerName"></span>?</p>
+                    <p>This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="game.closeFireConfirmation()">Cancel</button>
+                    <button class="btn btn-danger" onclick="game.confirmFireWorker()">Yes, Fire Worker</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Worker Spawn Rate Info Modal -->
+        <div class="modal hidden" id="workerSpawnRateModal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content worker-spawn-rate-modal-content">
+                <div class="modal-body">
+                    <h2 style="margin-top: 0; margin-bottom: 1em;">Worker Spawn Rates</h2>
+                    <p style="font-size: 0.95em; color: #bbb; margin-bottom: 1.5em;">Probability of receiving each grade based on facility level:</p>
+                    <div class="spawn-rate-table-container" id="spawnRateTableContainer">
+                        <!-- Table will be generated here -->
+                    </div>
+                </div>
+                <!-- Closing instruction at bottom -->
+                <div class="spawn-rate-close-hint">Click outside to close</div>
+            </div>
+        </div>
+
+        <!-- Reject Order Confirmation Modal -->
+        <div class="modal hidden" id="reject-order-modal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Reject Order?</h2>
+                    <button class="modal-close" onclick="game.closeRejectOrderModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="reject-order-modal-body">
+                    <!-- Dynamic content -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="game.closeRejectOrderModal()">Cancel</button>
+                    <button class="btn btn-danger" onclick="game.confirmRejectOrder()">Reject Order</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trade Confirmation Modal -->
+        <div class="modal hidden" id="trade-confirmation-modal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Confirm Trade</h2>
+                    <button class="modal-close" onclick="game.closeTradeConfirmationModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="trade-confirmation-modal-body">
+                    <!-- Dynamic content: order details -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="game.closeTradeConfirmationModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="game.confirmTradeOrder()">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Item Info Modal -->
+        <div class="modal hidden" id="item-info-modal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content item-info-modal-content">
+                <div class="modal-body item-info-modal-body">
+                    <!-- Two-panel layout for multiple items case -->
+                    <div class="item-info-list-panel" id="item-info-list-panel" style="display: none;">
+                        <div class="item-info-list" id="item-info-list">
+                            <!-- List of items with icon, name, type -->
+                        </div>
+                    </div>
+                    <!-- Details panel (right side for multiple items, centered for single) -->
+                    <div class="item-info-details-panel" id="item-info-details-panel">
+                        <!-- Item details will be rendered here -->
+                    </div>
+                </div>
+                <!-- Closing instruction at bottom -->
+                <div class="item-info-close-hint">Click outside to close</div>
+            </div>
+        </div>
+
+        <!-- Worker Details Modal -->
+        <div class="modal hidden" id="workerDetailsModal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content worker-details-modal-content">
+                <div class="modal-header">
+                    <h2 id="worker-details-title">Worker Details</h2>
+                    <button class="modal-close" onclick="game.closeWorkerDetailsModal()">&times;</button>
+                </div>
+                <div class="modal-body worker-details-modal-body">
+                    <!-- Worker details will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Construction Confirmation Modal -->
+        <div class="modal hidden" id="constructionConfirmModal" onclick="game.handleModalBackgroundClick(event)">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Construct Facility</h2>
+                    <button class="modal-close" onclick="game.closeConstructionConfirmation()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="construction-costs-section">
+                        <h4>Required Materials:</h4>
+                        <div class="costs-list" id="constructionModalCosts">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="game.closeConstructionConfirmation()">Cancel</button>
+                    <button class="btn btn-primary btn-confirm" id="confirmConstructionBtn" onclick="game.confirmConstruction()">Construct</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Control Bar - DEPRECATED (moved to header) -->
+        <footer class="time-control-bar hidden">
+            <span class="time-label">Game Speed:</span>
+            <div class="speed-buttons">
+                <button class="speed-btn" data-speed="1" onclick="game.setGameSpeed(1)">1x</button>
+                <button class="speed-btn" data-speed="2" onclick="game.setGameSpeed(2)">2x</button>
+                <button class="speed-btn" data-speed="4" onclick="game.setGameSpeed(4)">4x</button>
+                <button class="speed-btn" data-speed="8" onclick="game.setGameSpeed(8)">8x</button>
+                <button class="speed-btn" data-speed="16" onclick="game.setGameSpeed(16)">16x</button>
+                <button class="speed-btn" data-speed="32" onclick="game.setGameSpeed(32)">32x</button>
+                <button class="speed-btn" data-speed="64" onclick="game.setGameSpeed(64)">64x</button>
+            </div>
+            <span class="current-speed" id="currentSpeedLegacy">Current: 1x</span>
+        </footer>
+    </div>
+
+    <!-- Game Data & Loader -->
+    <script src="data/gameData.js"></script>
+    <script src="data/dataLoader.js"></script>
+
+    <!-- Core Systems -->
+    <script src="core/gameState.js"></script>
+    <script src="core/stashManager.js"></script>
+    <script src="core/facilityStorageManager.js"></script>
+    <script src="core/gameLoopManager.js"></script>
+
+    <!-- Game Systems -->
+    <script src="systems/productionSystem.js"></script>
+    <script src="systems/workerSystem.js"></script>
+    <script src="systems/craftingSystem.js"></script>
+    <script src="systems/tradingSystem.js"></script>
+    <script src="systems/tradingPostSystem.js"></script>
+    <script src="systems/upgradeSystem.js"></script>
+    <script src="systems/upgradeStatistics.js"></script>
+    <script src="systems/productGridSystem.js"></script>
+    <script src="systems/workerGridSystem.js"></script>
+
+    <!-- UI Systems -->
+    <script src="ui/navigationManager.js"></script>
+    <script src="ui/uiBuilder.js"></script>
+    <script src="ui/productGridDragDrop.js"></script>
+    <script src="ui/productGridRenderer.js"></script>
+    <script src="ui/workerGridRenderer.js"></script>
+    <script src="ui/facilityInfoRenderer.js"></script>
+    <script src="ui/productGridUI.js"></script>
+    <script src="ui/uiUpdater.js"></script>
+</body>
+</html>

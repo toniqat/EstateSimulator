@@ -1,0 +1,9 @@
+id,name,type
+stash,Stash,stash
+lodge,Worker's Lodge,emply
+processing,Processing Plant,process
+trading,Trading Post,trade
+farm,Farm,product
+mine,Mine,product
+ranch,Ranch,product
+fishery,Fishery,product
