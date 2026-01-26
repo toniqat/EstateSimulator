@@ -9,7 +9,9 @@ This directory defines the **facility types, production mechanics, grid systems,
 | File | Purpose |
 |------|---------|
 | `facility.csv` | Defines the 8 facility types available in the game (Lodge, Farm, Mine, etc.) |
-| `facilityUpgrade.csv` | Defines upgrade levels for each facility, requirements, and grid dimensions |
+| `facilityUpgrade.csv` | Defines upgrade levels for each facility with requirements |
+| `productUpgrade.csv` | Defines production-specific upgrade data: grid dimensions, production areas, and storage slots for production facilities |
+| `stashUpgrade.csv` | Defines stash capacity progression across upgrade levels |
 | `productArea.csv` | Defines individual production areas (grid placeable units) within facilities with dimensions and output |
 | `production.csv` | Defines base production output and intervals for each facility type |
 
@@ -41,26 +43,69 @@ stash       Stash                stash       Store inventory
 ---
 
 ### `facilityUpgrade.csv`
-**Purpose:** Defines upgrade progression for each facility (1-5 levels typically), with requirements, grid expansion, and available production areas.
+**Purpose:** Defines upgrade progression for each facility (1-5 levels typically), with requirements for unlocking each level.
 
 **Columns:**
 - `facility_id` - Which facility this upgrade applies to
 - `level` - Upgrade level
 - `requirements` - JSON array of items/quantities needed to unlock this level
-- `Grid` - Grid size (e.g., 5 = 5x5 grid for placing production areas)
-- `productAreas` - JSON object mapping production area IDs to their availability (-1 = unlimited slots)
-- `storageSlots` - Number of inventory slots at this upgrade level
 
 **Example Analysis (Farm Facility):**
 
-| Level | Requirements | Grid | Production Areas | Storage |
-|-------|--------------|------|------------------|---------|
-| 1 | 2 Bread | 5 | 6 types | 10 slots |
-| 2 | 2 Bread | 6 | 7 types | 15 slots |
-| 3 | 8 Bread | 7 | 8 types | 20 slots |
-| 4 | 8 Bread | 8 | 9 types | 25 slots |
+| Level | Requirements |
+|-------|--------------|
+| 1 | Lodge Level 1 |
+| 2 | 2x Bread |
+| 3 | 8x Bread |
+| 4 | 8x Bread |
+| 5 | 16x Bread |
 
-**Upgrade Pattern:** Each level increases grid size, unlocks more production area types, and expands storage.
+**Note:** Production-specific upgrade data (grid dimensions and production areas) is now defined in `productUpgrade.csv`. Storage slots for production facilities are also in `productUpgrade.csv`, while stash storage capacity is defined in `stashUpgrade.csv`.
+
+---
+
+### `productUpgrade.csv`
+**Purpose:** Defines production-specific upgrade data for production facilities (Farm, Mine, Ranch, Fishery). Contains grid dimensions, available production areas, and facility storage.
+
+**Columns:**
+- `facility_id` - Which production facility this upgrade applies to (farm, mine, ranch, fishery)
+- `level` - Upgrade level
+- `grid` - Grid height in rows (e.g., 5 = 5 rows, 6 columns fixed)
+- `productAreas` - JSON object mapping production area IDs to their availability (-1 = unlimited slots)
+- `storageSlots` - Number of inventory slots for this facility at this level
+
+**Example Data (Farm):**
+
+| Level | Grid | Production Areas | Storage |
+|-------|------|------------------|---------|
+| 1 | 5 | 6 types available | 10 slots |
+| 2 | 6 | 7 types available | 15 slots |
+| 3 | 7 | 8 types available | 20 slots |
+| 4 | 8 | 9 types available | 25 slots |
+| 5 | 9 | 9 types available | 30 slots |
+
+**Design:** Grid expands vertically (more rows), unlocking new production area types progressively, while facility storage increases for intermediate item buffering.
+
+---
+
+### `stashUpgrade.csv`
+**Purpose:** Defines stash (player inventory) capacity at each upgrade level.
+
+**Columns:**
+- `level` - Stash upgrade level
+- `capacity` - Total inventory slots available at this level
+
+**Example Data:**
+
+| Level | Capacity |
+|-------|----------|
+| 1 | 20 slots |
+| 2 | 25 slots |
+| 3 | 35 slots |
+| 4 | 50 slots |
+| 5 | 65 slots |
+
+**Usage:** Read by `dataLoader.getStashCapacity(level)` when initializing or upgrading stash.
 
 ---
 
@@ -114,7 +159,7 @@ fishery   fish         1            10,000 ms
 
 ## How to Modify
 
-### Adding a New Facility Type
+### Adding a New Production Facility Type
 
 1. **Add to** `facility.csv`:
    ```csv
@@ -123,26 +168,39 @@ fishery   fish         1            10,000 ms
 
 2. **Add upgrade levels to** `facilityUpgrade.csv`:
    ```csv
-   windmill,1,"[{""itemId"":""gold"",""count"":1000}]",5,"{""windmill_basic"":-1}",10
+   windmill,1,"[{""type"":""facility"",""param1"":""lodge"",""param2"":1}]"
+   windmill,2,"[{""type"":""item"",""param1"":""gold"",""param2"":100}]"
    ```
 
-3. **Add production areas to** `productArea.csv`:
+3. **Add production-specific upgrade data to** `productUpgrade.csv`:
+   ```csv
+   windmill,1,5,"{""windmill_basic"":-1}",10
+   windmill,2,6,"{""windmill_basic"":-1,""windmill_medium"":-1}",15
+   ```
+
+4. **Add production areas to** `productArea.csv`:
    ```csv
    windmill_basic,2,2,"{""itemId"":""flour"",""itemProductCount"":1}",10,2,"[{""statId"":""str"",""rate"":2}]"
    ```
 
-4. **Add base production to** `production.csv`:
+5. **Add base production to** `production.csv`:
    ```csv
    windmill,flour,1,10000
    ```
 
-5. **Run** `BuildData.bat`
+6. **Run** `BuildData.bat`
 
-### Expanding a Facility
+### Expanding Production Facility Capabilities
 
-1. **Edit** `facilityUpgrade.csv` to add new levels
-2. **Edit** `productArea.csv` to add new production area types
-3. **Run** `BuildData.bat`
+1. **Add new level to** `facilityUpgrade.csv` with requirements
+2. **Add production data to** `productUpgrade.csv` with grid size and available production areas
+3. **Add new production areas to** `productArea.csv` if needed
+4. **Run** `BuildData.bat`
+
+### Adjusting Stash Capacity
+
+1. **Edit** `stashUpgrade.csv` to change capacity at each level
+2. **Run** `BuildData.bat`
 
 ### Adjusting Production Efficiency
 
@@ -153,11 +211,19 @@ fishery   fish         1            10,000 ms
 ## Integration Points
 
 - **Facility Management:** `core/facilityStorageManager.js` manages facility storage
-- **Grid System:** `systems/productGridSystem.js` handles grid placement logic
+- **Stash Management:** `core/stashManager.js` uses `dataLoader.getStashCapacity(level)` for stash upgrades
+- **Grid System:** `systems/productGridSystem.js` handles grid placement logic; reads grid dimensions from `dataLoader.getGridDimensions(facilityId, level)`
 - **Grid UI:** `ui/productGridUI.js` renders and handles drag-drop
 - **Production:** `systems/productionSystem.js` calculates output
-- **Data Access:** Values accessed via `gameData.facility`, `gameData.facilityUpgrade`, `gameData.productArea`, `gameData.production`
+- **Data Access:**
+  - Upgrade requirements: `dataLoader.getUpgradeCost(facilityId, level)`
+  - Production facility storage: Read from `upgradeTree[facilityId][level].storageSlots`
+  - Grid dimensions: `dataLoader.getGridDimensions(facilityId, level)`
+  - Stash capacity: `dataLoader.getStashCapacity(level)`
+  - Production areas: `dataLoader.getAvailableProductAreas(facilityId, level)`
 - **Build Pipeline:** Auto-generated into `data/gameData.js` by `BuildData.bat`
+  - `facilityUpgrade.csv` and `productUpgrade.csv` are merged into `gameData.upgradeTree`
+  - `stashUpgrade.csv` is loaded into `gameData.stashUpgrades`
 
 ## Design Patterns
 
@@ -169,8 +235,9 @@ fishery   fish         1            10,000 ms
 
 ## Grid System Notes
 
-- Grid size defined in `facilityUpgrade.csv` (Grid column)
+- Grid size defined in `productUpgrade.csv` (`grid` column = height in rows, width fixed at 6 columns)
 - Production areas placed on grids via drag-drop UI
 - Grid collision detection prevents overlapping placement
 - Each production area occupies gridX × gridY space
-- See [GRID_SYSTEM.md](../GRID_SYSTEM.md) for detailed grid implementation
+- Accessed via `dataLoader.getGridDimensions(facilityId, level)` which returns `{x: 6, y: gridHeight}`
+- See [FEATURE_PRODUCT_GRID.md](../../docs/FEATURE_PRODUCT_GRID.md) for detailed grid implementation

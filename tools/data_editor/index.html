@@ -13,10 +13,7 @@
         <header class="editor-header">
             <div class="header-content">
                 <h1>Estate Simulator - Data Editor</h1>
-                <div class="header-actions">
-                    <button id="openDirBtn" class="btn btn-primary">📁 Open Data Directory</button>
-                    <span id="statusText" class="status-text">Ready to open data directory</span>
-                </div>
+                <span id="statusText" class="status-text">Ready to open data directory</span>
             </div>
         </header>
 
@@ -25,7 +22,8 @@
             <!-- Left Pane: File Explorer -->
             <div class="pane pane-left">
                 <div class="pane-header">
-                    <h2>Files</h2>
+                    <h2>EXPLORER</h2>
+                    <button id="openDirBtnExplorer" class="btn btn-primary btn-small">📁</button>
                 </div>
                 <div class="pane-content">
                     <div id="fileTree" class="file-tree">
@@ -34,28 +32,45 @@
                 </div>
             </div>
 
-            <!-- Middle Pane: Row List -->
-            <div class="pane pane-middle">
-                <div class="pane-header">
-                    <h2>Rows</h2>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Search IDs..." style="display: none;">
+            <!-- Tab Container -->
+            <div class="tab-container">
+                <!-- Tab Bar -->
+                <div class="tab-bar">
+                    <div id="tabsList" class="tabs-list"></div>
                 </div>
-                <div class="pane-content">
-                    <div id="rowList" class="row-list">
-                        <p class="placeholder">Select a CSV file to see rows</p>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Right Pane: Data Inspector -->
-            <div class="pane pane-right">
-                <div class="pane-header">
-                    <h2>Inspector</h2>
-                    <button id="inspectorViewToggle" class="btn btn-view-toggle">Table View</button>
-                </div>
-                <div class="pane-content">
-                    <div id="inspector" class="inspector inspector-form-view">
-                        <p class="placeholder">Select a row to inspect</p>
+                <!-- Tab Content -->
+                <div class="tab-content-wrapper">
+                    <!-- Middle Pane: Row List -->
+                    <div class="pane pane-middle">
+                        <div class="pane-header">
+                            <h2>DATAS</h2>
+                            <div class="pane-header-actions">
+                                <input type="text" id="searchInput" class="search-input" placeholder="Search IDs..." style="display: none;">
+                                <button id="addRowBtn" class="btn btn-small btn-add-row" title="Add new row">+</button>
+                            </div>
+                        </div>
+                        <div class="pane-content">
+                            <div id="rowList" class="row-list">
+                                <p class="placeholder">Select a CSV file to see rows</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Pane: Data Inspector -->
+                    <div class="pane pane-right">
+                        <div class="pane-header">
+                            <h2>INSEPCTOR</h2>
+                            <div class="pane-header-actions">
+                                <button id="deleteRowBtn" class="btn btn-small btn-delete-row" title="Delete selected row(s)" style="display: none;">Delete</button>
+                                <button id="inspectorViewToggle" class="btn btn-view-toggle">Table View</button>
+                            </div>
+                        </div>
+                        <div class="pane-content">
+                            <div id="inspector" class="inspector inspector-form-view">
+                                <p class="placeholder">Select a row to inspect</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,6 +153,7 @@
     <script src="js/rowList.js"></script>
     <script src="js/jsonRenderer.js"></script>
     <script src="js/dataInspector.js"></script>
+    <script src="js/tabManager.js"></script>
     <script src="js/dataEditor.js"></script>
 </body>
 </html>

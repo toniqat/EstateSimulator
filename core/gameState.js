@@ -69,9 +69,8 @@ class GameState {
         // Try to load saved game
         if (!this.loadGame()) {
             // Initialize new game
-            // Read initial stash capacity from storageSlots in upgrade data
-            const stashUpgrade = dataLoader.getUpgradeCost('stash', 1);
-            const initialCapacity = stashUpgrade && stashUpgrade.storageSlots !== undefined ? stashUpgrade.storageSlots : 20;
+            // Read initial stash capacity from stash upgrade data
+            const initialCapacity = dataLoader.getStashCapacity(1);
 
             this.stash = {
                 level: 1,
@@ -256,30 +255,26 @@ class GameState {
             // Load stash and ensure capacity matches current upgrade level
             if (data.stash) {
                 this.stash = data.stash;
-                // Verify capacity matches the current level's storageSlots value
-                const stashUpgrade = dataLoader.getUpgradeCost('stash', this.stash.level);
-                if (stashUpgrade && stashUpgrade.storageSlots !== undefined) {
-                    const oldCapacity = this.stash.capacity;
-                    this.stash.capacity = stashUpgrade.storageSlots;
-                    // Resize slots array if necessary
-                    if (this.stash.slots.length !== this.stash.capacity) {
-                        if (this.stash.slots.length < this.stash.capacity) {
-                            // Expand
-                            const newSlots = new Array(this.stash.capacity - this.stash.slots.length).fill(null);
-                            this.stash.slots = [...this.stash.slots, ...newSlots];
-                        } else {
-                            // Truncate (shouldn't happen in normal gameplay)
-                            this.stash.slots = this.stash.slots.slice(0, this.stash.capacity);
-                        }
+                // Verify capacity matches the current level's stash upgrade data
+                const oldCapacity = this.stash.capacity;
+                this.stash.capacity = dataLoader.getStashCapacity(this.stash.level);
+                // Resize slots array if necessary
+                if (this.stash.slots.length !== this.stash.capacity) {
+                    if (this.stash.slots.length < this.stash.capacity) {
+                        // Expand
+                        const newSlots = new Array(this.stash.capacity - this.stash.slots.length).fill(null);
+                        this.stash.slots = [...this.stash.slots, ...newSlots];
+                    } else {
+                        // Truncate (shouldn't happen in normal gameplay)
+                        this.stash.slots = this.stash.slots.slice(0, this.stash.capacity);
                     }
-                    if (oldCapacity !== this.stash.capacity) {
-                        console.log(`[Game Load] Stash capacity verified - Level ${this.stash.level}, Capacity: ${this.stash.capacity} slots (was ${oldCapacity})`);
-                    }
+                }
+                if (oldCapacity !== this.stash.capacity) {
+                    console.log(`[Game Load] Stash capacity verified - Level ${this.stash.level}, Capacity: ${this.stash.capacity} slots (was ${oldCapacity})`);
                 }
             } else {
                 // Initialize with level 1 capacity
-                const stashUpgrade = dataLoader.getUpgradeCost('stash', 1);
-                const initialCapacity = stashUpgrade && stashUpgrade.storageSlots !== undefined ? stashUpgrade.storageSlots : 20;
+                const initialCapacity = dataLoader.getStashCapacity(1);
                 this.stash = {
                     level: 1,
                     capacity: initialCapacity,

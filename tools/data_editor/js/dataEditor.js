@@ -8,6 +8,7 @@ class DataEditor {
         this.fileExplorer = null;
         this.rowList = null;
         this.dataInspector = null;
+        this.tabManager = null;
 
         this.currentFile = null;
         this.currentHeaders = [];
@@ -16,7 +17,7 @@ class DataEditor {
         this.currentTypeInfo = {};
 
         this.modifiedFiles = new Set();
-        this.openFiles = new Map(); // Map of path -> { headers, rows, idColumn }
+        this.openFiles = new Map(); // Map of path -> { file, headers, rows, idColumn }
 
         // Selection history: Map of file path -> row ID
         this.selectionHistory = this._loadSelectionHistory();
@@ -27,22 +28,18 @@ class DataEditor {
      */
     async init() {
         try {
+            // Initialize TabManager first
+            const tabsListContainer = document.getElementById('tabsList');
+            this.tabManager = new TabManager(tabsListContainer);
+            this.tabManager.onTabChanged = (filePath, isNewTab) => this._onTabChanged(filePath, isNewTab);
+
             // Initialize components
             this._setupComponents();
 
             // Setup keyboard shortcuts
             this._setupKeyboardShortcuts();
 
-            // Initialize file explorer
-            const openDirBtn = document.getElementById('openDirBtn');
-            openDirBtn.addEventListener('click', () => {
-                this.fileExplorer.init();
-            });
-
-            // Update button text based on last used directory
-            this._updateOpenDirButtonText();
-
-            UIComponents.updateStatus('Ready. Click "Open Data Directory" to get started.');
+            UIComponents.updateStatus('Ready. Click "📁" to open a data directory.');
         } catch (error) {
             console.error('Failed to initialize:', error);
             UIComponents.showToast('Failed to initialize application', 'error');
@@ -50,13 +47,43 @@ class DataEditor {
     }
 
     /**
-     * Update "Open Data Directory" button text with last used path if available
+     * Handle tab change event from TabManager
      * @private
      */
-    _updateOpenDirButtonText() {
-        const openDirBtn = document.getElementById('openDirBtn');
-        if (this.fileExplorer.lastDirPath) {
-            openDirBtn.title = `Last used: ${this.fileExplorer.lastDirPath}`;
+    _onTabChanged(filePath, isNewTab) {
+        if (!filePath) {
+            // All tabs closed - clear the UI
+            this.currentFile = null;
+            this.currentHeaders = [];
+            this.currentRows = [];
+            this.currentIdColumn = null;
+            this.currentTypeInfo = {};
+            this._updateStatus();
+            const rowListContainer = document.getElementById('rowList');
+            if (rowListContainer) {
+                rowListContainer.innerHTML = '<p class="placeholder">Select a CSV file to see rows</p>';
+            }
+            this.dataInspector.clear();
+            return;
+        }
+
+        // Load the file data for this tab
+        const fileData = this.openFiles.get(filePath);
+        if (fileData) {
+            // Restore file data from cache
+            this.currentFile = fileData.file;
+            this.currentHeaders = fileData.headers;
+            this.currentRows = fileData.rows;
+            this.currentIdColumn = fileData.idColumn;
+            this.currentTypeInfo = fileData.typeInfo || TypeInference.inferAllTypes(this.currentHeaders, this.currentRows);
+
+            // Update UI
+            this._updateStatus();
+            this.rowList.loadRows(this.currentRows, this.currentIdColumn, this.currentHeaders);
+            this.dataInspector.clear();
+
+            // Auto-select row: restore previous selection or select first row
+            this._autoSelectRow(filePath, this.currentRows, this.currentIdColumn);
         }
     }
 
@@ -67,7 +94,8 @@ class DataEditor {
     _setupComponents() {
         // File Explorer
         const fileTreeContainer = document.getElementById('fileTree');
-        this.fileExplorer = new FileExplorer(fileTreeContainer);
+        const explorerHeader = document.querySelector('.pane-left .pane-header');
+        this.fileExplorer = new FileExplorer(fileTreeContainer, explorerHeader);
         this.fileExplorer.onFileSelected = (file) => this._onFileSelected(file);
 
         // Row List
@@ -85,6 +113,14 @@ class DataEditor {
         // Inspector View Toggle Button
         const viewToggleBtn = document.getElementById('inspectorViewToggle');
         viewToggleBtn.addEventListener('click', () => this._toggleInspectorView());
+
+        // Add Row Button
+        const addRowBtn = document.getElementById('addRowBtn');
+        addRowBtn.addEventListener('click', () => this._onAddRowClicked());
+
+        // Delete Row Button
+        const deleteRowBtn = document.getElementById('deleteRowBtn');
+        deleteRowBtn.addEventListener('click', () => this._onDeleteRowClicked());
     }
 
     /**
@@ -93,6 +129,14 @@ class DataEditor {
      */
     async _onFileSelected(file) {
         try {
+            // Check if file is already open
+            if (this.tabManager.isTabOpen(file.path)) {
+                // Switch to existing tab
+                this.tabManager.switchToTab(file.path);
+                return;
+            }
+
+            // New file - open tab and load data
             UIComponents.updateStatus(`Loading ${file.name}...`);
 
             // Parse CSV
@@ -117,7 +161,10 @@ class DataEditor {
             this.currentTypeInfo = typeInfo;
 
             // Cache this file
-            this.openFiles.set(file.path, { headers, rows, idColumn });
+            this.openFiles.set(file.path, { file, headers, rows, idColumn, typeInfo });
+
+            // Create tab for this file
+            this.tabManager.openTab(file.path, file.name, file.fileHandle);
 
             // Update UI
             this._updateStatus();
@@ -218,14 +265,11 @@ class DataEditor {
                 if (fileData && this.currentFile && this.currentFile.path === filePath) {
                     fileData.headers = this.currentHeaders;
                     fileData.rows = this.currentRows;
+                    fileData.typeInfo = this.currentTypeInfo;
                 }
 
                 if (fileData) {
-                    await this._saveFile({
-                        path: filePath,
-                        name: this.currentFile?.name || filePath,
-                        handle: this.currentFile?.fileHandle
-                    });
+                    await this._saveFile(fileData.file);
                     saved++;
                 }
             }
@@ -244,7 +288,7 @@ class DataEditor {
      * @private
      */
     async _saveFile(file) {
-        if (!file.handle) {
+        if (!file.fileHandle) {
             throw new Error('File handle not available');
         }
 
@@ -264,7 +308,7 @@ class DataEditor {
         const csvContent = CSVParser.serialize(headersToSave, rowsToSave);
 
         // Write to file
-        const writable = await file.handle.createWritable();
+        const writable = await file.fileHandle.createWritable();
         await writable.write(csvContent);
         await writable.close();
     }
@@ -395,6 +439,105 @@ class DataEditor {
     }
 
     /**
+     * Handle add row button click
+     * @private
+     */
+    _onAddRowClicked() {
+        if (!this.currentFile) {
+            UIComponents.showToast('No file selected', 'warning');
+            return;
+        }
+
+        // Find the next available "New Data N" name
+        let newId = 'New Data 1';
+        let counter = 1;
+        while (this.currentRows.some(row => row[this.currentIdColumn] === newId)) {
+            counter++;
+            newId = `New Data ${counter}`;
+        }
+
+        // Create new row with default values
+        const newRow = {};
+        this.currentHeaders.forEach(header => {
+            newRow[header] = '';
+        });
+        newRow[this.currentIdColumn] = newId;
+
+        // Add row to data
+        this.currentRows.push(newRow);
+
+        // Mark file as modified
+        if (!this.modifiedFiles.has(this.currentFile.path)) {
+            this.modifiedFiles.add(this.currentFile.path);
+        }
+
+        // Update cache
+        this.openFiles.set(this.currentFile.path, {
+            file: this.currentFile,
+            headers: this.currentHeaders,
+            rows: this.currentRows,
+            idColumn: this.currentIdColumn,
+            typeInfo: this.currentTypeInfo
+        });
+
+        // Update UI
+        this._updateStatus();
+        this.rowList.loadRows(this.currentRows, this.currentIdColumn, this.currentHeaders);
+
+        // Auto-select the new row
+        this.rowList.selectRowById(newId, true);
+
+        UIComponents.showToast(`✓ New row "${newId}" added`, 'success');
+    }
+
+    /**
+     * Handle delete row button click
+     * @private
+     */
+    async _onDeleteRowClicked() {
+        const selectedIds = this.dataInspector.selectedIds;
+        if (selectedIds.length === 0) {
+            UIComponents.showToast('No rows selected', 'warning');
+            return;
+        }
+
+        const message = selectedIds.length === 1
+            ? `Delete row "${selectedIds[0]}"?`
+            : `Delete ${selectedIds.length} rows?`;
+
+        const confirmed = await UIComponents.showConfirm('Confirm Delete', message);
+        if (!confirmed) {
+            return;
+        }
+
+        // Remove selected rows
+        this.currentRows = this.currentRows.filter(row =>
+            !selectedIds.includes(row[this.currentIdColumn])
+        );
+
+        // Mark file as modified
+        if (!this.modifiedFiles.has(this.currentFile.path)) {
+            this.modifiedFiles.add(this.currentFile.path);
+        }
+
+        // Update cache
+        this.openFiles.set(this.currentFile.path, {
+            file: this.currentFile,
+            headers: this.currentHeaders,
+            rows: this.currentRows,
+            idColumn: this.currentIdColumn,
+            typeInfo: this.currentTypeInfo
+        });
+
+        // Update UI
+        this._updateStatus();
+        this.rowList.loadRows(this.currentRows, this.currentIdColumn, this.currentHeaders);
+        this.dataInspector.clear();
+
+        UIComponents.showToast(`✓ ${selectedIds.length} row${selectedIds.length !== 1 ? 's' : ''} deleted`, 'success');
+    }
+
+    /**
      * Add a new header/column to the current CSV
      * @param {string} headerName - Name of the new column
      * @param {string} dataType - Data type: 'string', 'number', 'enum', 'json'
@@ -433,9 +576,11 @@ class DataEditor {
         // Update cache
         if (this.currentFile) {
             this.openFiles.set(this.currentFile.path, {
+                file: this.currentFile,
                 headers: this.currentHeaders,
                 rows: this.currentRows,
-                idColumn: this.currentIdColumn
+                idColumn: this.currentIdColumn,
+                typeInfo: this.currentTypeInfo
             });
         }
 

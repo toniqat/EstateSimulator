@@ -9,16 +9,26 @@ class JSONRenderer {
      * @param {any} data - JSON data to render
      * @param {Function} onChange - Callback when data changes
      * @param {string} guessedType - 'object' or 'array' for empty state initialization (optional)
+     * @param {Object} typeInfo - Type information with optional subtype ('json_collection' | 'json_dictionary')
      * @returns {HTMLElement} Rendered element
      */
-    static render(data, onChange, guessedType = 'object') {
+    static render(data, onChange, guessedType = 'object', typeInfo = null) {
         if (data === '' || data === null || data === undefined) {
-            return this._renderEmptyState(onChange, guessedType);
+            return this._renderEmptyState(onChange, guessedType, typeInfo);
         }
 
         try {
             const parsed = typeof data === 'string' ? JSON.parse(data) : data;
 
+            // Use typeInfo.subtype if available to determine rendering strategy
+            if (typeInfo && typeInfo.subtype === 'json_collection') {
+                // Explicitly render as collection (table with headers)
+                if (Array.isArray(parsed)) {
+                    return this._renderArray(parsed, onChange);
+                }
+            }
+
+            // Default rendering based on actual structure
             if (Array.isArray(parsed)) {
                 return this._renderArray(parsed, onChange);
             } else if (typeof parsed === 'object') {
@@ -35,9 +45,10 @@ class JSONRenderer {
      * Render empty state
      * @param {Function} onChange - Callback when data changes
      * @param {string} guessedType - 'object' or 'array' to pre-initialize empty structure
+     * @param {Object} typeInfo - Type information with optional subtype
      * @private
      */
-    static _renderEmptyState(onChange, guessedType = 'object') {
+    static _renderEmptyState(onChange, guessedType = 'object', typeInfo = null) {
         const container = document.createElement('div');
         container.className = 'json-empty-editable';
 
@@ -68,15 +79,21 @@ class JSONRenderer {
             const addKeyBtn = document.createElement('button');
             addKeyBtn.className = 'json-add-row-btn';
             addKeyBtn.innerHTML = '+ Add Key';
-            addKeyBtn.addEventListener('click', async () => {
-                const keyName = await this._promptForKeyName(Object.keys(emptyObject));
-                if (keyName) {
-                    emptyObject[keyName] = '';
-                    if (onChange) onChange(emptyObject);
-                    // Re-render
-                    container.innerHTML = '';
-                    container.appendChild(this._renderObject(emptyObject, onChange));
+            addKeyBtn.addEventListener('click', () => {
+                // Find the next available "New Key N" name
+                let newKeyName = 'New Key 1';
+                let counter = 1;
+                while (emptyObject.hasOwnProperty(newKeyName)) {
+                    counter++;
+                    newKeyName = `New Key ${counter}`;
                 }
+
+                // Add the new key
+                emptyObject[newKeyName] = '';
+                if (onChange) onChange(emptyObject);
+                // Re-render
+                container.innerHTML = '';
+                container.appendChild(this._renderObject(emptyObject, onChange));
             });
             container.appendChild(addKeyBtn);
         }
@@ -84,23 +101,6 @@ class JSONRenderer {
         return container;
     }
 
-    /**
-     * Prompt user for a key name (simple modal-like dialog)
-     * @private
-     */
-    static async _promptForKeyName(existingKeys = []) {
-        return new Promise(resolve => {
-            const keyName = prompt('Enter key name:');
-            if (keyName && !existingKeys.includes(keyName)) {
-                resolve(keyName);
-            } else if (keyName && existingKeys.includes(keyName)) {
-                alert('Key already exists');
-                resolve(null);
-            } else {
-                resolve(null);
-            }
-        });
-    }
 
     /**
      * Render error state
@@ -125,11 +125,12 @@ class JSONRenderer {
             return container;
         }
 
-        // Determine columns from first item
+        // Determine if array contains objects or primitives
         const firstItem = arr[0];
-        let columns = [];
+        const isObjectArray = typeof firstItem === 'object' && firstItem !== null && !Array.isArray(firstItem);
 
-        if (typeof firstItem === 'object' && firstItem !== null) {
+        let columns = [];
+        if (isObjectArray) {
             columns = Object.keys(firstItem);
         } else {
             columns = ['value'];
@@ -139,6 +140,24 @@ class JSONRenderer {
         const table = document.createElement('table');
         table.className = 'json-table';
 
+        // Create header row
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+
+        columns.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+
+        // Delete column header
+        const deleteHeader = document.createElement('th');
+        deleteHeader.textContent = '';
+        headerRow.appendChild(deleteHeader);
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
         // Body rows
         const tbody = document.createElement('tbody');
 
@@ -147,14 +166,28 @@ class JSONRenderer {
 
             columns.forEach(col => {
                 const td = document.createElement('td');
-                const value = item[col] ?? '';
+
+                // Get value: for primitives, use the item itself; for objects, use item[col]
+                let value;
+                if (isObjectArray) {
+                    value = item[col] ?? '';
+                } else {
+                    value = item ?? '';
+                }
 
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.value = typeof value === 'object' ? JSON.stringify(value) : value;
 
                 input.addEventListener('change', () => {
-                    arr[index][col] = this._parseInputValue(input.value);
+                    const newValue = this._parseInputValue(input.value);
+
+                    if (isObjectArray) {
+                        arr[index][col] = newValue;
+                    } else {
+                        arr[index] = newValue;
+                    }
+
                     if (onChange) onChange(arr);
                 });
 
@@ -195,10 +228,15 @@ class JSONRenderer {
         addBtn.innerHTML = '+ Add Row';
 
         addBtn.addEventListener('click', () => {
-            const newItem = {};
-            columns.forEach(col => {
-                newItem[col] = '';
-            });
+            let newItem;
+            if (isObjectArray) {
+                newItem = {};
+                columns.forEach(col => {
+                    newItem[col] = '';
+                });
+            } else {
+                newItem = '';
+            }
             arr.push(newItem);
             if (onChange) onChange(arr);
             // Re-render
@@ -217,7 +255,7 @@ class JSONRenderer {
     }
 
     /**
-     * Render object as form
+     * Render object as table (for consistency with array rendering)
      * @private
      */
     static _renderObject(obj, onChange) {
@@ -233,117 +271,209 @@ class JSONRenderer {
             const addKeyBtn = document.createElement('button');
             addKeyBtn.className = 'json-add-row-btn';
             addKeyBtn.innerHTML = '+ Add Key';
-            addKeyBtn.addEventListener('click', async () => {
-                const keyName = await this._promptForKeyName([]);
-                if (keyName) {
-                    obj[keyName] = '';
-                    if (onChange) onChange(obj);
-                    // Re-render
-                    container.innerHTML = '';
-                    container.appendChild(this._renderObject(obj, onChange));
+            addKeyBtn.addEventListener('click', () => {
+                // Find the next available "New Key N" name
+                let newKeyName = 'New Key 1';
+                let counter = 1;
+                while (obj.hasOwnProperty(newKeyName)) {
+                    counter++;
+                    newKeyName = `New Key ${counter}`;
                 }
+
+                // Add the new key
+                obj[newKeyName] = '';
+                if (onChange) onChange(obj);
+                // Re-render
+                container.innerHTML = '';
+                container.appendChild(this._renderObject(obj, onChange));
             });
             container.appendChild(addKeyBtn);
             return container;
         }
 
-        keys.forEach(key => {
+        // Create table for object key-value pairs
+        const table = document.createElement('table');
+        table.className = 'json-table';
+
+        const tbody = document.createElement('tbody');
+
+        keys.forEach((key) => {
             const value = obj[key];
-            const group = document.createElement('div');
-            group.className = 'json-form-group';
+            const row = document.createElement('tr');
 
-            const label = document.createElement('label');
-            label.className = 'json-form-label';
-            label.textContent = key;
+            // Key column
+            const keyTd = document.createElement('td');
+            const keyInput = document.createElement('input');
+            keyInput.type = 'text';
+            keyInput.value = key;
+            keyInput.className = 'json-table-key-input';
+            keyTd.appendChild(keyInput);
+            row.appendChild(keyTd);
 
-            group.appendChild(label);
+            // Value column
+            const valueTd = document.createElement('td');
 
             if (Array.isArray(value)) {
-                // Nested array
-                const nestedDiv = document.createElement('div');
-                nestedDiv.className = 'json-nested';
-
-                const header = document.createElement('div');
-                header.className = 'json-nested-header';
-                header.innerHTML = `<span class="json-nested-toggle">▼</span> Array (${value.length} item${value.length !== 1 ? 's' : ''})`;
-
-                const content = document.createElement('div');
-                content.className = 'json-nested-content';
-                content.appendChild(this._renderArray(value, (newValue) => {
-                    obj[key] = newValue;
-                    if (onChange) onChange(obj);
-                }));
-
-                header.addEventListener('click', () => {
-                    nestedDiv.classList.toggle('collapsed');
+                // Nested array - show as button to expand
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'json-nested-expand-btn';
+                expandBtn.textContent = `Array (${value.length} items)`;
+                expandBtn.addEventListener('click', () => {
+                    const modal = this._createNestedModal('Array', this._renderArray(value, (newValue) => {
+                        obj[key] = newValue;
+                        if (onChange) onChange(obj);
+                    }));
+                    document.body.appendChild(modal);
                 });
-
-                nestedDiv.appendChild(header);
-                nestedDiv.appendChild(content);
-                group.appendChild(nestedDiv);
+                valueTd.appendChild(expandBtn);
             } else if (typeof value === 'object' && value !== null) {
-                // Nested object
-                const nestedDiv = document.createElement('div');
-                nestedDiv.className = 'json-nested';
-
-                const header = document.createElement('div');
-                header.className = 'json-nested-header';
-                header.innerHTML = `<span class="json-nested-toggle">▼</span> Object`;
-
-                const content = document.createElement('div');
-                content.className = 'json-nested-content';
-                content.appendChild(this._renderObject(value, (newValue) => {
-                    obj[key] = newValue;
-                    if (onChange) onChange(obj);
-                }));
-
-                header.addEventListener('click', () => {
-                    nestedDiv.classList.toggle('collapsed');
+                // Nested object - show as button to expand
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'json-nested-expand-btn';
+                expandBtn.textContent = 'Object';
+                expandBtn.addEventListener('click', () => {
+                    const modal = this._createNestedModal('Object', this._renderObject(value, (newValue) => {
+                        obj[key] = newValue;
+                        if (onChange) onChange(obj);
+                    }));
+                    document.body.appendChild(modal);
                 });
-
-                nestedDiv.appendChild(header);
-                nestedDiv.appendChild(content);
-                group.appendChild(nestedDiv);
+                valueTd.appendChild(expandBtn);
             } else {
                 // Primitive value
                 const input = document.createElement('input');
-                input.className = 'inspector-field-input';
                 input.type = 'text';
                 input.value = value ?? '';
-
                 input.addEventListener('change', () => {
                     obj[key] = this._parseInputValue(input.value);
                     if (onChange) onChange(obj);
                 });
-
-                group.appendChild(input);
+                valueTd.appendChild(input);
             }
 
-            container.appendChild(group);
-        });
+            row.appendChild(valueTd);
 
-        // Add "Add Key" button at the end
-        const addKeyBtnGroup = document.createElement('div');
-        addKeyBtnGroup.className = 'json-add-key-group';
-        addKeyBtnGroup.style.marginTop = '12px';
+            // Delete button
+            const deleteTd = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'json-delete-btn';
+            deleteBtn.textContent = '🗑';
+            deleteBtn.title = 'Delete key';
 
-        const addKeyBtn = document.createElement('button');
-        addKeyBtn.className = 'json-add-row-btn';
-        addKeyBtn.innerHTML = '+ Add Key';
-        addKeyBtn.addEventListener('click', async () => {
-            const keyName = await this._promptForKeyName(keys);
-            if (keyName) {
-                obj[keyName] = '';
+            deleteBtn.addEventListener('click', () => {
+                delete obj[key];
                 if (onChange) onChange(obj);
                 // Re-render
                 container.innerHTML = '';
                 container.appendChild(this._renderObject(obj, onChange));
-            }
+            });
+
+            deleteTd.appendChild(deleteBtn);
+            row.appendChild(deleteTd);
+
+            tbody.appendChild(row);
         });
-        addKeyBtnGroup.appendChild(addKeyBtn);
-        container.appendChild(addKeyBtnGroup);
+
+        // Add Row button row
+        const addRowTr = document.createElement('tr');
+        addRowTr.className = 'json-table-add-row-tr';
+
+        const addRowTd = document.createElement('td');
+        addRowTd.colSpan = 3; // Key, Value, Delete button columns
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'json-add-row-btn';
+        addBtn.innerHTML = '+ Add Key';
+
+        addBtn.addEventListener('click', () => {
+            // Find the next available "New Key N" name
+            let newKeyName = 'New Key 1';
+            let counter = 1;
+            while (obj.hasOwnProperty(newKeyName)) {
+                counter++;
+                newKeyName = `New Key ${counter}`;
+            }
+
+            // Add the new key
+            obj[newKeyName] = '';
+            if (onChange) onChange(obj);
+            // Re-render
+            container.innerHTML = '';
+            container.appendChild(this._renderObject(obj, onChange));
+        });
+
+        addRowTd.appendChild(addBtn);
+        addRowTr.appendChild(addRowTd);
+        tbody.appendChild(addRowTr);
+
+        table.appendChild(tbody);
+        container.appendChild(table);
 
         return container;
+    }
+
+    /**
+     * Create a modal dialog for nested objects/arrays
+     * @private
+     */
+    static _createNestedModal(title, content) {
+        const modal = document.createElement('div');
+        modal.className = 'json-nested-modal-overlay';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        `;
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'json-nested-modal';
+        modalContent.style.cssText = `
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 16px;
+            max-width: 80vw;
+            max-height: 80vh;
+            overflow: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        `;
+
+        const modalHeader = document.createElement('div');
+        modalHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;';
+
+        const modalTitle = document.createElement('h3');
+        modalTitle.style.cssText = 'margin: 0;';
+        modalTitle.textContent = title;
+        modalHeader.appendChild(modalTitle);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = '✕';
+        closeBtn.style.cssText = 'background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary);';
+        closeBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        modalHeader.appendChild(closeBtn);
+
+        modalContent.appendChild(modalHeader);
+        modalContent.appendChild(content);
+
+        modal.appendChild(modalContent);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+
+        return modal;
     }
 
     /**

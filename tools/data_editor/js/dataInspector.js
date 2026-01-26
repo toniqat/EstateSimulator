@@ -26,6 +26,8 @@ class DataInspector {
         this.onAddColumn = null;
         this.viewMode = 'form'; // 'form' or 'table'
         this.lockedFields = new Set(); // Track which JSON fields are locked
+        this.vectorGroups = new Map(); // Map of vector group name -> { components: [...] }
+        this.vectorGroupHeaders = new Set(); // Set of headers that are part of a vector group
     }
 
     /**
@@ -45,6 +47,18 @@ class DataInspector {
 
         // Reset locked fields when loading new data to avoid stale state
         this.lockedFields.clear();
+
+        // Detect vector groups
+        this.vectorGroups = TypeInference.detectVectorGroups(headers);
+        this.vectorGroupHeaders.clear();
+        this.vectorGroups.forEach((group) => {
+            group.components.forEach(comp => {
+                this.vectorGroupHeaders.add(comp.header);
+            });
+        });
+
+        // Update delete button visibility
+        this._updateDeleteButtonVisibility();
 
         this.render();
     }
@@ -86,10 +100,45 @@ class DataInspector {
         // Update container class
         this.container.className = 'inspector inspector-form-view';
 
+        const renderedHeaders = new Set(); // Track which headers have been rendered
+
         // Render fields
         this.headers.forEach(header => {
+            // Skip if already rendered (part of a vector group)
+            if (renderedHeaders.has(header)) {
+                return;
+            }
+
+            // Check if this header is part of a vector group
+            let isVectorComponent = false;
+            let vectorGroupName = null;
+            for (const [groupName, group] of this.vectorGroups.entries()) {
+                if (group.components.some(comp => comp.header === header)) {
+                    isVectorComponent = true;
+                    vectorGroupName = groupName;
+                    break;
+                }
+            }
+
+            // If this is a vector component, render the entire vector group
+            if (isVectorComponent && vectorGroupName) {
+                const group = this.vectorGroups.get(vectorGroupName);
+                this._renderVectorField(selectedRows, vectorGroupName, group);
+                group.components.forEach(comp => {
+                    renderedHeaders.add(comp.header);
+                });
+                return;
+            }
+
+            // Render regular field
             const fieldDiv = document.createElement('div');
-            const typeInf = this.typeInfo[header] || { type: 'string' };
+            const isIdColumn = header === this.idColumn;
+            let typeInf = this.typeInfo[header] || { type: 'string' };
+
+            // ID columns are always rendered as string/input, never as enum
+            if (isIdColumn && typeInf.type === 'enum') {
+                typeInf = { type: 'string' };
+            }
 
             // Get values from selected rows
             const values = selectedRows.map(row => row[header] ?? '');
@@ -125,6 +174,7 @@ class DataInspector {
             }
 
             this.container.appendChild(fieldDiv);
+            renderedHeaders.add(header);
         });
 
         // Add "Add Column" button at the bottom
@@ -228,7 +278,13 @@ class DataInspector {
             this.headers.forEach(header => {
                 const td = document.createElement('td');
                 const value = row[header] ?? '';
-                const typeInf = this.typeInfo[header] || { type: 'string' };
+                const isIdColumn = header === this.idColumn;
+                let typeInf = this.typeInfo[header] || { type: 'string' };
+
+                // ID columns are always rendered as string/input, never as enum
+                if (isIdColumn && typeInf.type === 'enum') {
+                    typeInf = { type: 'string' };
+                }
 
                 // Check if this is a JSON field with mixed values and is locked
                 const isJsonWithMixed = typeInf.type === 'json' &&
@@ -475,6 +531,70 @@ class DataInspector {
     }
 
     /**
+     * Render a vector group field (e.g., GridX/GridY as "Grid [X] x [Y]")
+     * @private
+     */
+    _renderVectorField(selectedRows, groupName, group) {
+        const fieldDiv = document.createElement('div');
+        fieldDiv.className = 'inspector-field vector-field';
+
+        const label = document.createElement('label');
+        label.className = 'inspector-field-label';
+        label.textContent = groupName;
+
+        fieldDiv.appendChild(label);
+
+        const vectorContainer = document.createElement('div');
+        vectorContainer.className = 'vector-inputs-container';
+
+        // Create input for each component (X, Y, Z)
+        group.components.forEach((comp, index) => {
+            const values = selectedRows.map(row => row[comp.header] ?? '');
+            const allSame = values.every(v => v === values[0]);
+
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'vector-input-group';
+
+            const inputLabel = document.createElement('label');
+            inputLabel.className = 'vector-input-label';
+            inputLabel.textContent = comp.suffix;
+            inputGroup.appendChild(inputLabel);
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'inspector-field-input vector-input';
+
+            if (allSame) {
+                input.value = values[0] || '';
+                input.placeholder = 'Enter number...';
+            } else {
+                input.className += ' mixed';
+                input.placeholder = '<Mixed Values>';
+                input.disabled = true;
+            }
+
+            input.addEventListener('change', () => {
+                this._updateField(comp.header, input.value);
+            });
+
+            inputGroup.appendChild(input);
+
+            // Add separator between components (except after last)
+            if (index < group.components.length - 1) {
+                const separator = document.createElement('span');
+                separator.className = 'vector-separator';
+                separator.textContent = '×';
+                inputGroup.appendChild(separator);
+            }
+
+            vectorContainer.appendChild(inputGroup);
+        });
+
+        fieldDiv.appendChild(vectorContainer);
+        this.container.appendChild(fieldDiv);
+    }
+
+    /**
      * Render JSON field
      * @private
      */
@@ -492,7 +612,7 @@ class DataInspector {
                 const guessedType = Array.isArray(parsed) ? 'array' : 'object';
                 const jsonRendererElement = JSONRenderer.render(parsed, (newValue) => {
                     this._updateField(header, JSONRenderer.serialize(newValue));
-                }, guessedType);
+                }, guessedType, this.typeInfo[header]);
 
                 container.appendChild(jsonRendererElement);
             } catch (error) {
@@ -525,7 +645,7 @@ class DataInspector {
                         const guessedType = Array.isArray(parsed) ? 'array' : 'object';
                         const jsonRendererElement = JSONRenderer.render(parsed, (newValue) => {
                             this._updateField(header, JSONRenderer.serialize(newValue));
-                        }, guessedType);
+                        }, guessedType, this.typeInfo[header]);
 
                         // Add a note about multi-row editing
                         const noteDiv = document.createElement('div');
@@ -540,7 +660,7 @@ class DataInspector {
                     // Editable empty state
                     const jsonRendererElement = JSONRenderer.render('', (newValue) => {
                         this._updateField(header, JSONRenderer.serialize(newValue));
-                    }, 'object');
+                    }, 'object', this.typeInfo[header]);
                     container.appendChild(jsonRendererElement);
                 }
             }
@@ -548,7 +668,7 @@ class DataInspector {
             // Empty field (all same and empty)
             const jsonRendererElement = JSONRenderer.render('', (newValue) => {
                 this._updateField(header, JSONRenderer.serialize(newValue));
-            }, 'object');
+            }, 'object', this.typeInfo[header]);
             container.appendChild(jsonRendererElement);
         }
 
@@ -663,5 +783,17 @@ class DataInspector {
         this.container.innerHTML = '<p class="placeholder">Select a row to inspect</p>';
         this.selectedIds = [];
         this.lockedFields.clear();
+        this._updateDeleteButtonVisibility();
+    }
+
+    /**
+     * Update delete button visibility based on selection
+     * @private
+     */
+    _updateDeleteButtonVisibility() {
+        const deleteBtn = document.getElementById('deleteRowBtn');
+        if (deleteBtn) {
+            deleteBtn.style.display = this.selectedIds.length > 0 ? '' : 'none';
+        }
     }
 }

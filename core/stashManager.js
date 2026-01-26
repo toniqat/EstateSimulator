@@ -183,8 +183,8 @@ class StashManager {
         this.gameState.facilities['stash'].level = nextLevel;
         const oldCapacity = this.gameState.stash.capacity;
 
-        // Read new capacity from storageSlots in the upgrade data
-        const newCapacity = upgradeCost.storageSlots !== undefined ? upgradeCost.storageSlots : 25 + (nextLevel - 1) * 10;
+        // Read new capacity from stash upgrade data
+        const newCapacity = dataLoader.getStashCapacity(nextLevel);
         this.gameState.stash.capacity = newCapacity;
 
         // Expand slots array

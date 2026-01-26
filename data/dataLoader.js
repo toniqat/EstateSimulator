@@ -23,6 +23,7 @@ class DataLoader {
         this.tradingOrders = {}; // { orderId: { grade, credit, required, reward } }
         this.processUpgrades = {}; // { level: { level, processList } }
         this.itemProcessingLevels = {}; // { itemId: minLevel } - Cached minimum processing level for each item
+        this.stashUpgrades = {}; // { level: { level, capacity } }
     }
 
     /**
@@ -55,6 +56,7 @@ class DataLoader {
             this.loadTradingRegionUpgrades();
             this.loadTradingOrders();
             this.loadProcessUpgrades();
+            this.loadStashUpgrades();
             this.buildProcessingLevelCache();
 
             console.log('All data loaded successfully from embedded GAME_DATA');
@@ -907,6 +909,53 @@ class DataLoader {
     getTradingOrder(orderId) {
         const orders = GAME_DATA.tradingOrders || [];
         return orders.find(o => o.id === orderId) || null;
+    }
+
+    /**
+     * Load stash upgrade data from GAME_DATA
+     */
+    loadStashUpgrades() {
+        try {
+            if (!GAME_DATA.stashUpgrades || Object.keys(GAME_DATA.stashUpgrades).length === 0) {
+                console.warn('No stash upgrades found in GAME_DATA');
+                return;
+            }
+
+            for (const [level, upgrade] of Object.entries(GAME_DATA.stashUpgrades)) {
+                if (!upgrade.level) {
+                    console.warn('Skipping invalid stash upgrade (missing level):', upgrade);
+                    continue;
+                }
+
+                this.stashUpgrades[parseInt(upgrade.level)] = {
+                    level: parseInt(upgrade.level),
+                    capacity: parseInt(upgrade.capacity) || 0
+                };
+            }
+
+            console.log(`Loaded ${Object.keys(this.stashUpgrades).length} stash upgrade levels from GAME_DATA`);
+        } catch (error) {
+            console.error('Error loading stash upgrades:', error);
+        }
+    }
+
+    /**
+     * Get stash upgrade by level
+     * @param {number} level - Stash level
+     * @returns {Object} Stash upgrade object {level, capacity}
+     */
+    getStashUpgrade(level) {
+        return this.stashUpgrades[level] || null;
+    }
+
+    /**
+     * Get stash capacity for a given level
+     * @param {number} level - Stash level
+     * @returns {number} Storage capacity
+     */
+    getStashCapacity(level) {
+        const upgrade = this.getStashUpgrade(level);
+        return upgrade ? upgrade.capacity : 0;
     }
 
     /**

@@ -75,7 +75,7 @@ body {
 .editor-main {
     display: flex;
     flex: 1;
-    gap: 1px;
+    gap: 0;
     overflow: hidden;
     background-color: var(--border-color);
 }
@@ -104,6 +104,92 @@ body {
     overflow: hidden;
 }
 
+/* Tab Container */
+.tab-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+}
+
+.tab-bar {
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    display: none;
+    align-items: center;
+    height: 32px;
+    flex-shrink: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.tab-bar.visible {
+    display: flex;
+}
+
+.tabs-list {
+    display: flex;
+    height: 100%;
+    gap: 0;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.tab:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.tab.active {
+    background-color: var(--bg-secondary);
+    border-bottom-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.tab-close-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    transition: all 0.2s;
+}
+
+.tab-close-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--error-color);
+}
+
+.tab-content-wrapper {
+    display: flex;
+    flex: 1;
+    gap: 1px;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
+
 .pane-header {
     background-color: var(--bg-tertiary);
     border-bottom: 1px solid var(--border-color);
@@ -113,12 +199,21 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    height: 32px;
 }
 
 .pane-header h2 {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-primary);
+    margin: 0;
+    flex: 1;
+}
+
+.pane-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .pane-content {
@@ -265,7 +360,7 @@ body {
     padding: 12px;
 }
 
-/* Form View Mode (Default) - Single-Line Horizontal Layout */
+/* Form View Mode (Default) - Single-Line Horizontal Layout (Property Grid Style) */
 .inspector.inspector-form-view .inspector-field {
     display: flex;
     align-items: flex-start;
@@ -275,10 +370,9 @@ body {
 }
 
 .inspector.inspector-form-view .inspector-field.complex-data {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
-    margin-bottom: 16px;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
 }
 
 .inspector.inspector-form-view .inspector-add-column-container {
@@ -319,9 +413,17 @@ body {
 }
 
 .inspector.inspector-form-view .inspector-field.complex-data .inspector-field-label {
-    display: block;
-    margin-bottom: 4px;
-    min-width: auto;
+    display: inline-block;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 140px;
+    padding: 6px 8px;
+    margin-bottom: 0;
 }
 
 .inspector.inspector-form-view .inspector-field-input {
@@ -351,12 +453,10 @@ body {
 }
 
 /* Lock Toggle Styles */
-.inspector-field-lock-toggle {
-    margin-bottom: 8px;
-}
-
-.inspector.inspector-form-view .inspector-field.complex-data .inspector-field-lock-toggle {
-    margin-bottom: 4px;
+.inspector.inspector-form-view .inspector-field-lock-toggle {
+    flex: 1;
+    margin-bottom: 0;
+    margin-top: 2px;
 }
 
 .inspector-field-lock-label {
@@ -387,8 +487,13 @@ body {
 }
 
 /* JSON/Complex data containers in form view */
+.inspector.inspector-form-view .inspector-field.complex-data > div:not(.inspector-field-lock-toggle):not(.inspector-field-label) {
+    flex: 1;
+}
+
 .inspector.inspector-form-view .inspector-field.complex-data .inspector-field-note {
     margin-left: 0;
+    margin-bottom: 0;
 }
 
 /* Table View Mode */
@@ -732,6 +837,39 @@ select:focus {
     min-width: auto;
 }
 
+.btn-small {
+    padding: 4px 6px;
+    font-size: 14px;
+    min-width: auto;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-add-row {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.btn-add-row:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--success-color);
+}
+
+.btn-delete-row {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--error-color);
+}
+
+.btn-delete-row:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--error-color);
+}
+
 /* Modal */
 .modal {
     position: fixed;
@@ -923,6 +1061,113 @@ select:focus {
     margin-top: 12px;
     padding-top: 8px;
     border-top: 1px dashed var(--border-color);
+}
+
+/* JSON Table Key Input */
+.json-table-key-input {
+    background-color: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 0;
+    width: 100%;
+}
+
+.json-table-key-input:focus {
+    outline: none;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 2px 4px;
+}
+
+/* JSON Nested Expand Button */
+.json-nested-expand-btn {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--accent-color);
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+    font-size: 12px;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.json-nested-expand-btn:hover {
+    background-color: var(--hover-bg);
+    border-color: var(--accent-color);
+}
+
+/* JSON Nested Modal */
+.json-nested-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.json-nested-modal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 16px;
+    max-width: 80vw;
+    max-height: 80vh;
+    overflow: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Vector Field Styles */
+.inspector-field.vector-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding: 4px 0;
+}
+
+.vector-inputs-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.vector-input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.vector-input-label {
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+.vector-input {
+    width: 70px;
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.vector-separator {
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin: 0 4px;
 }
 
 /* Utilities */

@@ -4,13 +4,27 @@
  */
 
 class FileExplorer {
-    constructor(container) {
+    constructor(container, headerContainer) {
         this.container = container;
+        this.headerContainer = headerContainer;
         this.dirHandle = null;
         this.csvFileMap = new Map(); // Map of path -> CSV fileHandle
         this.selectedFile = null;
         this.onFileSelected = null;
         this.lastDirPath = this._loadLastDirPath();
+        this._setupHeaderButton();
+    }
+
+    /**
+     * Setup the "Open Data Directory" button in the header
+     * @private
+     */
+    _setupHeaderButton() {
+        const btn = document.getElementById('openDirBtnExplorer');
+        if (btn) {
+            btn.title = 'Open Data Directory';
+            btn.addEventListener('click', () => this.init());
+        }
     }
 
     /**

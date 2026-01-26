@@ -23,6 +23,8 @@ $workerGrades = @()
 $workerUpgrades = @{}
 $workerLevels = @()
 $processUpgrades = @{}
+$productUpgrades = @{}
+$stashUpgrades = @{}
 
 # Helper function to convert values to appropriate types
 function ConvertValue($value) {
@@ -252,7 +254,78 @@ if (Test-Path $upgradeCheckPath) {
     Write-Host "✓ Loaded upgrades for $($upgradeTree.Count) facilities from facilityUpgrade.csv"
 }
 
-# Process gameConfig.csv
+# Process productUpgrade.csv - Add production-specific data to production facilities
+$productUpgradePath = Join-Path $DataDir "facilities\productUpgrade.csv"
+if (Test-Path $productUpgradePath) {
+    $productRows = Import-Csv $productUpgradePath
+    foreach ($row in $productRows) {
+        if ($row.facility_id) {
+            $facilityId = $row.facility_id
+            $level = [int]($row.level -replace '[^\d]', '1')
+
+            # Parse grid as integer
+            $grid = if ($row.grid) { [int]($row.grid -replace '[^\d]', '0') } else { $null }
+
+            # Parse productAreas JSON if present
+            $productAreas_parsed = $null
+            if ($row.productAreas) {
+                try {
+                    $productAreas_parsed = ConvertFrom-Json $row.productAreas
+                } catch {
+                    Write-Host "Warning: Failed to parse productAreas JSON for $facilityId level $level"
+                }
+            }
+
+            # Parse storageSlots as integer
+            $storageSlots = if ($row.storageSlots) { [int]($row.storageSlots -replace '[^\d]', '0') } else { $null }
+
+            # Store in temporary productUpgrades for merging
+            if (-not $productUpgrades.ContainsKey($facilityId)) {
+                $productUpgrades[$facilityId] = @{}
+            }
+
+            $productUpgrades[$facilityId][[string]$level] = @{
+                grid = $grid
+                productAreas = $productAreas_parsed
+                storageSlots = $storageSlots
+            }
+        }
+    }
+    Write-Host "✓ Loaded production upgrade data for $($productUpgrades.Count) facilities from productUpgrade.csv"
+}
+
+# Merge productUpgrade data into upgradeTree for production facilities
+foreach ($facilityId in $productUpgrades.Keys) {
+    if ($upgradeTree.ContainsKey($facilityId)) {
+        foreach ($level in $productUpgrades[$facilityId].Keys) {
+            if ($upgradeTree[$facilityId].ContainsKey($level)) {
+                $upgradeTree[$facilityId][$level].Grid = $productUpgrades[$facilityId][$level].grid
+                $upgradeTree[$facilityId][$level].productAreas = $productUpgrades[$facilityId][$level].productAreas
+                $upgradeTree[$facilityId][$level].storageSlots = $productUpgrades[$facilityId][$level].storageSlots
+            }
+        }
+    }
+}
+
+# Process stashUpgrade.csv - Load stash capacity data
+$stashUpgradePath = Join-Path $DataDir "stashUpgrade.csv"
+if (Test-Path $stashUpgradePath) {
+    $stashRows = Import-Csv $stashUpgradePath
+    foreach ($row in $stashRows) {
+        if ($row.level) {
+            $level = [int]($row.level -replace '[^\d]', '1')
+            $capacity = if ($row.capacity) { [int]($row.capacity -replace '[^\d]', '0') } else { 0 }
+
+            $stashUpgrades[[string]$level] = @{
+                level = $level
+                capacity = $capacity
+            }
+        }
+    }
+    Write-Host "✓ Loaded stash capacity data for $($stashUpgrades.Count) levels from stashUpgrade.csv"
+}
+
+# gameConfig.csv
 $configPath = Join-Path $DataDir "common\gameConfig.csv"
 if (Test-Path $configPath) {
     $configRows = Import-Csv $configPath
@@ -507,6 +580,7 @@ $gameData = @{
     workerUpgrades = $workerUpgrades
     workerLevels = $workerLevels
     processUpgrades = $processUpgrades
+    stashUpgrades = $stashUpgrades
 }
 
 # Convert to JSON and write to file
@@ -545,4 +619,5 @@ Write-Host "✓ $($tradingRegions.Count) trading regions loaded"
 Write-Host "✓ $($tradingRegionUpgrades.Count) trading region upgrades loaded"
 Write-Host "✓ $($tradingOrders.Count) trading orders loaded"
 Write-Host "✓ $($processUpgrades.Count) process upgrade levels loaded"
+Write-Host "✓ $($stashUpgrades.Count) stash upgrade levels loaded"
 Write-Host "`nBuild complete! All CSV files processed successfully."
