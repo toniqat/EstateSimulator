@@ -10,11 +10,12 @@ class JSONRenderer {
      * @param {Function} onChange - Callback when data changes
      * @param {string} guessedType - 'object' or 'array' for empty state initialization (optional)
      * @param {Object} typeInfo - Type information with optional subtype ('json_collection' | 'json_dictionary')
+     * @param {Object} context - CSV context for schema inference: { rows, columnName, headers }
      * @returns {HTMLElement} Rendered element
      */
-    static render(data, onChange, guessedType = 'object', typeInfo = null) {
+    static render(data, onChange, guessedType = 'object', typeInfo = null, context = null) {
         if (data === '' || data === null || data === undefined) {
-            return this._renderEmptyState(onChange, guessedType, typeInfo);
+            return this._renderEmptyState(onChange, guessedType, typeInfo, context);
         }
 
         try {
@@ -46,12 +47,191 @@ class JSONRenderer {
      * @param {Function} onChange - Callback when data changes
      * @param {string} guessedType - 'object' or 'array' to pre-initialize empty structure
      * @param {Object} typeInfo - Type information with optional subtype
+     * @param {Object} context - CSV context: { rows, columnName, headers }
      * @private
      */
-    static _renderEmptyState(onChange, guessedType = 'object', typeInfo = null) {
+    static _renderEmptyState(onChange, guessedType = 'object', typeInfo = null, context = null) {
         const container = document.createElement('div');
         container.className = 'json-empty-editable';
 
+        // Try to infer schema from other rows in the same column
+        const inferredType = this._inferJSONStructureFromContext(context, typeInfo);
+
+        // Render empty table view based on inferred or guessed type
+        if (inferredType === 'json_collection') {
+            return this._renderEmptyCollection(container, onChange, context);
+        } else if (inferredType === 'json_dictionary') {
+            return this._renderEmptyDictionary(container, onChange);
+        }
+
+        // Fallback to original behavior if can't infer
+        return this._renderEmptyFallback(container, onChange, guessedType);
+    }
+
+    /**
+     * Infer JSON structure from CSV context (other rows in same column)
+     * @param {Object} context - CSV context: { rows, columnName, headers }
+     * @param {Object} typeInfo - Type information with subtype
+     * @returns {string} 'json_collection' | 'json_dictionary' | null
+     * @private
+     */
+    static _inferJSONStructureFromContext(context, typeInfo) {
+        // If typeInfo has explicit subtype, use it
+        if (typeInfo && typeInfo.subtype) {
+            return typeInfo.subtype;
+        }
+
+        // Try to infer from context (other rows)
+        if (!context || !context.rows || !context.columnName) {
+            return null;
+        }
+
+        const { rows, columnName } = context;
+
+        // Get all non-empty values in this column
+        const nonEmptyValues = [];
+        for (const row of rows) {
+            const value = row[columnName];
+            if (value && value !== '' && value !== null && value !== undefined) {
+                try {
+                    const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+                    nonEmptyValues.push(parsed);
+                } catch (e) {
+                    // Skip invalid JSON
+                }
+            }
+        }
+
+        // If no valid JSON found, can't infer
+        if (nonEmptyValues.length === 0) {
+            return null;
+        }
+
+        // Use TypeInference to determine subtype
+        return TypeInference._inferJSONSubtype(
+            nonEmptyValues.map(v => typeof v === 'string' ? v : JSON.stringify(v))
+        );
+    }
+
+    /**
+     * Render empty JSON collection (array with consistent schema)
+     * Shows a table with headers derived from reference rows
+     * @private
+     */
+    static _renderEmptyCollection(container, onChange, context) {
+        // Find reference schema from non-empty rows
+        const referenceSchema = this._getReferenceCollectionSchema(context);
+
+        if (!referenceSchema || referenceSchema.length === 0) {
+            // No reference schema, show empty message
+            const msg = document.createElement('p');
+            msg.className = 'json-empty-prompt';
+            msg.style.cssText = 'color: var(--text-secondary); font-style: italic; margin-bottom: 12px;';
+            msg.textContent = 'Empty collection - Click to add rows';
+            container.appendChild(msg);
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'json-add-row-btn';
+            addBtn.innerHTML = '+ Add Row';
+            addBtn.addEventListener('click', () => {
+                const newArray = [{}];
+                if (onChange) onChange(newArray);
+                container.innerHTML = '';
+                container.appendChild(this._renderArray(newArray, onChange));
+            });
+            container.appendChild(addBtn);
+            return container;
+        }
+
+        // Create table with headers
+        const table = document.createElement('table');
+        table.className = 'json-table';
+
+        // Create header row
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+
+        referenceSchema.forEach(col => {
+            const th = document.createElement('th');
+            th.textContent = col;
+            headerRow.appendChild(th);
+        });
+
+        // Delete column header
+        const deleteHeader = document.createElement('th');
+        deleteHeader.textContent = '';
+        headerRow.appendChild(deleteHeader);
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Body (initially empty)
+        const tbody = document.createElement('tbody');
+
+        // Add Row button
+        const addRowTr = document.createElement('tr');
+        addRowTr.className = 'json-table-add-row-tr';
+
+        const addRowTd = document.createElement('td');
+        addRowTd.colSpan = referenceSchema.length + 1; // +1 for delete button
+
+        const addBtn = document.createElement('button');
+        addBtn.className = 'json-add-row-btn';
+        addBtn.innerHTML = '+ Add Row';
+
+        addBtn.addEventListener('click', () => {
+            const newArray = [{}];
+            referenceSchema.forEach(col => {
+                newArray[0][col] = '';
+            });
+            if (onChange) onChange(newArray);
+            container.innerHTML = '';
+            container.appendChild(this._renderArray(newArray, onChange));
+        });
+
+        addRowTd.appendChild(addBtn);
+        addRowTr.appendChild(addRowTd);
+        tbody.appendChild(addRowTr);
+
+        table.appendChild(tbody);
+        container.appendChild(table);
+
+        return container;
+    }
+
+    /**
+     * Render empty JSON dictionary (object with varying keys)
+     * Shows Key-Value list with "+ Add Key" button
+     * @private
+     */
+    static _renderEmptyDictionary(container, onChange) {
+        const emptyObject = {};
+
+        const msg = document.createElement('p');
+        msg.className = 'json-empty-prompt';
+        msg.style.cssText = 'color: var(--text-secondary); font-style: italic; margin-bottom: 12px;';
+        msg.textContent = 'Empty dictionary - Click to add keys';
+        container.appendChild(msg);
+
+        const addKeyBtn = document.createElement('button');
+        addKeyBtn.className = 'json-add-row-btn';
+        addKeyBtn.innerHTML = '+ Add Key';
+        addKeyBtn.addEventListener('click', () => {
+            emptyObject['New Key 1'] = '';
+            if (onChange) onChange(emptyObject);
+            container.innerHTML = '';
+            container.appendChild(this._renderObject(emptyObject, onChange));
+        });
+        container.appendChild(addKeyBtn);
+
+        return container;
+    }
+
+    /**
+     * Fallback rendering for when schema can't be inferred
+     * @private
+     */
+    static _renderEmptyFallback(container, onChange, guessedType) {
         // Show prompt
         const prompt = document.createElement('p');
         prompt.className = 'json-empty-prompt';
@@ -68,30 +248,18 @@ class JSONRenderer {
             addBtn.addEventListener('click', () => {
                 emptyArray.push({});
                 if (onChange) onChange(emptyArray);
-                // Re-render
                 container.innerHTML = '';
                 container.appendChild(this._renderArray(emptyArray, onChange));
             });
             container.appendChild(addBtn);
         } else {
-            // Default to object
             const emptyObject = {};
             const addKeyBtn = document.createElement('button');
             addKeyBtn.className = 'json-add-row-btn';
             addKeyBtn.innerHTML = '+ Add Key';
             addKeyBtn.addEventListener('click', () => {
-                // Find the next available "New Key N" name
-                let newKeyName = 'New Key 1';
-                let counter = 1;
-                while (emptyObject.hasOwnProperty(newKeyName)) {
-                    counter++;
-                    newKeyName = `New Key ${counter}`;
-                }
-
-                // Add the new key
-                emptyObject[newKeyName] = '';
+                emptyObject['New Key 1'] = '';
                 if (onChange) onChange(emptyObject);
-                // Re-render
                 container.innerHTML = '';
                 container.appendChild(this._renderObject(emptyObject, onChange));
             });
@@ -99,6 +267,40 @@ class JSONRenderer {
         }
 
         return container;
+    }
+
+    /**
+     * Get reference schema (column names) from non-empty collection rows
+     * @param {Object} context - CSV context: { rows, columnName }
+     * @returns {Array} Array of column names
+     * @private
+     */
+    static _getReferenceCollectionSchema(context) {
+        if (!context || !context.rows || !context.columnName) {
+            return [];
+        }
+
+        const { rows, columnName } = context;
+
+        // Find first non-empty collection value
+        for (const row of rows) {
+            const value = row[columnName];
+            if (value && value !== '' && value !== null && value !== undefined) {
+                try {
+                    const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        const firstItem = parsed[0];
+                        if (typeof firstItem === 'object' && firstItem !== null && !Array.isArray(firstItem)) {
+                            return Object.keys(firstItem);
+                        }
+                    }
+                } catch (e) {
+                    // Skip invalid JSON
+                }
+            }
+        }
+
+        return [];
     }
 
 

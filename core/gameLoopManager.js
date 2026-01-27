@@ -171,16 +171,6 @@ class GameLoopManager {
         }
     }
 
-    sell(itemId) {
-        const inputElement = document.getElementById(`${itemId}-sell-input`);
-        const amountToSell = parseInt(inputElement.value) || 0;
-
-        if (this.tradingSystem.sell(itemId, amountToSell)) {
-            inputElement.value = 0;
-            this.uiUpdater.updateUI();
-        }
-    }
-
     upgradeFacility(facilityId) {
         if (this.upgradeSystem.upgradeFacility(facilityId)) {
             // Update grid dimensions if this is a product facility

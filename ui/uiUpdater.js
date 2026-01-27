@@ -69,15 +69,6 @@ class UIUpdater {
             const workerEl = document.getElementById(`${facilityId}-workers`);
             if (workerEl) workerEl.textContent = facility.assignedWorkers;
 
-            const prodEl = document.getElementById(`${facilityId}-production`);
-            if (prodEl) {
-                const prodData = dataLoader.getProduction(facilityId);
-                if (prodData) {
-                    const baseProduction = facility.assignedWorkers * facility.level * prodData.baseOutput;
-                    prodEl.textContent = baseProduction;
-                }
-            }
-
             // Update product grid UI worker count
             const workerCountEl = document.getElementById(`${facilityId}-worker-count`);
             if (workerCountEl) {

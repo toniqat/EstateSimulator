@@ -8,9 +8,7 @@ Write-Host "Generating gameData.js from CSV files..."
 # Initialize collections
 $items = @()
 $facilities = @()
-$production = @{}
 $recipes = @{}
-$trading = @{}
 $tradingUpgrades = @{}
 $tradingRegions = @()
 $tradingRegionUpgrades = @()
@@ -83,23 +81,6 @@ if (Test-Path $facilityPath) {
     Write-Host "✓ Loaded $($facilities.Count) facilities from facility.csv"
 }
 
-# Process production.csv
-$productionPath = Join-Path $DataDir "facilities\production.csv"
-if (Test-Path $productionPath) {
-    $productionRows = Import-Csv $productionPath
-    foreach ($row in $productionRows) {
-        if ($row.facility_id) {
-            $production[$row.facility_id] = @{
-                facilityId = $row.facility_id
-                output = $row.output_item_id
-                outputItemId = $row.output_item_id
-                baseOutput = [int]($row.base_output -replace '[^\d]', '1')
-                productionInterval = [int]($row.production_interval_ms -replace '[^\d]', '10000')
-            }
-        }
-    }
-    Write-Host "✓ Loaded $($production.Count) production facilities from production.csv"
-}
 
 # Process recipe.csv (legacy - recipes now come from item.csv)
 $recipePath = Join-Path $DataDir "items\recipe.csv"
@@ -161,21 +142,6 @@ if (Test-Path $processUpgradePath) {
         }
     }
     Write-Host "✓ Loaded $($processUpgrades.Count) process upgrade levels from processUpgrade.csv"
-}
-
-# Process trading.csv
-$tradingPath = Join-Path $DataDir "trading\trading.csv"
-if (Test-Path $tradingPath) {
-    $tradeRows = Import-Csv $tradingPath
-    foreach ($row in $tradeRows) {
-        if ($row.item_id) {
-            $trading[$row.item_id] = @{
-                itemId = $row.item_id
-                sellPrice = [int]($row.sell_price -replace '[^\d]', '0')
-            }
-        }
-    }
-    Write-Host "✓ Loaded $($trading.Count) trading prices from trading.csv"
 }
 
 # Process facilityUpgrade.csv
@@ -565,9 +531,7 @@ if (Test-Path $tradingOrderPath) {
 $gameData = @{
     items = $items
     facilities = $facilities
-    production = $production
     recipes = $recipes
-    trading = $trading
     tradingUpgrades = $tradingUpgrades
     tradingRegions = $tradingRegions
     tradingRegionUpgrades = $tradingRegionUpgrades
@@ -604,9 +568,7 @@ Write-Host "✓ Successfully generated gameData.js"
 Write-Host "`n=== Build Summary ==="
 Write-Host "✓ $($items.Count) items loaded"
 Write-Host "✓ $($facilities.Count) facilities loaded"
-Write-Host "✓ $($production.Count) production facilities loaded"
 Write-Host "✓ $($recipes.Count) recipes loaded"
-Write-Host "✓ $($trading.Count) trading prices loaded"
 Write-Host "✓ $($upgradeTree.Count) facility upgrade trees loaded"
 Write-Host "✓ $($config.Count) config values loaded"
 Write-Host "✓ $($productAreas.Count) product areas loaded"

@@ -11,6 +11,7 @@ class FileExplorer {
         this.csvFileMap = new Map(); // Map of path -> CSV fileHandle
         this.selectedFile = null;
         this.onFileSelected = null;
+        this.onDirectoryLoaded = null; // Callback when directory is loaded
         this.lastDirPath = this._loadLastDirPath();
         this._setupHeaderButton();
     }
@@ -83,6 +84,11 @@ class FileExplorer {
             if (this.csvFileMap.size === 0) {
                 // Still show the tree even if no CSV files found
                 UIComponents.showToast('No CSV files found in directory', 'warning');
+            }
+
+            // Notify that directory is loaded
+            if (this.onDirectoryLoaded) {
+                this.onDirectoryLoaded();
             }
         } catch (error) {
             UIComponents.showToast(`Error loading directory: ${error.message}`, 'error');

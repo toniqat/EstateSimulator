@@ -602,6 +602,13 @@ class DataInspector {
         const container = document.createElement('div');
         const isLocked = this.lockedFields.has(header);
 
+        // Create CSV context for schema inference
+        const context = {
+            rows: this.rows,
+            columnName: header,
+            headers: this.headers
+        };
+
         if (allSame && values[0]) {
             // Non-empty, all same
             try {
@@ -612,7 +619,7 @@ class DataInspector {
                 const guessedType = Array.isArray(parsed) ? 'array' : 'object';
                 const jsonRendererElement = JSONRenderer.render(parsed, (newValue) => {
                     this._updateField(header, JSONRenderer.serialize(newValue));
-                }, guessedType, this.typeInfo[header]);
+                }, guessedType, this.typeInfo[header], context);
 
                 container.appendChild(jsonRendererElement);
             } catch (error) {
@@ -638,14 +645,14 @@ class DataInspector {
                                 ? JSON.parse(topRowValue)
                                 : topRowValue;
                         } else {
-                            // Empty value - guess type from other rows
+                            // Empty value - infer type from other rows
                             parsed = '';
                         }
 
                         const guessedType = Array.isArray(parsed) ? 'array' : 'object';
                         const jsonRendererElement = JSONRenderer.render(parsed, (newValue) => {
                             this._updateField(header, JSONRenderer.serialize(newValue));
-                        }, guessedType, this.typeInfo[header]);
+                        }, guessedType, this.typeInfo[header], context);
 
                         // Add a note about multi-row editing
                         const noteDiv = document.createElement('div');
@@ -660,7 +667,7 @@ class DataInspector {
                     // Editable empty state
                     const jsonRendererElement = JSONRenderer.render('', (newValue) => {
                         this._updateField(header, JSONRenderer.serialize(newValue));
-                    }, 'object', this.typeInfo[header]);
+                    }, 'object', this.typeInfo[header], context);
                     container.appendChild(jsonRendererElement);
                 }
             }
@@ -668,7 +675,7 @@ class DataInspector {
             // Empty field (all same and empty)
             const jsonRendererElement = JSONRenderer.render('', (newValue) => {
                 this._updateField(header, JSONRenderer.serialize(newValue));
-            }, 'object', this.typeInfo[header]);
+            }, 'object', this.typeInfo[header], context);
             container.appendChild(jsonRendererElement);
         }
 

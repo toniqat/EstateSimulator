@@ -6,6 +6,32 @@
  */
 
 const GAME_DATA = {
+    "stashUpgrades":  {
+                          "3":  {
+                                    "capacity":  35,
+                                    "level":  3
+                                },
+                          "2":  {
+                                    "capacity":  25,
+                                    "level":  2
+                                },
+                          "1":  {
+                                    "capacity":  20,
+                                    "level":  1
+                                },
+                          "4":  {
+                                    "capacity":  50,
+                                    "level":  4
+                                },
+                          "6":  {
+                                    "capacity":  80,
+                                    "level":  6
+                                },
+                          "5":  {
+                                    "capacity":  65,
+                                    "level":  5
+                                }
+                      },
     "productAreas":  [
                          {
                              "workers":  1,
@@ -342,457 +368,359 @@ const GAME_DATA = {
                          }
                      ],
     "config":  {
-                   "max_game_speed":  64,
-                   "initial_gold":  0,
-                   "hire_cost":  50,
                    "min_game_speed":  1,
-                   "production_interval_ms":  10000,
-                   "initial_workers":  10
+                   "initial_gold":  0,
+                   "max_game_speed":  64
                },
-    "workerLevels":  [
-                         {
-                             "expRequired":  0,
-                             "level":  1
-                         },
-                         {
-                             "expRequired":  600,
-                             "level":  2
-                         },
-                         {
-                             "expRequired":  1200,
-                             "level":  3
-                         },
-                         {
-                             "expRequired":  1800,
-                             "level":  4
-                         },
-                         {
-                             "expRequired":  2400,
-                             "level":  5
-                         },
-                         {
-                             "expRequired":  3000,
-                             "level":  6
-                         },
-                         {
-                             "expRequired":  2400,
-                             "level":  7
-                         },
-                         {
-                             "expRequired":  2800,
-                             "level":  8
-                         },
-                         {
-                             "expRequired":  3200,
-                             "level":  9
-                         },
-                         {
-                             "expRequired":  3600,
-                             "level":  10
-                         },
-                         {
-                             "expRequired":  4000,
-                             "level":  11
-                         },
-                         {
-                             "expRequired":  4400,
-                             "level":  12
-                         },
-                         {
-                             "expRequired":  4800,
-                             "level":  13
-                         },
-                         {
-                             "expRequired":  5200,
-                             "level":  14
-                         },
-                         {
-                             "expRequired":  5600,
-                             "level":  15
-                         },
-                         {
-                             "expRequired":  6000,
-                             "level":  16
-                         },
-                         {
-                             "expRequired":  6400,
-                             "level":  17
-                         },
-                         {
-                             "expRequired":  6800,
-                             "level":  18
-                         },
-                         {
-                             "expRequired":  7200,
-                             "level":  19
-                         },
-                         {
-                             "expRequired":  7600,
-                             "level":  20
-                         },
-                         {
-                             "expRequired":  8000,
-                             "level":  21
-                         },
-                         {
-                             "expRequired":  8400,
-                             "level":  22
-                         },
-                         {
-                             "expRequired":  8800,
-                             "level":  23
-                         },
-                         {
-                             "expRequired":  9200,
-                             "level":  24
-                         },
-                         {
-                             "expRequired":  9600,
-                             "level":  25
-                         },
-                         {
-                             "expRequired":  10000,
-                             "level":  26
-                         },
-                         {
-                             "expRequired":  10400,
-                             "level":  27
-                         },
-                         {
-                             "expRequired":  10800,
-                             "level":  28
-                         },
-                         {
-                             "expRequired":  11200,
-                             "level":  29
-                         },
-                         {
-                             "expRequired":  11600,
-                             "level":  30
-                         },
-                         {
-                             "expRequired":  12000,
-                             "level":  31
-                         },
-                         {
-                             "expRequired":  12400,
-                             "level":  32
-                         },
-                         {
-                             "expRequired":  12800,
-                             "level":  33
-                         },
-                         {
-                             "expRequired":  13200,
-                             "level":  34
-                         },
-                         {
-                             "expRequired":  13600,
-                             "level":  35
-                         },
-                         {
-                             "expRequired":  14000,
-                             "level":  36
-                         },
-                         {
-                             "expRequired":  14400,
-                             "level":  37
-                         },
-                         {
-                             "expRequired":  14800,
-                             "level":  38
-                         },
-                         {
-                             "expRequired":  15200,
-                             "level":  39
-                         },
-                         {
-                             "expRequired":  15600,
-                             "level":  40
-                         },
-                         {
-                             "expRequired":  16000,
-                             "level":  41
-                         },
-                         {
-                             "expRequired":  16400,
-                             "level":  42
-                         },
-                         {
-                             "expRequired":  16800,
-                             "level":  43
-                         },
-                         {
-                             "expRequired":  17200,
-                             "level":  44
-                         },
-                         {
-                             "expRequired":  17600,
-                             "level":  45
-                         },
-                         {
-                             "expRequired":  18000,
-                             "level":  46
-                         },
-                         {
-                             "expRequired":  18400,
-                             "level":  47
-                         },
-                         {
-                             "expRequired":  18800,
-                             "level":  48
-                         },
-                         {
-                             "expRequired":  19200,
-                             "level":  49
-                         },
-                         {
-                             "expRequired":  19600,
-                             "level":  50
-                         },
-                         {
-                             "expRequired":  20000,
-                             "level":  51
-                         },
-                         {
-                             "expRequired":  20400,
-                             "level":  52
-                         },
-                         {
-                             "expRequired":  20800,
-                             "level":  53
-                         },
-                         {
-                             "expRequired":  21200,
-                             "level":  54
-                         },
-                         {
-                             "expRequired":  21600,
-                             "level":  55
-                         },
-                         {
-                             "expRequired":  22000,
-                             "level":  56
-                         },
-                         {
-                             "expRequired":  22400,
-                             "level":  57
-                         },
-                         {
-                             "expRequired":  22800,
-                             "level":  58
-                         },
-                         {
-                             "expRequired":  23200,
-                             "level":  59
-                         },
-                         {
-                             "expRequired":  23600,
-                             "level":  60
-                         },
-                         {
-                             "expRequired":  24000,
-                             "level":  61
-                         },
-                         {
-                             "expRequired":  24400,
-                             "level":  62
-                         },
-                         {
-                             "expRequired":  24800,
-                             "level":  63
-                         },
-                         {
-                             "expRequired":  25200,
-                             "level":  64
-                         },
-                         {
-                             "expRequired":  25600,
-                             "level":  65
-                         },
-                         {
-                             "expRequired":  26000,
-                             "level":  66
-                         },
-                         {
-                             "expRequired":  26400,
-                             "level":  67
-                         },
-                         {
-                             "expRequired":  26800,
-                             "level":  68
-                         },
-                         {
-                             "expRequired":  27200,
-                             "level":  69
-                         },
-                         {
-                             "expRequired":  27600,
-                             "level":  70
-                         },
-                         {
-                             "expRequired":  28000,
-                             "level":  71
-                         },
-                         {
-                             "expRequired":  28400,
-                             "level":  72
-                         },
-                         {
-                             "expRequired":  28800,
-                             "level":  73
-                         },
-                         {
-                             "expRequired":  29200,
-                             "level":  74
-                         },
-                         {
-                             "expRequired":  29600,
-                             "level":  75
-                         },
-                         {
-                             "expRequired":  30000,
-                             "level":  76
-                         },
-                         {
-                             "expRequired":  30400,
-                             "level":  77
-                         },
-                         {
-                             "expRequired":  30800,
-                             "level":  78
-                         },
-                         {
-                             "expRequired":  31200,
-                             "level":  79
-                         },
-                         {
-                             "expRequired":  31600,
-                             "level":  80
-                         },
-                         {
-                             "expRequired":  32000,
-                             "level":  81
-                         },
-                         {
-                             "expRequired":  32400,
-                             "level":  82
-                         },
-                         {
-                             "expRequired":  32800,
-                             "level":  83
-                         },
-                         {
-                             "expRequired":  33200,
-                             "level":  84
-                         },
-                         {
-                             "expRequired":  33600,
-                             "level":  85
-                         },
-                         {
-                             "expRequired":  34000,
-                             "level":  86
-                         },
-                         {
-                             "expRequired":  34400,
-                             "level":  87
-                         },
-                         {
-                             "expRequired":  34800,
-                             "level":  88
-                         },
-                         {
-                             "expRequired":  35200,
-                             "level":  89
-                         },
-                         {
-                             "expRequired":  35600,
-                             "level":  90
-                         },
-                         {
-                             "expRequired":  36000,
-                             "level":  91
-                         },
-                         {
-                             "expRequired":  36400,
-                             "level":  92
-                         },
-                         {
-                             "expRequired":  36800,
-                             "level":  93
-                         },
-                         {
-                             "expRequired":  37200,
-                             "level":  94
-                         },
-                         {
-                             "expRequired":  37600,
-                             "level":  95
-                         },
-                         {
-                             "expRequired":  38000,
-                             "level":  96
-                         },
-                         {
-                             "expRequired":  38400,
-                             "level":  97
-                         },
-                         {
-                             "expRequired":  38800,
-                             "level":  98
-                         },
-                         {
-                             "expRequired":  39200,
-                             "level":  99
-                         },
-                         {
-                             "expRequired":  39600,
-                             "level":  100
-                         }
-                     ],
-    "facilities":  [
-                       {
-                           "name":  "Stash",
-                           "id":  "stash",
-                           "type":  "stash"
-                       },
-                       {
-                           "name":  "Worker\u0027s Lodge",
-                           "id":  "lodge",
-                           "type":  "emply"
-                       },
-                       {
-                           "name":  "Processing Plant",
-                           "id":  "processing",
-                           "type":  "process"
-                       },
-                       {
-                           "name":  "Trading Post",
-                           "id":  "trading",
-                           "type":  "trade"
-                       },
-                       {
-                           "name":  "Farm",
-                           "id":  "farm",
-                           "type":  "product"
-                       },
-                       {
-                           "name":  "Mine",
-                           "id":  "mine",
-                           "type":  "product"
-                       },
-                       {
-                           "name":  "Ranch",
-                           "id":  "ranch",
-                           "type":  "product"
-                       },
-                       {
-                           "name":  "Fishery",
-                           "id":  "fishery",
-                           "type":  "product"
-                       }
-                   ],
+    "tradingRegions":  [
+                           {
+                               "id":  "region_capital",
+                               "name":  "Capital City"
+                           },
+                           {
+                               "id":  "region_coast",
+                               "name":  "Coastal Harbor"
+                           },
+                           {
+                               "id":  "region_forest",
+                               "name":  "Forest Haven"
+                           }
+                       ],
+    "recipes":  {
+                    "cannedfish":  {
+                                       "value":  [
+                                                     {
+                                                         "itemId":  "fish",
+                                                         "count":  2
+                                                     }
+                                                 ],
+                                       "Count":  1
+                                   },
+                    "cookedmeat":  {
+                                       "value":  [
+                                                     {
+                                                         "itemId":  "meat",
+                                                         "count":  2
+                                                     }
+                                                 ],
+                                       "Count":  1
+                                   },
+                    "steel":  {
+                                  "value":  [
+                                                {
+                                                    "itemId":  "ore",
+                                                    "count":  3
+                                                }
+                                            ],
+                                  "Count":  1
+                              },
+                    "bread":  {
+                                  "value":  [
+                                                {
+                                                    "itemId":  "wheat",
+                                                    "count":  2
+                                                }
+                                            ],
+                                  "Count":  1
+                              }
+                },
+    "workerNames":  [
+                        "John Smith",
+                        "Emma Johnson",
+                        "Michael Williams",
+                        "Sarah Brown",
+                        "James Jones",
+                        "Emily Garcia",
+                        "David Miller",
+                        "Jessica Davis",
+                        "Robert Rodriguez",
+                        "Maria Martinez",
+                        "William Hernandez",
+                        "Linda Lopez",
+                        "Richard Gonzalez",
+                        "Thomas Anderson",
+                        "Karen Taylor",
+                        "Christopher Thomas",
+                        "Mary Jackson",
+                        "Daniel White",
+                        "Patricia Harris",
+                        "Matthew Martin",
+                        "Barbara Thompson",
+                        "Anthony Garcia",
+                        "Susan Martinez",
+                        "Mark Robinson",
+                        "Jessica Clark",
+                        "Donald Rodriguez",
+                        "Jennifer Lewis",
+                        "Steven Lee",
+                        "Lisa Walker",
+                        "Paul Hall",
+                        "Michelle Allen",
+                        "Andrew Young",
+                        "Emily Hernandez",
+                        "Joshua King",
+                        "Angela Wright",
+                        "Kevin Lopez",
+                        "Anna Hill",
+                        "Brian Scott",
+                        "Michelle Green",
+                        "George Adams",
+                        "Emily Nelson",
+                        "Edward Carter",
+                        "Kathleen Mitchell",
+                        "Ronald Roberts",
+                        "Brenda Phillips",
+                        "Timothy Campbell",
+                        "Diane Parker",
+                        "Jason Evans",
+                        "Catherine Edwards",
+                        "Jeffrey Collins",
+                        "June Reeves",
+                        "Ryan Stewart",
+                        "Beverly Morris",
+                        "Jacob Rogers",
+                        "Mary Hunt",
+                        "Gary Day",
+                        "Diane Austin",
+                        "Bennie Jacobs",
+                        "Frances Carlson"
+                    ],
+    "tradingRegionUpgrades":  [
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10001",
+                                                                          "appearRate":  3
+                                                                      },
+                                                                      {
+                                                                          "orderId":  "order-10002",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  2
+                                                    },
+                                      "level":  1,
+                                      "id":  "region_capital",
+                                      "exp":  1000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10003",
+                                                                          "appearRate":  2
+                                                                      },
+                                                                      {
+                                                                          "orderId":  "order-10004",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  2
+                                                    },
+                                      "level":  2,
+                                      "id":  "region_capital",
+                                      "exp":  2000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10005",
+                                                                          "appearRate":  2
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  3,
+                                      "id":  "region_capital",
+                                      "exp":  3000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10006",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  4,
+                                      "id":  "region_capital",
+                                      "exp":  4000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10007",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  5,
+                                      "id":  "region_capital",
+                                      "exp":  5000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10011",
+                                                                          "appearRate":  3
+                                                                      },
+                                                                      {
+                                                                          "orderId":  "order-10012",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  2
+                                                    },
+                                      "level":  1,
+                                      "id":  "region_coast",
+                                      "exp":  1000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10013",
+                                                                          "appearRate":  2
+                                                                      },
+                                                                      {
+                                                                          "orderId":  "order-10014",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  2
+                                                    },
+                                      "level":  2,
+                                      "id":  "region_coast",
+                                      "exp":  2000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10015",
+                                                                          "appearRate":  2
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  3,
+                                      "id":  "region_coast",
+                                      "exp":  3000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10016",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  4,
+                                      "id":  "region_coast",
+                                      "exp":  4000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10017",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  5,
+                                      "id":  "region_coast",
+                                      "exp":  5000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10021",
+                                                                          "appearRate":  2
+                                                                      },
+                                                                      {
+                                                                          "orderId":  "order-10022",
+                                                                          "appearRate":  2
+                                                                      }
+                                                                  ],
+                                                        "Count":  2
+                                                    },
+                                      "level":  1,
+                                      "id":  "region_forest",
+                                      "exp":  1000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10023",
+                                                                          "appearRate":  2
+                                                                      },
+                                                                      {
+                                                                          "orderId":  "order-10024",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  2
+                                                    },
+                                      "level":  2,
+                                      "id":  "region_forest",
+                                      "exp":  2000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10025",
+                                                                          "appearRate":  2
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  3,
+                                      "id":  "region_forest",
+                                      "exp":  3000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10026",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  4,
+                                      "id":  "region_forest",
+                                      "exp":  4000
+                                  },
+                                  {
+                                      "orderList":  {
+                                                        "value":  [
+                                                                      {
+                                                                          "orderId":  "order-10027",
+                                                                          "appearRate":  1
+                                                                      }
+                                                                  ],
+                                                        "Count":  1
+                                                    },
+                                      "level":  5,
+                                      "id":  "region_forest",
+                                      "exp":  5000
+                                  }
+                              ],
     "items":  [
                   {
                       "type":  "Farm",
@@ -858,129 +786,114 @@ const GAME_DATA = {
                       "stacks":  999999
                   }
               ],
-    "processUpgrades":  {
+    "workerGrades":  [
+                         {
+                             "id":  "common",
+                             "name":  "Common",
+                             "weight":  1,
+                             "baseGold":  20,
+                             "maxLevel":  10,
+                             "levelGold":  10
+                         },
+                         {
+                             "id":  "uncommon",
+                             "name":  "Uncommon",
+                             "weight":  1,
+                             "baseGold":  50,
+                             "maxLevel":  20,
+                             "levelGold":  20
+                         },
+                         {
+                             "id":  "rare",
+                             "name":  "Rare",
+                             "weight":  1,
+                             "baseGold":  100,
+                             "maxLevel":  30,
+                             "levelGold":  30
+                         },
+                         {
+                             "id":  "epic",
+                             "name":  "Epic",
+                             "weight":  1,
+                             "baseGold":  200,
+                             "maxLevel":  50,
+                             "levelGold":  50
+                         },
+                         {
+                             "id":  "legendary",
+                             "name":  "Legendary",
+                             "weight":  1,
+                             "baseGold":  500,
+                             "maxLevel":  100,
+                             "levelGold":  100
+                         }
+                     ],
+    "tradingUpgrades":  {
                             "2":  {
-                                      "processList":  [
-                                                          "bread",
-                                                          "steel"
-                                                      ],
-                                      "level":  2
+                                      "level":  2,
+                                      "requirements":  {
+                                                           "value":  [
+                                                                         {
+                                                                             "itemId":  "gold",
+                                                                             "count":  500
+                                                                         }
+                                                                     ],
+                                                           "Count":  1
+                                                       },
+                                      "cooltime":  300,
+                                      "maxQueueSlots":  4
                                   },
                             "4":  {
-                                      "processList":  [
-                                                          "bread",
-                                                          "steel",
-                                                          "cookedmeat",
-                                                          "cannedfish"
-                                                      ],
-                                      "level":  4
+                                      "level":  4,
+                                      "requirements":  {
+                                                           "value":  [
+                                                                         {
+                                                                             "itemId":  "gold",
+                                                                             "count":  2000
+                                                                         }
+                                                                     ],
+                                                           "Count":  1
+                                                       },
+                                      "cooltime":  180,
+                                      "maxQueueSlots":  6
                                   },
                             "5":  {
-                                      "processList":  [
-                                                          "bread",
-                                                          "steel",
-                                                          "cookedmeat",
-                                                          "cannedfish"
-                                                      ],
-                                      "level":  5
+                                      "level":  5,
+                                      "requirements":  {
+                                                           "value":  [
+                                                                         {
+                                                                             "itemId":  "gold",
+                                                                             "count":  5000
+                                                                         }
+                                                                     ],
+                                                           "Count":  1
+                                                       },
+                                      "cooltime":  120,
+                                      "maxQueueSlots":  8
                                   },
                             "1":  {
-                                      "processList":  [
-                                                          "bread"
-                                                      ],
-                                      "level":  1
+                                      "level":  1,
+                                      "requirements":  [
+
+                                                       ],
+                                      "cooltime":  360,
+                                      "maxQueueSlots":  3
                                   },
                             "3":  {
-                                      "processList":  [
-                                                          "bread",
-                                                          "steel",
-                                                          "cookedmeat"
-                                                      ],
-                                      "level":  3
+                                      "level":  3,
+                                      "requirements":  {
+                                                           "value":  [
+                                                                         {
+                                                                             "itemId":  "gold",
+                                                                             "count":  1000
+                                                                         }
+                                                                     ],
+                                                           "Count":  1
+                                                       },
+                                      "cooltime":  240,
+                                      "maxQueueSlots":  5
                                   }
                         },
-    "tradingRegions":  [
-                           {
-                               "id":  "region_capital",
-                               "name":  "Capital City"
-                           },
-                           {
-                               "id":  "region_coast",
-                               "name":  "Coastal Harbor"
-                           },
-                           {
-                               "id":  "region_forest",
-                               "name":  "Forest Haven"
-                           }
-                       ],
-    "recipes":  {
-                    "cannedfish":  {
-                                       "outputCount":  1,
-                                       "materials":  [
-                                                         {
-                                                             "itemId":  "fish",
-                                                             "count":  2
-                                                         }
-                                                     ]
-                                   },
-                    "cookedmeat":  {
-                                       "outputCount":  1,
-                                       "materials":  [
-                                                         {
-                                                             "itemId":  "meat",
-                                                             "count":  2
-                                                         }
-                                                     ]
-                                   },
-                    "steel":  {
-                                  "outputCount":  1,
-                                  "materials":  [
-                                                    {
-                                                        "itemId":  "ore",
-                                                        "count":  3
-                                                    }
-                                                ]
-                              },
-                    "bread":  {
-                                  "outputCount":  1,
-                                  "materials":  [
-                                                    {
-                                                        "itemId":  "wheat",
-                                                        "count":  2
-                                                    }
-                                                ]
-                              }
-                },
-    "production":  {
-                       "farm":  {
-                                    "output":  "wheat",
-                                    "baseOutput":  1,
-                                    "productionInterval":  10000,
-                                    "outputItemId":  "wheat",
-                                    "facilityId":  "farm"
-                                },
-                       "fishery":  {
-                                       "output":  "fish",
-                                       "baseOutput":  1,
-                                       "productionInterval":  10000,
-                                       "outputItemId":  "fish",
-                                       "facilityId":  "fishery"
-                                   },
-                       "mine":  {
-                                    "output":  "ore",
-                                    "baseOutput":  1,
-                                    "productionInterval":  10000,
-                                    "outputItemId":  "ore",
-                                    "facilityId":  "mine"
-                                },
-                       "ranch":  {
-                                     "output":  "meat",
-                                     "baseOutput":  1,
-                                     "productionInterval":  10000,
-                                     "outputItemId":  "meat",
-                                     "facilityId":  "ranch"
-                                 }
-                   },
     "tradingOrders":  [
                           {
                               "credit":  100,
@@ -1538,70 +1451,82 @@ const GAME_DATA = {
                                            }
                           }
                       ],
-    "tradingUpgrades":  {
+    "workerUpgrades":  {
+                           "2":  {
+                                     "maxPending":  7,
+                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 5}, {\"grade\": \"uncommon\", \"weight\": 2}, {\"grade\": \"rare\", \"weight\": 1}]",
+                                     "arrivalInterval":  25000,
+                                     "level":  2,
+                                     "maxWorkers":  9
+                                 },
+                           "4":  {
+                                     "maxPending":  9,
+                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 4}, {\"grade\": \"uncommon\", \"weight\": 8}, {\"grade\": \"rare\", \"weight\": 6}, {\"grade\": \"epic\", \"weight\": 4}, {\"grade\": \"legendary\", \"weight\": 1}]",
+                                     "arrivalInterval":  15000,
+                                     "level":  4,
+                                     "maxWorkers":  15
+                                 },
+                           "5":  {
+                                     "maxPending":  10,
+                                     "gradeWeight":  "[{\"grade\": \"uncommon\", \"weight\": 4}, {\"grade\": \"rare\", \"weight\": 6}, {\"grade\": \"epic\", \"weight\": 4}, {\"grade\": \"legendary\", \"weight\": 1}]",
+                                     "arrivalInterval":  10000,
+                                     "level":  5,
+                                     "maxWorkers":  18
+                                 },
+                           "1":  {
+                                     "maxPending":  6,
+                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 3}, {\"grade\": \"uncommon\", \"weight\": 1}]",
+                                     "arrivalInterval":  30000,
+                                     "level":  1,
+                                     "maxWorkers":  6
+                                 },
+                           "3":  {
+                                     "maxPending":  8,
+                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 5}, {\"grade\": \"uncommon\", \"weight\": 5}, {\"grade\": \"rare\", \"weight\": 3}, {\"grade\": \"epic\", \"weight\": 1}]",
+                                     "arrivalInterval":  20000,
+                                     "level":  3,
+                                     "maxWorkers":  12
+                                 }
+                       },
+    "processUpgrades":  {
                             "2":  {
-                                      "level":  2,
-                                      "requirements":  {
-                                                           "value":  [
-                                                                         {
-                                                                             "itemId":  "gold",
-                                                                             "count":  500
-                                                                         }
-                                                                     ],
-                                                           "Count":  1
-                                                       },
-                                      "cooltime":  300,
-                                      "maxQueueSlots":  4
+                                      "processList":  [
+                                                          "bread",
+                                                          "steel"
+                                                      ],
+                                      "level":  2
                                   },
                             "4":  {
-                                      "level":  4,
-                                      "requirements":  {
-                                                           "value":  [
-                                                                         {
-                                                                             "itemId":  "gold",
-                                                                             "count":  2000
-                                                                         }
-                                                                     ],
-                                                           "Count":  1
-                                                       },
-                                      "cooltime":  180,
-                                      "maxQueueSlots":  6
+                                      "processList":  [
+                                                          "bread",
+                                                          "steel",
+                                                          "cookedmeat",
+                                                          "cannedfish"
+                                                      ],
+                                      "level":  4
                                   },
                             "5":  {
-                                      "level":  5,
-                                      "requirements":  {
-                                                           "value":  [
-                                                                         {
-                                                                             "itemId":  "gold",
-                                                                             "count":  5000
-                                                                         }
-                                                                     ],
-                                                           "Count":  1
-                                                       },
-                                      "cooltime":  120,
-                                      "maxQueueSlots":  8
+                                      "processList":  [
+                                                          "bread",
+                                                          "steel",
+                                                          "cookedmeat",
+                                                          "cannedfish"
+                                                      ],
+                                      "level":  5
                                   },
                             "1":  {
-                                      "level":  1,
-                                      "requirements":  [
-
-                                                       ],
-                                      "cooltime":  360,
-                                      "maxQueueSlots":  3
+                                      "processList":  [
+                                                          "bread"
+                                                      ],
+                                      "level":  1
                                   },
                             "3":  {
-                                      "level":  3,
-                                      "requirements":  {
-                                                           "value":  [
-                                                                         {
-                                                                             "itemId":  "gold",
-                                                                             "count":  1000
-                                                                         }
-                                                                     ],
-                                                           "Count":  1
-                                                       },
-                                      "cooltime":  240,
-                                      "maxQueueSlots":  5
+                                      "processList":  [
+                                                          "bread",
+                                                          "steel",
+                                                          "cookedmeat"
+                                                      ],
+                                      "level":  3
                                   }
                         },
     "upgradeTree":  {
@@ -1872,7 +1797,7 @@ const GAME_DATA = {
                         "processing":  {
                                            "2":  {
                                                      "Grid":  null,
-                                                     "productAreas":  0,
+                                                     "productAreas":  null,
                                                      "gridX":  null,
                                                      "level":  2,
                                                      "requirements":  {
@@ -1894,7 +1819,7 @@ const GAME_DATA = {
                                                  },
                                            "4":  {
                                                      "Grid":  null,
-                                                     "productAreas":  0,
+                                                     "productAreas":  null,
                                                      "gridX":  null,
                                                      "level":  4,
                                                      "requirements":  {
@@ -1916,7 +1841,7 @@ const GAME_DATA = {
                                                  },
                                            "5":  {
                                                      "Grid":  null,
-                                                     "productAreas":  0,
+                                                     "productAreas":  null,
                                                      "gridX":  null,
                                                      "level":  5,
                                                      "requirements":  {
@@ -1938,7 +1863,7 @@ const GAME_DATA = {
                                                  },
                                            "1":  {
                                                      "Grid":  null,
-                                                     "productAreas":  0,
+                                                     "productAreas":  null,
                                                      "gridX":  null,
                                                      "level":  1,
                                                      "requirements":  {
@@ -1965,7 +1890,7 @@ const GAME_DATA = {
                                                  },
                                            "3":  {
                                                      "Grid":  null,
-                                                     "productAreas":  0,
+                                                     "productAreas":  null,
                                                      "gridX":  null,
                                                      "level":  3,
                                                      "requirements":  {
@@ -1989,7 +1914,7 @@ const GAME_DATA = {
                         "lodge":  {
                                       "2":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  2,
                                                 "requirements":  {
@@ -2016,7 +1941,7 @@ const GAME_DATA = {
                                             },
                                       "4":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  4,
                                                 "requirements":  {
@@ -2043,7 +1968,7 @@ const GAME_DATA = {
                                             },
                                       "5":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  5,
                                                 "requirements":  {
@@ -2070,7 +1995,7 @@ const GAME_DATA = {
                                             },
                                       "1":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  1,
                                                 "requirements":  {
@@ -2092,7 +2017,7 @@ const GAME_DATA = {
                                             },
                                       "3":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  3,
                                                 "requirements":  {
@@ -2404,7 +2329,7 @@ const GAME_DATA = {
                         "trading":  {
                                         "2":  {
                                                   "Grid":  null,
-                                                  "productAreas":  0,
+                                                  "productAreas":  null,
                                                   "gridX":  null,
                                                   "level":  2,
                                                   "requirements":  {
@@ -2431,7 +2356,7 @@ const GAME_DATA = {
                                               },
                                         "4":  {
                                                   "Grid":  null,
-                                                  "productAreas":  0,
+                                                  "productAreas":  null,
                                                   "gridX":  null,
                                                   "level":  4,
                                                   "requirements":  {
@@ -2458,7 +2383,7 @@ const GAME_DATA = {
                                               },
                                         "5":  {
                                                   "Grid":  null,
-                                                  "productAreas":  0,
+                                                  "productAreas":  null,
                                                   "gridX":  null,
                                                   "level":  5,
                                                   "requirements":  {
@@ -2485,7 +2410,7 @@ const GAME_DATA = {
                                               },
                                         "1":  {
                                                   "Grid":  null,
-                                                  "productAreas":  0,
+                                                  "productAreas":  null,
                                                   "gridX":  null,
                                                   "level":  1,
                                                   "requirements":  {
@@ -2512,7 +2437,7 @@ const GAME_DATA = {
                                               },
                                         "3":  {
                                                   "Grid":  null,
-                                                  "productAreas":  0,
+                                                  "productAreas":  null,
                                                   "gridX":  null,
                                                   "level":  3,
                                                   "requirements":  {
@@ -2541,7 +2466,7 @@ const GAME_DATA = {
                         "stash":  {
                                       "2":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  2,
                                                 "requirements":  {
@@ -2554,7 +2479,7 @@ const GAME_DATA = {
                                                                                ],
                                                                      "Count":  1
                                                                  },
-                                                "storageSlots":  25,
+                                                "storageSlots":  null,
                                                 "materials":  [
 
                                                               ],
@@ -2563,7 +2488,7 @@ const GAME_DATA = {
                                             },
                                       "4":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  4,
                                                 "requirements":  {
@@ -2576,7 +2501,7 @@ const GAME_DATA = {
                                                                                ],
                                                                      "Count":  1
                                                                  },
-                                                "storageSlots":  50,
+                                                "storageSlots":  null,
                                                 "materials":  [
 
                                                               ],
@@ -2585,7 +2510,7 @@ const GAME_DATA = {
                                             },
                                       "5":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  5,
                                                 "requirements":  {
@@ -2598,7 +2523,7 @@ const GAME_DATA = {
                                                                                ],
                                                                      "Count":  1
                                                                  },
-                                                "storageSlots":  65,
+                                                "storageSlots":  null,
                                                 "materials":  [
 
                                                               ],
@@ -2607,13 +2532,13 @@ const GAME_DATA = {
                                             },
                                       "1":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  1,
                                                 "requirements":  [
 
                                                                  ],
-                                                "storageSlots":  20,
+                                                "storageSlots":  null,
                                                 "materials":  [
 
                                                               ],
@@ -2622,7 +2547,7 @@ const GAME_DATA = {
                                             },
                                       "3":  {
                                                 "Grid":  null,
-                                                "productAreas":  0,
+                                                "productAreas":  null,
                                                 "gridX":  null,
                                                 "level":  3,
                                                 "requirements":  {
@@ -2635,7 +2560,7 @@ const GAME_DATA = {
                                                                                ],
                                                                      "Count":  1
                                                                  },
-                                                "storageSlots":  35,
+                                                "storageSlots":  null,
                                                 "materials":  [
 
                                                               ],
@@ -2644,398 +2569,448 @@ const GAME_DATA = {
                                             }
                                   }
                     },
-    "workerNames":  [
-                        "John Smith",
-                        "Emma Johnson",
-                        "Michael Williams",
-                        "Sarah Brown",
-                        "James Jones",
-                        "Emily Garcia",
-                        "David Miller",
-                        "Jessica Davis",
-                        "Robert Rodriguez",
-                        "Maria Martinez",
-                        "William Hernandez",
-                        "Linda Lopez",
-                        "Richard Gonzalez",
-                        "Thomas Anderson",
-                        "Karen Taylor",
-                        "Christopher Thomas",
-                        "Mary Jackson",
-                        "Daniel White",
-                        "Patricia Harris",
-                        "Matthew Martin",
-                        "Barbara Thompson",
-                        "Anthony Garcia",
-                        "Susan Martinez",
-                        "Mark Robinson",
-                        "Jessica Clark",
-                        "Donald Rodriguez",
-                        "Jennifer Lewis",
-                        "Steven Lee",
-                        "Lisa Walker",
-                        "Paul Hall",
-                        "Michelle Allen",
-                        "Andrew Young",
-                        "Emily Hernandez",
-                        "Joshua King",
-                        "Angela Wright",
-                        "Kevin Lopez",
-                        "Anna Hill",
-                        "Brian Scott",
-                        "Michelle Green",
-                        "George Adams",
-                        "Emily Nelson",
-                        "Edward Carter",
-                        "Kathleen Mitchell",
-                        "Ronald Roberts",
-                        "Brenda Phillips",
-                        "Timothy Campbell",
-                        "Diane Parker",
-                        "Jason Evans",
-                        "Catherine Edwards",
-                        "Jeffrey Collins",
-                        "June Reeves",
-                        "Ryan Stewart",
-                        "Beverly Morris",
-                        "Jacob Rogers",
-                        "Mary Hunt",
-                        "Gary Day",
-                        "Diane Austin",
-                        "Bennie Jacobs",
-                        "Frances Carlson"
-                    ],
-    "tradingRegionUpgrades":  [
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10001",
-                                                                          "appearRate":  3
-                                                                      },
-                                                                      {
-                                                                          "orderId":  "order-10002",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  2
-                                                    },
-                                      "level":  1,
-                                      "id":  "region_capital",
-                                      "exp":  1000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10003",
-                                                                          "appearRate":  2
-                                                                      },
-                                                                      {
-                                                                          "orderId":  "order-10004",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  2
-                                                    },
-                                      "level":  2,
-                                      "id":  "region_capital",
-                                      "exp":  2000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10005",
-                                                                          "appearRate":  2
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  3,
-                                      "id":  "region_capital",
-                                      "exp":  3000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10006",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  4,
-                                      "id":  "region_capital",
-                                      "exp":  4000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10007",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  5,
-                                      "id":  "region_capital",
-                                      "exp":  5000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10011",
-                                                                          "appearRate":  3
-                                                                      },
-                                                                      {
-                                                                          "orderId":  "order-10012",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  2
-                                                    },
-                                      "level":  1,
-                                      "id":  "region_coast",
-                                      "exp":  1000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10013",
-                                                                          "appearRate":  2
-                                                                      },
-                                                                      {
-                                                                          "orderId":  "order-10014",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  2
-                                                    },
-                                      "level":  2,
-                                      "id":  "region_coast",
-                                      "exp":  2000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10015",
-                                                                          "appearRate":  2
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  3,
-                                      "id":  "region_coast",
-                                      "exp":  3000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10016",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  4,
-                                      "id":  "region_coast",
-                                      "exp":  4000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10017",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  5,
-                                      "id":  "region_coast",
-                                      "exp":  5000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10021",
-                                                                          "appearRate":  2
-                                                                      },
-                                                                      {
-                                                                          "orderId":  "order-10022",
-                                                                          "appearRate":  2
-                                                                      }
-                                                                  ],
-                                                        "Count":  2
-                                                    },
-                                      "level":  1,
-                                      "id":  "region_forest",
-                                      "exp":  1000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10023",
-                                                                          "appearRate":  2
-                                                                      },
-                                                                      {
-                                                                          "orderId":  "order-10024",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  2
-                                                    },
-                                      "level":  2,
-                                      "id":  "region_forest",
-                                      "exp":  2000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10025",
-                                                                          "appearRate":  2
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  3,
-                                      "id":  "region_forest",
-                                      "exp":  3000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10026",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  4,
-                                      "id":  "region_forest",
-                                      "exp":  4000
-                                  },
-                                  {
-                                      "orderList":  {
-                                                        "value":  [
-                                                                      {
-                                                                          "orderId":  "order-10027",
-                                                                          "appearRate":  1
-                                                                      }
-                                                                  ],
-                                                        "Count":  1
-                                                    },
-                                      "level":  5,
-                                      "id":  "region_forest",
-                                      "exp":  5000
-                                  }
-                              ],
-    "workerGrades":  [
+    "workerLevels":  [
                          {
-                             "id":  "common",
-                             "name":  "Common",
-                             "weight":  1,
-                             "baseGold":  20,
-                             "maxLevel":  10,
-                             "levelGold":  10
+                             "expRequired":  0,
+                             "level":  1
                          },
                          {
-                             "id":  "uncommon",
-                             "name":  "Uncommon",
-                             "weight":  1,
-                             "baseGold":  50,
-                             "maxLevel":  20,
-                             "levelGold":  20
+                             "expRequired":  600,
+                             "level":  2
                          },
                          {
-                             "id":  "rare",
-                             "name":  "Rare",
-                             "weight":  1,
-                             "baseGold":  100,
-                             "maxLevel":  30,
-                             "levelGold":  30
+                             "expRequired":  1200,
+                             "level":  3
                          },
                          {
-                             "id":  "epic",
-                             "name":  "Epic",
-                             "weight":  1,
-                             "baseGold":  200,
-                             "maxLevel":  50,
-                             "levelGold":  50
+                             "expRequired":  1800,
+                             "level":  4
                          },
                          {
-                             "id":  "legendary",
-                             "name":  "Legendary",
-                             "weight":  1,
-                             "baseGold":  500,
-                             "maxLevel":  100,
-                             "levelGold":  100
+                             "expRequired":  2400,
+                             "level":  5
+                         },
+                         {
+                             "expRequired":  3000,
+                             "level":  6
+                         },
+                         {
+                             "expRequired":  2400,
+                             "level":  7
+                         },
+                         {
+                             "expRequired":  2800,
+                             "level":  8
+                         },
+                         {
+                             "expRequired":  3200,
+                             "level":  9
+                         },
+                         {
+                             "expRequired":  3600,
+                             "level":  10
+                         },
+                         {
+                             "expRequired":  4000,
+                             "level":  11
+                         },
+                         {
+                             "expRequired":  4400,
+                             "level":  12
+                         },
+                         {
+                             "expRequired":  4800,
+                             "level":  13
+                         },
+                         {
+                             "expRequired":  5200,
+                             "level":  14
+                         },
+                         {
+                             "expRequired":  5600,
+                             "level":  15
+                         },
+                         {
+                             "expRequired":  6000,
+                             "level":  16
+                         },
+                         {
+                             "expRequired":  6400,
+                             "level":  17
+                         },
+                         {
+                             "expRequired":  6800,
+                             "level":  18
+                         },
+                         {
+                             "expRequired":  7200,
+                             "level":  19
+                         },
+                         {
+                             "expRequired":  7600,
+                             "level":  20
+                         },
+                         {
+                             "expRequired":  8000,
+                             "level":  21
+                         },
+                         {
+                             "expRequired":  8400,
+                             "level":  22
+                         },
+                         {
+                             "expRequired":  8800,
+                             "level":  23
+                         },
+                         {
+                             "expRequired":  9200,
+                             "level":  24
+                         },
+                         {
+                             "expRequired":  9600,
+                             "level":  25
+                         },
+                         {
+                             "expRequired":  10000,
+                             "level":  26
+                         },
+                         {
+                             "expRequired":  10400,
+                             "level":  27
+                         },
+                         {
+                             "expRequired":  10800,
+                             "level":  28
+                         },
+                         {
+                             "expRequired":  11200,
+                             "level":  29
+                         },
+                         {
+                             "expRequired":  11600,
+                             "level":  30
+                         },
+                         {
+                             "expRequired":  12000,
+                             "level":  31
+                         },
+                         {
+                             "expRequired":  12400,
+                             "level":  32
+                         },
+                         {
+                             "expRequired":  12800,
+                             "level":  33
+                         },
+                         {
+                             "expRequired":  13200,
+                             "level":  34
+                         },
+                         {
+                             "expRequired":  13600,
+                             "level":  35
+                         },
+                         {
+                             "expRequired":  14000,
+                             "level":  36
+                         },
+                         {
+                             "expRequired":  14400,
+                             "level":  37
+                         },
+                         {
+                             "expRequired":  14800,
+                             "level":  38
+                         },
+                         {
+                             "expRequired":  15200,
+                             "level":  39
+                         },
+                         {
+                             "expRequired":  15600,
+                             "level":  40
+                         },
+                         {
+                             "expRequired":  16000,
+                             "level":  41
+                         },
+                         {
+                             "expRequired":  16400,
+                             "level":  42
+                         },
+                         {
+                             "expRequired":  16800,
+                             "level":  43
+                         },
+                         {
+                             "expRequired":  17200,
+                             "level":  44
+                         },
+                         {
+                             "expRequired":  17600,
+                             "level":  45
+                         },
+                         {
+                             "expRequired":  18000,
+                             "level":  46
+                         },
+                         {
+                             "expRequired":  18400,
+                             "level":  47
+                         },
+                         {
+                             "expRequired":  18800,
+                             "level":  48
+                         },
+                         {
+                             "expRequired":  19200,
+                             "level":  49
+                         },
+                         {
+                             "expRequired":  19600,
+                             "level":  50
+                         },
+                         {
+                             "expRequired":  20000,
+                             "level":  51
+                         },
+                         {
+                             "expRequired":  20400,
+                             "level":  52
+                         },
+                         {
+                             "expRequired":  20800,
+                             "level":  53
+                         },
+                         {
+                             "expRequired":  21200,
+                             "level":  54
+                         },
+                         {
+                             "expRequired":  21600,
+                             "level":  55
+                         },
+                         {
+                             "expRequired":  22000,
+                             "level":  56
+                         },
+                         {
+                             "expRequired":  22400,
+                             "level":  57
+                         },
+                         {
+                             "expRequired":  22800,
+                             "level":  58
+                         },
+                         {
+                             "expRequired":  23200,
+                             "level":  59
+                         },
+                         {
+                             "expRequired":  23600,
+                             "level":  60
+                         },
+                         {
+                             "expRequired":  24000,
+                             "level":  61
+                         },
+                         {
+                             "expRequired":  24400,
+                             "level":  62
+                         },
+                         {
+                             "expRequired":  24800,
+                             "level":  63
+                         },
+                         {
+                             "expRequired":  25200,
+                             "level":  64
+                         },
+                         {
+                             "expRequired":  25600,
+                             "level":  65
+                         },
+                         {
+                             "expRequired":  26000,
+                             "level":  66
+                         },
+                         {
+                             "expRequired":  26400,
+                             "level":  67
+                         },
+                         {
+                             "expRequired":  26800,
+                             "level":  68
+                         },
+                         {
+                             "expRequired":  27200,
+                             "level":  69
+                         },
+                         {
+                             "expRequired":  27600,
+                             "level":  70
+                         },
+                         {
+                             "expRequired":  28000,
+                             "level":  71
+                         },
+                         {
+                             "expRequired":  28400,
+                             "level":  72
+                         },
+                         {
+                             "expRequired":  28800,
+                             "level":  73
+                         },
+                         {
+                             "expRequired":  29200,
+                             "level":  74
+                         },
+                         {
+                             "expRequired":  29600,
+                             "level":  75
+                         },
+                         {
+                             "expRequired":  30000,
+                             "level":  76
+                         },
+                         {
+                             "expRequired":  30400,
+                             "level":  77
+                         },
+                         {
+                             "expRequired":  30800,
+                             "level":  78
+                         },
+                         {
+                             "expRequired":  31200,
+                             "level":  79
+                         },
+                         {
+                             "expRequired":  31600,
+                             "level":  80
+                         },
+                         {
+                             "expRequired":  32000,
+                             "level":  81
+                         },
+                         {
+                             "expRequired":  32400,
+                             "level":  82
+                         },
+                         {
+                             "expRequired":  32800,
+                             "level":  83
+                         },
+                         {
+                             "expRequired":  33200,
+                             "level":  84
+                         },
+                         {
+                             "expRequired":  33600,
+                             "level":  85
+                         },
+                         {
+                             "expRequired":  34000,
+                             "level":  86
+                         },
+                         {
+                             "expRequired":  34400,
+                             "level":  87
+                         },
+                         {
+                             "expRequired":  34800,
+                             "level":  88
+                         },
+                         {
+                             "expRequired":  35200,
+                             "level":  89
+                         },
+                         {
+                             "expRequired":  35600,
+                             "level":  90
+                         },
+                         {
+                             "expRequired":  36000,
+                             "level":  91
+                         },
+                         {
+                             "expRequired":  36400,
+                             "level":  92
+                         },
+                         {
+                             "expRequired":  36800,
+                             "level":  93
+                         },
+                         {
+                             "expRequired":  37200,
+                             "level":  94
+                         },
+                         {
+                             "expRequired":  37600,
+                             "level":  95
+                         },
+                         {
+                             "expRequired":  38000,
+                             "level":  96
+                         },
+                         {
+                             "expRequired":  38400,
+                             "level":  97
+                         },
+                         {
+                             "expRequired":  38800,
+                             "level":  98
+                         },
+                         {
+                             "expRequired":  39200,
+                             "level":  99
+                         },
+                         {
+                             "expRequired":  39600,
+                             "level":  100
                          }
                      ],
-    "trading":  {
-                    "cannedfish":  {
-                                       "itemId":  "cannedfish",
-                                       "sellPrice":  12
-                                   },
-                    "cookedmeat":  {
-                                       "itemId":  "cookedmeat",
-                                       "sellPrice":  15
-                                   },
-                    "steel":  {
-                                  "itemId":  "steel",
-                                  "sellPrice":  20
-                              },
-                    "bread":  {
-                                  "itemId":  "bread",
-                                  "sellPrice":  10
-                              }
-                },
-    "workerUpgrades":  {
-                           "2":  {
-                                     "maxPending":  5,
-                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 5}, {\"grade\": \"uncommon\", \"weight\": 2}, {\"grade\": \"rare\", \"weight\": 1}]",
-                                     "arrivalInterval":  25000,
-                                     "level":  2,
-                                     "maxWorkers":  15
-                                 },
-                           "4":  {
-                                     "maxPending":  10,
-                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 4}, {\"grade\": \"uncommon\", \"weight\": 8}, {\"grade\": \"rare\", \"weight\": 6}, {\"grade\": \"epic\", \"weight\": 4}, {\"grade\": \"legendary\", \"weight\": 1}]",
-                                     "arrivalInterval":  15000,
-                                     "level":  4,
-                                     "maxWorkers":  50
-                                 },
-                           "5":  {
-                                     "maxPending":  15,
-                                     "gradeWeight":  "[{\"grade\": \"uncommon\", \"weight\": 4}, {\"grade\": \"rare\", \"weight\": 6}, {\"grade\": \"epic\", \"weight\": 4}, {\"grade\": \"legendary\", \"weight\": 1}]",
-                                     "arrivalInterval":  10000,
-                                     "level":  5,
-                                     "maxWorkers":  100
-                                 },
-                           "1":  {
-                                     "maxPending":  3,
-                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 3}, {\"grade\": \"uncommon\", \"weight\": 1}]",
-                                     "arrivalInterval":  30000,
-                                     "level":  1,
-                                     "maxWorkers":  5
-                                 },
-                           "3":  {
-                                     "maxPending":  7,
-                                     "gradeWeight":  "[{\"grade\": \"common\", \"weight\": 5}, {\"grade\": \"uncommon\", \"weight\": 5}, {\"grade\": \"rare\", \"weight\": 3}, {\"grade\": \"epic\", \"weight\": 1}]",
-                                     "arrivalInterval":  20000,
-                                     "level":  3,
-                                     "maxWorkers":  30
-                                 }
+    "facilities":  [
+                       {
+                           "name":  "Stash",
+                           "id":  "stash",
+                           "type":  "stash"
+                       },
+                       {
+                           "name":  "Worker\u0027s Lodge",
+                           "id":  "lodge",
+                           "type":  "emply"
+                       },
+                       {
+                           "name":  "Processing Plant",
+                           "id":  "processing",
+                           "type":  "process"
+                       },
+                       {
+                           "name":  "Trading Post",
+                           "id":  "trading",
+                           "type":  "trade"
+                       },
+                       {
+                           "name":  "Farm",
+                           "id":  "farm",
+                           "type":  "product"
+                       },
+                       {
+                           "name":  "Mine",
+                           "id":  "mine",
+                           "type":  "product"
+                       },
+                       {
+                           "name":  "Ranch",
+                           "id":  "ranch",
+                           "type":  "product"
+                       },
+                       {
+                           "name":  "Fishery",
+                           "id":  "fishery",
+                           "type":  "product"
                        }
+                   ]
 };

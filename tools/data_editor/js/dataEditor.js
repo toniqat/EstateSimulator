@@ -21,6 +21,9 @@ class DataEditor {
 
         // Selection history: Map of file path -> row ID
         this.selectionHistory = this._loadSelectionHistory();
+
+        // Last viewed file path
+        this.lastViewedFilePath = this._loadLastViewedFilePath();
     }
 
     /**
@@ -97,6 +100,7 @@ class DataEditor {
         const explorerHeader = document.querySelector('.pane-left .pane-header');
         this.fileExplorer = new FileExplorer(fileTreeContainer, explorerHeader);
         this.fileExplorer.onFileSelected = (file) => this._onFileSelected(file);
+        this.fileExplorer.onDirectoryLoaded = () => this._onDirectoryLoaded();
 
         // Row List
         const rowListContainer = document.getElementById('rowList');
@@ -133,6 +137,8 @@ class DataEditor {
             if (this.tabManager.isTabOpen(file.path)) {
                 // Switch to existing tab
                 this.tabManager.switchToTab(file.path);
+                // Save the file path as last viewed
+                this._saveLastViewedFilePath(file.path);
                 return;
             }
 
@@ -174,10 +180,36 @@ class DataEditor {
             // Auto-select row: restore previous selection or select first row
             this._autoSelectRow(file.path, rows, idColumn);
 
+            // Save the file path as last viewed
+            this._saveLastViewedFilePath(file.path);
+
             UIComponents.updateStatus(`Loaded ${file.name} (${rows.length} rows)`);
         } catch (error) {
             console.error('Error loading file:', error);
             UIComponents.showToast(`Error loading file: ${error.message}`, 'error');
+        }
+    }
+
+    /**
+     * Handle directory loaded event from FileExplorer
+     * Attempts to restore the last viewed file
+     * @private
+     */
+    _onDirectoryLoaded() {
+        // If we have a last viewed file path, try to restore it
+        if (this.lastViewedFilePath && this.fileExplorer.csvFileMap.has(this.lastViewedFilePath)) {
+            const fileHandle = this.fileExplorer.csvFileMap.get(this.lastViewedFilePath);
+
+            // Simulate file selection by calling the internal method
+            // We need to find the file element and trigger the selection
+            const fileElements = this.fileExplorer.container.querySelectorAll('.file-tree-item.file');
+            for (const element of fileElements) {
+                if (element.textContent.trim() === fileHandle.name) {
+                    // Programmatically select this file
+                    this.fileExplorer._selectFile(element, fileHandle, this.lastViewedFilePath);
+                    return;
+                }
+            }
         }
     }
 
@@ -596,6 +628,33 @@ class DataEditor {
         );
 
         UIComponents.showToast(`✓ Column "${headerName}" added`, 'success');
+    }
+
+    /**
+     * Save last viewed file path to localStorage
+     * @param {string} filePath - Path to the file
+     * @private
+     */
+    _saveLastViewedFilePath(filePath) {
+        try {
+            localStorage.setItem('dataEditor_lastViewedFilePath', filePath);
+        } catch (error) {
+            console.warn('Could not save last viewed file path:', error);
+        }
+    }
+
+    /**
+     * Load last viewed file path from localStorage
+     * @returns {string|null} Last viewed file path or null
+     * @private
+     */
+    _loadLastViewedFilePath() {
+        try {
+            return localStorage.getItem('dataEditor_lastViewedFilePath') || null;
+        } catch (error) {
+            console.warn('Could not load last viewed file path:', error);
+            return null;
+        }
     }
 }
 

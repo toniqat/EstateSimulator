@@ -1,5 +1,0 @@
-facility_id,output_item_id,base_output,production_interval_ms
-farm,wheat,1,10000
-mine,ore,1,10000
-ranch,meat,1,10000
-fishery,fish,1,10000

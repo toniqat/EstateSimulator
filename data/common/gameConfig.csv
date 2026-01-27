@@ -1,7 +1,4 @@
 key,value
 initial_gold,0
-initial_workers,10
-hire_cost,50
-production_interval_ms,10000
 min_game_speed,1
 max_game_speed,64

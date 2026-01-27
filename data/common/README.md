@@ -24,9 +24,6 @@ This directory contains **global game configuration** values that define core ga
 | Key | Value | Purpose |
 |-----|-------|---------|
 | `initial_gold` | 0 | Starting gold when a new game begins |
-| `initial_workers` | 10 | Number of workers hired at game start |
-| `hire_cost` | 50 | Gold cost to hire one additional worker |
-| `production_interval_ms` | 10000 | Time in milliseconds between production ticks (10 seconds) |
 | `min_game_speed` | 1 | Minimum game speed multiplier (1x speed) |
 | `max_game_speed` | 64 | Maximum game speed multiplier (64x speed) |
 

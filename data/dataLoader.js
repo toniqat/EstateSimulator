@@ -9,8 +9,6 @@ class DataLoader {
         this.facilities = {};
         this.upgradeTree = {};
         this.recipeData = null;
-        this.productionData = null;
-        this.tradingData = null;
         this.gameConfig = {};
         this.productAreas = {};
         this.workerNames = [];
@@ -45,9 +43,7 @@ class DataLoader {
             this.loadFacilities();
             this.loadUpgrades();
             this.loadGameConfig();
-            this.loadProduction();
             this.loadRecipes();
-            this.loadTrading();
             this.loadProductAreas();
             this.loadWorkerData();
             this.loadWorkerLevels();
@@ -166,23 +162,6 @@ class DataLoader {
         }
     }
 
-    /**
-     * Load production data from GAME_DATA
-     */
-    loadProduction() {
-        try {
-            if (!GAME_DATA.production || Object.keys(GAME_DATA.production).length === 0) {
-                throw new Error('No production data found in GAME_DATA');
-            }
-
-            this.productionData = { ...GAME_DATA.production };
-
-            console.log(`Loaded ${Object.keys(this.productionData).length} production facilities from GAME_DATA`);
-        } catch (error) {
-            console.error('Error loading production data:', error);
-            throw error;
-        }
-    }
 
     /**
      * Load recipes from GAME_DATA
@@ -198,24 +177,6 @@ class DataLoader {
             console.log(`Loaded ${Object.keys(this.recipeData).length} recipes from GAME_DATA`);
         } catch (error) {
             console.error('Error loading recipes:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Load trading prices from GAME_DATA
-     */
-    loadTrading() {
-        try {
-            if (!GAME_DATA.trading || Object.keys(GAME_DATA.trading).length === 0) {
-                throw new Error('No trading prices found in GAME_DATA');
-            }
-
-            this.tradingData = { ...GAME_DATA.trading };
-
-            console.log(`Loaded ${Object.keys(this.tradingData).length} trading prices from GAME_DATA`);
-        } catch (error) {
-            console.error('Error loading trading prices:', error);
             throw error;
         }
     }
@@ -323,19 +284,6 @@ class DataLoader {
         return this.recipeData ? this.recipeData[itemId] : null;
     }
 
-    /**
-     * Get production data for a facility
-     */
-    getProduction(facilityId) {
-        return this.productionData ? this.productionData[facilityId] : null;
-    }
-
-    /**
-     * Get trading price for an item
-     */
-    getTradingPrice(itemId) {
-        return this.tradingData ? this.tradingData[itemId] : null;
-    }
 
     /**
      * Get game configuration value

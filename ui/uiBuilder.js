@@ -101,7 +101,6 @@ class UIBuilder {
      */
     buildDynamicUI() {
         this.buildRecipesUI();
-        this.buildTradingUI();
         this.buildTradingPostUI();
         this.buildStashUI();
     }
@@ -438,25 +437,6 @@ class UIBuilder {
     }
 
     /**
-     * Build trading section
-     */
-    buildTradingUI() {
-        const tradingGrid = document.getElementById('trading-grid');
-        if (!tradingGrid) return;
-
-        tradingGrid.innerHTML = '';
-
-        const tradingData = dataLoader.tradingData || {};
-        const allItems = dataLoader.getAllItems();
-
-        for (const itemId in tradingData) {
-            const tradeInfo = tradingData[itemId];
-            const card = this.createTradeCard(itemId, tradeInfo, allItems);
-            tradingGrid.appendChild(card);
-        }
-    }
-
-    /**
      * Check if a stash item should be shown based on current filter
      */
     shouldShowStashItem(itemId, allItems) {
@@ -580,27 +560,6 @@ class UIBuilder {
                 stashGrid.appendChild(slotDiv);
             }
         }
-    }
-
-    /**
-     * Create a trade card element
-     */
-    createTradeCard(itemId, tradeInfo, allItems) {
-        const card = document.createElement('div');
-        card.className = 'trade-card';
-
-        const item = allItems[itemId];
-        const itemName = item ? item.name : itemId;
-
-        card.innerHTML = `
-            <h4>${itemName}</h4>
-            <p class="trade-price">${tradeInfo.sellPrice} Gold each</p>
-            <p class="trade-stock">Stock: <span id="${itemId}-stock">0</span></p>
-            <input type="number" min="0" id="${itemId}-sell-input" placeholder="Amount" value="0">
-            <button class="btn btn-primary" onclick="game.sell('${itemId}')">Sell</button>
-        `;
-
-        return card;
     }
 
     /**

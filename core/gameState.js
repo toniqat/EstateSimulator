@@ -110,8 +110,8 @@ class GameState {
                 }
             }
 
-            // Load config - start with 500 Gold
-            this.gold = 500;
+            // Load config - start with initial_gold from gameConfig
+            this.gold = parseInt(dataLoader.gameConfig.initial_gold) || 0;
 
             // Initialize worker system
             this.workers = {
