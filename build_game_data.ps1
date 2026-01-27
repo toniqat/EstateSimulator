@@ -274,7 +274,7 @@ foreach ($facilityId in $productUpgrades.Keys) {
 }
 
 # Process stashUpgrade.csv - Load stash capacity data
-$stashUpgradePath = Join-Path $DataDir "stashUpgrade.csv"
+$stashUpgradePath = Join-Path $DataDir "facilities\stashUpgrade.csv"
 if (Test-Path $stashUpgradePath) {
     $stashRows = Import-Csv $stashUpgradePath
     foreach ($row in $stashRows) {

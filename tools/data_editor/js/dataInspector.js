@@ -19,7 +19,7 @@ class DataInspector {
         this.headers = [];
         this.rows = [];
         this.idColumn = null;
-        this.selectedIds = [];
+        this.selectedIndices = [];
         this.typeInfo = {};
         this.currentValues = {};
         this.onDataChanged = null;
@@ -35,14 +35,15 @@ class DataInspector {
      * @param {Array} headers - Column names
      * @param {Array} rows - Row objects
      * @param {string} idColumn - ID column name
-     * @param {Array} selectedIds - Selected ID values
+     * @param {Array} selectedIndices - Selected row indices (or legacy selectedIds for backward compatibility)
      * @param {Object} typeInfo - Type information for columns
      */
-    load(headers, rows, idColumn, selectedIds, typeInfo) {
+    load(headers, rows, idColumn, selectedIndices, typeInfo) {
         this.headers = headers;
         this.rows = rows;
         this.idColumn = idColumn;
-        this.selectedIds = selectedIds;
+        // Support both selectedIndices (new) and legacy selectedIds for backward compatibility
+        this.selectedIndices = selectedIndices || [];
         this.typeInfo = typeInfo;
 
         // Reset locked fields when loading new data to avoid stale state
@@ -69,15 +70,13 @@ class DataInspector {
     render() {
         this.container.innerHTML = '';
 
-        if (this.selectedIds.length === 0) {
+        if (this.selectedIndices.length === 0) {
             this.container.innerHTML = '<p class="placeholder">Select a row to inspect</p>';
             return;
         }
 
-        // Get selected rows in order (important for determining "top-most" row)
-        const selectedRows = this.selectedIds.map(id =>
-            CSVParser.getRowById(this.rows, this.idColumn, id)
-        ).filter(r => r !== null);
+        // Get selected rows by index (maintains order, always gets correct row even with duplicate IDs)
+        const selectedRows = CSVParser.getRowsByIndices(this.rows, this.selectedIndices);
 
         if (selectedRows.length === 0) {
             this.container.innerHTML = '<p class="placeholder">No rows found</p>';
@@ -657,7 +656,7 @@ class DataInspector {
                         // Add a note about multi-row editing
                         const noteDiv = document.createElement('div');
                         noteDiv.className = 'inspector-field-note';
-                        noteDiv.textContent = `Editing top row (${this.selectedIds.length} rows selected)`;
+                        noteDiv.textContent = `Editing top row (${this.selectedIndices.length} rows selected)`;
                         container.appendChild(noteDiv);
                         container.appendChild(jsonRendererElement);
                     } catch (error) {
@@ -693,9 +692,11 @@ class DataInspector {
             this._propagateJSONSchema(header, value);
         }
 
-        // Update the selected rows
-        this.selectedIds.forEach(id => {
-            CSVParser.updateRow(this.rows, this.idColumn, id, { [header]: value });
+        // Update the selected rows by index (supports duplicate IDs)
+        this.selectedIndices.forEach(index => {
+            if (index >= 0 && index < this.rows.length) {
+                this.rows[index][header] = value;
+            }
         });
 
         if (this.onDataChanged) {
@@ -788,7 +789,7 @@ class DataInspector {
      */
     clear() {
         this.container.innerHTML = '<p class="placeholder">Select a row to inspect</p>';
-        this.selectedIds = [];
+        this.selectedIndices = [];
         this.lockedFields.clear();
         this._updateDeleteButtonVisibility();
     }
@@ -800,7 +801,7 @@ class DataInspector {
     _updateDeleteButtonVisibility() {
         const deleteBtn = document.getElementById('deleteRowBtn');
         if (deleteBtn) {
-            deleteBtn.style.display = this.selectedIds.length > 0 ? '' : 'none';
+            deleteBtn.style.display = this.selectedIndices.length > 0 ? '' : 'none';
         }
     }
 }

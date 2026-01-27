@@ -106,6 +106,31 @@ class CSVParser {
     }
 
     /**
+     * Get specific row by index
+     * @param {Array} rows - Row objects
+     * @param {number} index - Row index
+     * @returns {Object|null} Row object or null
+     */
+    static getRowByIndex(rows, index) {
+        if (index < 0 || index >= rows.length) {
+            return null;
+        }
+        return rows[index] || null;
+    }
+
+    /**
+     * Get multiple rows by indices
+     * @param {Array} rows - Row objects
+     * @param {Array} indices - Array of row indices
+     * @returns {Array} Array of row objects
+     */
+    static getRowsByIndices(rows, indices) {
+        return indices
+            .filter(index => index >= 0 && index < rows.length)
+            .map(index => rows[index]);
+    }
+
+    /**
      * Update row by ID
      * @param {Array} rows - Row objects
      * @param {string} idColumn - ID column name

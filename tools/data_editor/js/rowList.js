@@ -204,6 +204,14 @@ class RowList {
     }
 
     /**
+     * Get selected row indices
+     * @returns {Array} Array of selected row indices (in order)
+     */
+    getSelectedIndices() {
+        return Array.from(this.selectedIndices).sort((a, b) => a - b);
+    }
+
+    /**
      * Clear selection
      */
     clearSelection() {

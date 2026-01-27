@@ -369,7 +369,7 @@ const GAME_DATA = {
                      ],
     "config":  {
                    "min_game_speed":  1,
-                   "initial_gold":  0,
+                   "initial_gold":  500,
                    "max_game_speed":  64
                },
     "tradingRegions":  [

@@ -218,11 +218,14 @@ class DataEditor {
      * @private
      */
     _onRowSelectionChanged(selectedIds) {
+        // Get the selected row indices from rowList
+        const selectedIndices = this.rowList.getSelectedIndices();
+
         this.dataInspector.load(
             this.currentHeaders,
             this.currentRows,
             this.currentIdColumn,
-            selectedIds,
+            selectedIndices,
             this.currentTypeInfo
         );
         this._updateInspectorViewButtonText();
@@ -527,24 +530,28 @@ class DataEditor {
      * @private
      */
     async _onDeleteRowClicked() {
-        const selectedIds = this.dataInspector.selectedIds;
-        if (selectedIds.length === 0) {
+        const selectedIndices = this.dataInspector.selectedIndices;
+        if (selectedIndices.length === 0) {
             UIComponents.showToast('No rows selected', 'warning');
             return;
         }
 
-        const message = selectedIds.length === 1
+        const selectedRows = CSVParser.getRowsByIndices(this.currentRows, selectedIndices);
+        const selectedIds = selectedRows.map(row => row[this.currentIdColumn]);
+
+        const message = selectedIndices.length === 1
             ? `Delete row "${selectedIds[0]}"?`
-            : `Delete ${selectedIds.length} rows?`;
+            : `Delete ${selectedIndices.length} rows?`;
 
         const confirmed = await UIComponents.showConfirm('Confirm Delete', message);
         if (!confirmed) {
             return;
         }
 
-        // Remove selected rows
-        this.currentRows = this.currentRows.filter(row =>
-            !selectedIds.includes(row[this.currentIdColumn])
+        // Remove selected rows (filter out rows that are at the selected indices)
+        const indicesToDelete = new Set(selectedIndices);
+        this.currentRows = this.currentRows.filter((_, index) =>
+            !indicesToDelete.has(index)
         );
 
         // Mark file as modified
