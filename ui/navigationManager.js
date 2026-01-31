@@ -54,8 +54,8 @@ class NavigationManager {
         // Add "Add Facility" button if there are unbuilt facilities
         this.updateAddFacilityButton();
 
-        // Set default facility on first load
-        if (!this.currentFacility && this.facilityTypes.length > 0) {
+        // Set default facility on first load (but not if in construction mode)
+        if (!this.currentFacility && !this.inConstructionMode && this.facilityTypes.length > 0) {
             // Find first built facility
             for (const facility of this.facilityTypes) {
                 const facilityState = this.gameState?.facilities[facility.id];

@@ -50,6 +50,7 @@ class UpgradeSystem {
 
     /**
      * Check if an upgrade is possible and return status
+     * CRITICAL: Must check BOTH facility-level prerequisites AND item requirements
      */
     canUpgrade(facilityId) {
         const facility = this.gameState.facilities[facilityId];
@@ -62,36 +63,58 @@ class UpgradeSystem {
             return { canUpgrade: false, reason: 'Cannot upgrade further' };
         }
 
-        // Check all requirements
-        const missingRequirements = [];
+        // Normalize requirements - MUST have this before checking
         let requirements = this._normalizeRequirements(upgradeCost.requirements || []);
 
-        for (const req of requirements) {
-            const check = this._checkRequirement(req);
+        // CRITICAL: Check facility-level prerequisites FIRST
+        // These must be satisfied before checking items
+        const facilityConditions = requirements.filter(r => r.type === 'facility');
+        for (const req of facilityConditions) {
+            const targetFacility = this.gameState.facilities[req.param1];
+            const requiredLevel = req.param2;
+            const currentLevel = targetFacility?.level || 0;
 
-            if (!check.satisfied) {
-                if (req.type === 'item') {
-                    missingRequirements.push({
-                        type: 'item',
-                        itemId: req.param1,
-                        required: req.param2,
-                        have: check.have
-                    });
-                } else if (req.type === 'facility') {
-                    missingRequirements.push({
+            // Facility level must be >= required level
+            if (currentLevel < requiredLevel) {
+                return {
+                    canUpgrade: false,
+                    reason: 'Insufficient requirements',
+                    missingRequirements: [{
                         type: 'facility',
                         facilityId: req.param1,
-                        requiredLevel: req.param2,
-                        currentLevel: this.gameState.facilities[req.param1]?.level || 0
-                    });
-                }
+                        requiredLevel: requiredLevel,
+                        currentLevel: currentLevel
+                    }]
+                };
             }
         }
 
-        if (missingRequirements.length > 0) {
-            return { canUpgrade: false, reason: 'Insufficient requirements', missingRequirements };
+        // Then check item requirements
+        const itemRequirements = requirements.filter(r => r.type === 'item');
+        const missingItems = [];
+
+        for (const req of itemRequirements) {
+            const itemId = req.param1;
+            const required = req.param2;
+            const have = itemId === 'gold' ? this.gameState.gold : this.stashManager.getItemQuantity(itemId);
+
+            // Item quantity must be >= required quantity
+            if (have < required) {
+                missingItems.push({
+                    type: 'item',
+                    itemId: itemId,
+                    required: required,
+                    have: have
+                });
+            }
         }
 
+        // If any item requirement is missing, fail
+        if (missingItems.length > 0) {
+            return { canUpgrade: false, reason: 'Insufficient requirements', missingRequirements: missingItems };
+        }
+
+        // All requirements satisfied
         return { canUpgrade: true };
     }
 
@@ -229,6 +252,7 @@ class UpgradeSystem {
 
     /**
      * Check if a facility can be constructed (is unbuilt and has Level 1 requirements met)
+     * CRITICAL: Must check BOTH facility-level prerequisites AND item requirements
      */
     canConstruct(facilityId) {
         const facility = this.gameState.facilities[facilityId];
@@ -241,11 +265,33 @@ class UpgradeSystem {
         const constructionCost = dataLoader.getUpgradeCost(facilityId, 1);
         if (!constructionCost) return false;
 
-        // Check all requirements
+        // Normalize requirements
         let requirements = this._normalizeRequirements(constructionCost.requirements || []);
-        for (const req of requirements) {
-            const check = this._checkRequirement(req);
-            if (!check.satisfied) return false;
+
+        // CRITICAL: Check facility-level prerequisites FIRST
+        const facilityConditions = requirements.filter(r => r.type === 'facility');
+        for (const req of facilityConditions) {
+            const targetFacility = this.gameState.facilities[req.param1];
+            const requiredLevel = req.param2;
+            const currentLevel = targetFacility?.level || 0;
+
+            // Facility level must be >= required level
+            if (currentLevel < requiredLevel) {
+                return false;
+            }
+        }
+
+        // Then check item requirements
+        const itemRequirements = requirements.filter(r => r.type === 'item');
+        for (const req of itemRequirements) {
+            const itemId = req.param1;
+            const required = req.param2;
+            const have = itemId === 'gold' ? this.gameState.gold : this.stashManager.getItemQuantity(itemId);
+
+            // Item quantity must be >= required quantity
+            if (have < required) {
+                return false;
+            }
         }
 
         return true;

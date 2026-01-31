@@ -4,7 +4,7 @@
  */
 
 class FileExplorer {
-    constructor(container, headerContainer) {
+    constructor(container, headerContainer, persistence = null) {
         this.container = container;
         this.headerContainer = headerContainer;
         this.dirHandle = null;
@@ -13,6 +13,7 @@ class FileExplorer {
         this.onFileSelected = null;
         this.onDirectoryLoaded = null; // Callback when directory is loaded
         this.lastDirPath = this._loadLastDirPath();
+        this.persistence = persistence; // Optional persistence module for directory handle storage
         this._setupHeaderButton();
     }
 
@@ -30,7 +31,7 @@ class FileExplorer {
 
     /**
      * Initialize file explorer with directory picker
-     * Tries to reuse last directory path if available, otherwise shows picker
+     * Tries to reuse last directory handle if available, otherwise shows picker
      * @returns {Promise<void>}
      */
     async init() {
@@ -48,13 +49,40 @@ class FileExplorer {
                 return;
             }
 
+            // Try to retrieve stored directory handle if persistence is available
+            if (this.persistence) {
+                const storedHandle = await this.persistence.getDirectoryHandle();
+                if (storedHandle) {
+                    this.dirHandle = storedHandle;
+                    UIComponents.updateStatus(`Loading last folder: ${storedHandle.name}...`);
+                    await this.loadDirectory();
+                    return;
+                }
+
+                // If no valid handle but we have stored metadata, try restoring with permission
+                // (user activation is available here from the button click)
+                const restoredHandle = await this.persistence.restoreDirectoryHandleWithPermission();
+                if (restoredHandle) {
+                    this.dirHandle = restoredHandle;
+                    UIComponents.updateStatus(`Restoring last folder: ${restoredHandle.name}...`);
+                    await this.loadDirectory();
+                    return;
+                }
+            }
+
             // Request directory access
             this.dirHandle = await window.showDirectoryPicker();
 
-            // Save the directory path for next time
-            if (this.dirHandle.name) {
-                this._saveLastDirPath(this.dirHandle.name);
-                this.lastDirPath = this.dirHandle.name;
+            // Save the directory handle for next time
+            if (this.dirHandle) {
+                if (this.persistence) {
+                    await this.persistence.saveDirectoryHandle(this.dirHandle);
+                }
+                // Also save to localStorage as fallback
+                if (this.dirHandle.name) {
+                    this._saveLastDirPath(this.dirHandle.name);
+                    this.lastDirPath = this.dirHandle.name;
+                }
             }
 
             await this.loadDirectory();
@@ -91,7 +119,30 @@ class FileExplorer {
                 this.onDirectoryLoaded();
             }
         } catch (error) {
-            UIComponents.showToast(`Error loading directory: ${error.message}`, 'error');
+            console.error('Error loading directory:', error.name, '-', error.message);
+
+            // Handle permission errors specifically
+            if (error.name === 'NotAllowedError') {
+                this.dirHandle = null;
+                if (this.persistence) {
+                    try {
+                        await this.persistence.clearAll();
+                    } catch (e) {
+                        // Ignore clear errors
+                    }
+                }
+                UIComponents.showToast('Folder permissions lost. Please select the folder again.', 'error');
+                this.container.innerHTML = `
+                    <div class="placeholder">
+                        <p>⚠️ Folder access was lost.</p>
+                        <p>Permissions may have been revoked or the folder was moved.</p>
+                        <p>Click "📁" button above to select your data directory again.</p>
+                    </div>
+                `;
+            } else {
+                console.error('Detailed error:', error);
+                UIComponents.showToast(`Error loading directory: ${error.message}`, 'error');
+            }
         }
     }
 

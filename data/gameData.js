@@ -784,6 +784,27 @@ const GAME_DATA = {
                       "name":  "Gold",
                       "id":  "gold",
                       "stacks":  999999
+                  },
+                  {
+                      "type":  "Farm",
+                      "grade":  "common",
+                      "name":  "Sweetgrass",
+                      "id":  "sweetgrass",
+                      "stacks":  50
+                  },
+                  {
+                      "type":  "Farm",
+                      "grade":  "common",
+                      "name":  "Fennel",
+                      "id":  "fennel",
+                      "stacks":  50
+                  },
+                  {
+                      "type":  "Farm",
+                      "grade":  "common",
+                      "name":  "Wormwood",
+                      "id":  "wormwood",
+                      "stacks":  50
                   }
               ],
     "workerGrades":  [

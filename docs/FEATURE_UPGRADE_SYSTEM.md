@@ -155,25 +155,32 @@ Before applying upgrade, system validates all requirements:
    - **Item Requirements**: Stash contains required quantities
    - **Facility Requirements**: Target facility has reached required level
 
-**Validation Logic:**
+**Validation Logic (CRITICAL ORDER):**
 ```javascript
 if (!facilityExists) return "Facility not found"
 if (currentLevel >= 5) return "Already at max level"
 
-for (req of requirements) {
-  if (req.type === "item") {
-    if (stash[req.param1] < req.param2)
-      return "Missing " + req.param1
-  } else if (req.type === "facility") {
-    if (gameState.facilities[req.param1].level < req.param2)
-      return req.param1 + " must be level " + req.param2
-  }
+// STEP 1: Check FACILITY-LEVEL prerequisites FIRST (non-negotiable gates)
+for (req of facilityRequirements) {
+  if (gameState.facilities[req.param1].level < req.param2)
+    return req.param1 + " must be level " + req.param2
 }
+
+// STEP 2: Then check ITEM requirements (only if facility prerequisites are met)
+for (req of itemRequirements) {
+  if (stash[req.param1] < req.param2)
+    return "Missing " + req.param1
+}
+
+// All requirements satisfied - upgrade can proceed
 ```
 
 **Requirement Resolution:**
-- **Item** requirements must be satisfied AND will be consumed
-- **Facility** requirements must be satisfied but NOT consumed (only checked as prerequisite)
+- **Facility** requirements are checked FIRST (hard prerequisites that cannot be bypassed)
+- **Item** requirements are checked SECOND (resources to consume on upgrade)
+- Both types must be satisfied for upgrade button to turn green
+- **Item** requirements will be consumed on successful upgrade
+- **Facility** requirements are NOT consumed (only validated as prerequisites)
 
 ### Upgrade Application
 

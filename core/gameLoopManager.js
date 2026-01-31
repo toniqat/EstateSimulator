@@ -377,7 +377,7 @@ class GameLoopManager {
         if (facilityId === 'trading') {
             upgradeSucceeded = this.upgradeTradingPost();
         } else if (facilityId === 'stash') {
-            // Stash has special upgrade logic that updates capacity from storageSlots
+            // Stash has special upgrade logic that reads capacity from stashUpgrade.csv
             upgradeSucceeded = this.stashManager.upgradeStash();
         } else {
             upgradeSucceeded = this.upgradeSystem.upgradeFacility(facilityId);
@@ -1630,9 +1630,9 @@ class GameLoopManager {
 
             // Rebuild construction grid to reflect newly built facility (removed from available construction list)
             // Keep Construction View active so user can build more facilities
-            const mainView = document.getElementById('main-view');
-            if (mainView) {
-                this.uiBuilder.buildConstructionGridUI(mainView);
+            const constructionView = document.querySelector('.facility-view[data-view="construction"]');
+            if (constructionView) {
+                this.uiBuilder.buildConstructionGridUI(constructionView);
             }
 
             this.uiUpdater.updateUI();

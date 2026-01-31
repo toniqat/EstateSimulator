@@ -13,7 +13,10 @@
         <header class="editor-header">
             <div class="header-content">
                 <h1>Estate Simulator - Data Editor</h1>
-                <span id="statusText" class="status-text">Ready to open data directory</span>
+                <div class="header-status">
+                    <span id="statusText" class="status-text">Ready to open data directory</span>
+                    <span id="supportIndicator" class="support-indicator" title="Browser support for persistent directory access">?</span>
+                </div>
             </div>
         </header>
 
@@ -149,6 +152,7 @@
     <script src="js/csvParser.js"></script>
     <script src="js/typeInference.js"></script>
     <script src="js/uiComponents.js"></script>
+    <script src="js/editorPersistence.js"></script>
     <script src="js/fileExplorer.js"></script>
     <script src="js/rowList.js"></script>
     <script src="js/jsonRenderer.js"></script>

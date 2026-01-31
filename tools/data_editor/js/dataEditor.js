@@ -9,6 +9,7 @@ class DataEditor {
         this.rowList = null;
         this.dataInspector = null;
         this.tabManager = null;
+        this.persistence = null;
 
         this.currentFile = null;
         this.currentHeaders = [];
@@ -31,7 +32,12 @@ class DataEditor {
      */
     async init() {
         try {
-            // Initialize TabManager first
+            // Initialize persistence system
+            this.persistence = new EditorPersistence();
+            await this.persistence.initialize();
+            this._logBrowserSupport();
+
+            // Initialize TabManager
             const tabsListContainer = document.getElementById('tabsList');
             this.tabManager = new TabManager(tabsListContainer);
             this.tabManager.onTabChanged = (filePath, isNewTab) => this._onTabChanged(filePath, isNewTab);
@@ -41,6 +47,9 @@ class DataEditor {
 
             // Setup keyboard shortcuts
             this._setupKeyboardShortcuts();
+
+            // Try to auto-load last folder if stored
+            await this._tryAutoLoadFolder();
 
             UIComponents.updateStatus('Ready. Click "📁" to open a data directory.');
         } catch (error) {
@@ -53,7 +62,7 @@ class DataEditor {
      * Handle tab change event from TabManager
      * @private
      */
-    _onTabChanged(filePath, isNewTab) {
+    _onTabChanged(filePath, _isNewTab) {
         if (!filePath) {
             // All tabs closed - clear the UI
             this.currentFile = null;
@@ -98,7 +107,7 @@ class DataEditor {
         // File Explorer
         const fileTreeContainer = document.getElementById('fileTree');
         const explorerHeader = document.querySelector('.pane-left .pane-header');
-        this.fileExplorer = new FileExplorer(fileTreeContainer, explorerHeader);
+        this.fileExplorer = new FileExplorer(fileTreeContainer, explorerHeader, this.persistence);
         this.fileExplorer.onFileSelected = (file) => this._onFileSelected(file);
         this.fileExplorer.onDirectoryLoaded = () => this._onDirectoryLoaded();
 
@@ -661,6 +670,150 @@ class DataEditor {
         } catch (error) {
             console.warn('Could not load last viewed file path:', error);
             return null;
+        }
+    }
+
+    /**
+     * Log browser support information to console and update UI indicator
+     * @private
+     */
+    _logBrowserSupport() {
+        if (!this.persistence) return;
+
+        const support = this.persistence.getBrowserSupport();
+        console.log('EditorPersistence - Browser Support:');
+        console.log('  File System Access API:', support.fileSystemAccess);
+        console.log('  IndexedDB:', support.indexedDB);
+        console.log('  localStorage:', support.localStorage);
+        console.log('  Directory Persistence:', support.supportsDirectoryPersistence ? '✓ Enabled' : '✗ Limited');
+        console.log('  Fallback Available:', support.fallbackAvailable ? '✓ Yes' : '✗ No');
+
+        // Update support indicator
+        this._updateSupportIndicator(support);
+    }
+
+    /**
+     * Update the visual support indicator in the header
+     * @param {Object} support - Support info from persistence module
+     * @private
+     */
+    _updateSupportIndicator(support) {
+        const indicator = document.getElementById('supportIndicator');
+        if (!indicator) return;
+
+        let status = 'unsupported';
+        let title = 'Browser support: Limited\n\nUnsupported features:\n';
+        let unsupported = [];
+
+        if (!support.fileSystemAccess) {
+            unsupported.push('File System Access API');
+        }
+        if (!support.indexedDB) {
+            unsupported.push('IndexedDB');
+        }
+        if (!support.localStorage) {
+            unsupported.push('localStorage');
+        }
+
+        if (unsupported.length === 0) {
+            status = 'supported';
+            title = 'Browser support: Full\n\n✓ Persistent directory access enabled\n✓ All features available';
+        } else if (support.fallbackAvailable) {
+            status = 'partial';
+            title = 'Browser support: Partial\n\nUnsupported:\n• ' + unsupported.join('\n• ') +
+                    '\n\n⚠ Directory persistence limited (fallback available)';
+        } else {
+            status = 'unsupported';
+            title = 'Browser support: Unsupported\n\nUnsupported:\n• ' + unsupported.join('\n• ') +
+                    '\n\n✗ Persistent directory access not available';
+        }
+
+        // Set indicator appearance
+        indicator.className = `support-indicator ${status}`;
+        indicator.title = title;
+
+        // Set indicator text
+        if (status === 'supported') {
+            indicator.textContent = '✓';
+        } else if (status === 'partial') {
+            indicator.textContent = '⚠';
+        } else {
+            indicator.textContent = '✗';
+        }
+    }
+
+    /**
+     * Try to auto-load the last used folder on startup
+     * Detects if a stored folder exists but permissions were revoked,
+     * and prompts user to restore access
+     * @private
+     */
+    async _tryAutoLoadFolder() {
+        if (!this.persistence) return;
+
+        try {
+            // First, try to get an already-valid handle
+            let handle = await this.persistence.getDirectoryHandle();
+            if (handle) {
+                console.log('EditorPersistence: Auto-loading last folder:', handle.name);
+                this.fileExplorer.dirHandle = handle;
+                await this.fileExplorer.loadDirectory();
+                return;
+            }
+
+            // Check if a stored handle exists but permissions were revoked
+            const hasStored = await this.persistence.hasStoredHandle();
+            if (hasStored) {
+                console.log('EditorPersistence: Stored folder found but permission revoked - prompting user to restore');
+                // Show a toast with an action to restore permissions
+                UIComponents.showToast(
+                    'Your saved folder access expired. Grant permission to restore access.',
+                    'warning',
+                    {
+                        label: 'Restore',
+                        action: () => this._restoreStoredFolderAccess()
+                    }
+                );
+            } else {
+                console.log('EditorPersistence: No stored folder to auto-load');
+            }
+        } catch (error) {
+            console.warn('EditorPersistence: Could not auto-load folder:', error);
+            // Clear invalid stored data
+            try {
+                await this.persistence.clearAll();
+                UIComponents.showToast('Stored folder access expired. Please select your data directory again.', 'warning');
+            } catch (e) {
+                // Ignore
+            }
+        }
+    }
+
+    /**
+     * Restore access to a previously saved folder
+     * Requests permission from the user for the stored folder handle
+     * This must be called with user activation (e.g., from a button click)
+     * @private
+     */
+    async _restoreStoredFolderAccess() {
+        if (!this.persistence) return;
+
+        try {
+            console.log('EditorPersistence: User requesting permission restoration...');
+            const handle = await this.persistence.restoreDirectoryHandleWithPermission();
+
+            if (handle) {
+                console.log('EditorPersistence: Successfully restored folder access:', handle.name);
+                this.fileExplorer.dirHandle = handle;
+                await this.fileExplorer.loadDirectory();
+                UIComponents.showToast('✓ Folder access restored successfully', 'success');
+            } else {
+                console.warn('EditorPersistence: Failed to restore folder access');
+                UIComponents.showToast('Could not restore folder access. Please select the directory manually.', 'error');
+            }
+        } catch (error) {
+            console.error('EditorPersistence: Error restoring folder access:', error);
+            UIComponents.showToast('Error restoring folder access. Please select the directory manually.', 'error');
         }
     }
 }

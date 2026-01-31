@@ -1008,6 +1008,7 @@ class UIUpdater {
 
     /**
      * Update Trading Post upgrade button state
+     * Uses same validation as other facilities via canUpgrade()
      */
     updateTradingUpgradeButton() {
         const upgradeBtn = document.getElementById('trading-upgrade-btn');
@@ -1029,42 +1030,14 @@ class UIUpdater {
         upgradeBtn.disabled = false;
         upgradeBtn.removeAttribute('disabled');
 
-        // Check if player can afford upgrade (check requirements)
-        let canAfford = true;
-        if (nextUpgrade.requirements && nextUpgrade.requirements.length > 0) {
-            for (const req of nextUpgrade.requirements) {
-                // Handle polymorphic requirements structure (new format with type, param1, param2)
-                if (req.type === 'item' || req.type === undefined) {
-                    // New format: {type: "item", param1: itemId, param2: quantity}
-                    // Old format: {itemId: itemId, count: quantity}
-                    const itemId = req.param1 || req.itemId;
-                    const required = req.param2 || req.count;
-
-                    if (itemId === 'gold') {
-                        if (this.gameState.gold < required) {
-                            canAfford = false;
-                            break;
-                        }
-                    } else {
-                        const have = this.stashManager.getItemQuantity(itemId);
-                        if (have < required) {
-                            canAfford = false;
-                            break;
-                        }
-                    }
-                } else if (req.type === 'facility') {
-                    // Facility-level requirements
-                    const facility = this.gameState.facilities[req.param1];
-                    if (!facility || facility.level < req.param2) {
-                        canAfford = false;
-                        break;
-                    }
-                }
-            }
-        }
+        // Use upgradeSystem.canUpgrade for consistent validation logic
+        // This ensures facility-level requirements are checked BEFORE item requirements
+        const canUpgradeResult = (typeof game !== 'undefined' && game.upgradeSystem)
+            ? game.upgradeSystem.canUpgrade('trading')
+            : { canUpgrade: false };
 
         // Update button visual state (but keep it clickable)
-        if (canAfford) {
+        if (canUpgradeResult.canUpgrade) {
             upgradeBtn.classList.remove('insufficient-resources');
             upgradeBtn.style.backgroundColor = '#2ecc71'; // Green
             upgradeBtn.title = 'Upgrade Trading Post';

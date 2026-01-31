@@ -13,6 +13,8 @@ class CraftingSystem {
      */
     getMaterials(recipe) {
         if (!recipe) return [];
+        // Current format: recipe.value (array of {itemId, count})
+        if (recipe.value) return recipe.value;
         // New format: recipe.materials
         if (recipe.materials) return recipe.materials;
         // Old format: recipe.inputs
@@ -25,11 +27,13 @@ class CraftingSystem {
      */
     getOutputCount(recipe) {
         if (!recipe) return 0;
+        // Current format: recipe.Count
+        if (recipe.Count !== undefined) return recipe.Count;
         // New format: recipe.outputCount
         if (recipe.outputCount !== undefined) return recipe.outputCount;
         // Old format: recipe.outputAmount
         if (recipe.outputAmount !== undefined) return recipe.outputAmount;
-        return 0;
+        return 1; // Default to 1 if no count found
     }
 
     /**

@@ -265,6 +265,11 @@ Legend:
 - **Title Format:** Now displays "Construct Facility : [Facility Name]" for clarity
 - **Content Cleanup:** Removed redundant facility name display from body content
 - **View Persistence:** Construction View remains active after successful facility build, allowing chained construction
+  - Fixed in navigationManager.js: `initializeNavigation()` now checks `inConstructionMode` flag before auto-selecting default facility
+  - This prevents the view from switching to Stash after construction completes
+- **Grid Refresh on Build:** Construction grid now properly refreshes after facility is built
+  - Fixed in gameLoopManager.js: `confirmConstruction()` now correctly queries `.facility-view[data-view="construction"]` instead of non-existent `#main-view`
+  - Newly built facilities are immediately removed from the construction list
 
 ## Construction Requirements
 

@@ -143,53 +143,123 @@ class StashManager {
     }
 
     /**
-     * Upgrade stash facility
+     * Normalize requirements array (handle wrapped {value: [...]} format)
+     */
+    _normalizeRequirements(requirements) {
+        if (requirements && typeof requirements === 'object' && !Array.isArray(requirements) && requirements.value) {
+            requirements = requirements.value;
+        }
+        if (!Array.isArray(requirements)) {
+            return [];
+        }
+        return requirements;
+    }
+
+    /**
+     * Check if a requirement is satisfied
+     * Type "item": Check inventory quantity
+     * Type "facility": Check facility level
+     */
+    _checkRequirement(requirement) {
+        if (requirement.type === 'facility') {
+            const facility = this.gameState.facilities[requirement.param1];
+            if (!facility) return { satisfied: false, reason: 'Facility not found' };
+            return { satisfied: facility.level >= requirement.param2, reason: null };
+        } else if (requirement.type === 'item') {
+            const itemId = requirement.param1;
+            const required = requirement.param2;
+            const have = itemId === 'gold' ? this.gameState.gold : this.getItemQuantity(itemId);
+            return { satisfied: have >= required, have, required, itemId };
+        }
+        return { satisfied: false, reason: 'Unknown requirement type' };
+    }
+
+    /**
+     * Upgrade stash facility using modern requirements-based system
+     * Validates all requirements, consumes resources, and updates capacity from stashUpgrade.csv
      */
     upgradeStash() {
         const nextLevel = this.gameState.stash.level + 1;
         const upgradeCost = dataLoader.getUpgradeCost('stash', nextLevel);
 
         if (!upgradeCost) {
-            alert('Cannot upgrade stash further!');
+            alert('Cannot upgrade Stash further!');
             return false;
         }
 
-        // Check gold
-        if (this.gameState.gold < upgradeCost.goldCost) {
-            alert(`Not enough gold! Need ${upgradeCost.goldCost}, have ${this.gameState.gold}`);
-            return false;
-        }
+        // Normalize and check all requirements
+        let requirements = this._normalizeRequirements(upgradeCost.requirements || []);
 
-        // Check materials
-        for (const materialId of upgradeCost.materials) {
-            const required = upgradeCost.materials.filter(m => m === materialId).length;
-            const have = this.getItemQuantity(materialId);
-            if (have < required) {
-                const item = dataLoader.getItem(materialId);
-                const itemName = item ? item.name : materialId;
-                alert(`Not enough ${itemName}! Need ${required}, have ${have}`);
+        // First, validate all requirements
+        for (const req of requirements) {
+            const check = this._checkRequirement(req);
+
+            if (!check.satisfied) {
+                if (req.type === 'item') {
+                    const item = dataLoader.getItem(req.param1);
+                    const itemName = item ? item.name : req.param1;
+                    alert(`Not enough ${itemName}! Need ${req.param2}, have ${check.have}`);
+                } else if (req.type === 'facility') {
+                    const facility = dataLoader.getFacility(req.param1);
+                    const facilityName = facility ? facility.name : req.param1;
+                    alert(`${facilityName} must be at least level ${req.param2}!`);
+                }
                 return false;
             }
         }
 
-        // Consume costs
-        this.gameState.gold -= upgradeCost.goldCost;
-        for (const materialId of upgradeCost.materials) {
-            this.removeItemFromStash(materialId, 1);
+        // Consume resources (items only, not facilities)
+        for (const req of requirements) {
+            if (req.type === 'item') {
+                const itemId = req.param1;
+                const count = req.param2;
+
+                if (itemId === 'gold') {
+                    this.gameState.gold -= count;
+                } else {
+                    this.removeItemFromStash(itemId, count);
+                }
+            }
         }
 
-        // Upgrade
-        this.gameState.stash.level = nextLevel;
-        this.gameState.facilities['stash'].level = nextLevel;
+        // Record old capacity for slot expansion
         const oldCapacity = this.gameState.stash.capacity;
 
-        // Read new capacity from stash upgrade data
+        // Upgrade level
+        this.gameState.stash.level = nextLevel;
+        this.gameState.facilities['stash'].level = nextLevel;
+
+        // Read new capacity from stashUpgrade.csv via dataLoader
         const newCapacity = dataLoader.getStashCapacity(nextLevel);
+        if (newCapacity === 0) {
+            console.warn(`Warning: Stash level ${nextLevel} has no capacity defined in stashUpgrade.csv`);
+        }
         this.gameState.stash.capacity = newCapacity;
 
-        // Expand slots array
-        const newSlots = new Array(this.gameState.stash.capacity - oldCapacity).fill(null);
-        this.gameState.stash.slots = [...this.gameState.stash.slots, ...newSlots];
+        // Expand slots array if capacity increased
+        if (newCapacity > oldCapacity) {
+            const newSlots = new Array(newCapacity - oldCapacity).fill(null);
+            this.gameState.stash.slots = [...this.gameState.stash.slots, ...newSlots];
+        }
+
+        // Log upgrade with grouped details
+        console.groupCollapsed(`⬆️ Stash Upgraded`);
+        console.log(`Previous Level: ${nextLevel - 1}`);
+        console.log(`New Level: ${nextLevel}`);
+        console.log(`Previous Capacity: ${oldCapacity}`);
+        console.log(`New Capacity: ${newCapacity}`);
+        const itemReqs = requirements.filter(r => r.type === 'item');
+        if (itemReqs.length > 0) {
+            const itemDetails = itemReqs.map(req => {
+                const itemId = req.param1;
+                const count = req.param2;
+                const item = dataLoader.getItem(itemId);
+                const itemName = item ? item.name : itemId;
+                return `${itemName} (${count})`;
+            });
+            console.log(`Resources Consumed: ${itemDetails.join(', ')}`);
+        }
+        console.groupEnd();
 
         return true;
     }

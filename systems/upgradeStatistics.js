@@ -23,16 +23,17 @@ class UpgradeStatistics {
     /**
      * Get statistics for Stash upgrade
      */
-    getStashStatistics(facilityId, currentLevel, nextLevel) {
+    getStashStatistics(currentLevel, nextLevel) {
         const stats = [];
 
-        const currentUpgrade = this.dataLoader.getUpgradeCost(facilityId, currentLevel);
-        const nextUpgrade = this.dataLoader.getUpgradeCost(facilityId, nextLevel);
+        // Use dedicated stash upgrade methods instead of general upgrade tree
+        const currentCapacity = this.dataLoader.getStashCapacity(currentLevel);
+        const nextCapacity = this.dataLoader.getStashCapacity(nextLevel);
 
-        if (!currentUpgrade || !nextUpgrade) return stats;
-
-        const currentCapacity = currentUpgrade.storageSlots || 0;
-        const nextCapacity = nextUpgrade.storageSlots || 0;
+        // Only show stat if capacities are defined
+        if (currentCapacity === 0 && nextCapacity === 0) {
+            return stats;
+        }
 
         stats.push({
             label: 'Inventory Capacity',
@@ -374,7 +375,7 @@ class UpgradeStatistics {
 
         // Route to appropriate statistics getter based on facility type
         if (facilityId === 'stash') {
-            statistics = this.getStashStatistics(facilityId, currentLevel, nextLevel);
+            statistics = this.getStashStatistics(currentLevel, nextLevel);
         } else if (facilityId === 'lodge') {
             statistics = this.getWorkerLodgeStatistics(currentLevel, nextLevel);
         } else if (['farm', 'mine', 'ranch', 'fishery'].includes(facilityId)) {

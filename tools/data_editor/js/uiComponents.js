@@ -8,21 +8,80 @@ class UIComponents {
      * Show a toast notification
      * @param {string} message - Toast message
      * @param {string} type - 'success', 'error', 'warning' (default: 'success')
-     * @param {number} duration - Duration in ms (default: 3000)
+     * @param {Object|number} options - Duration in ms (for backwards compatibility) or options object
+     *                                   options.duration - Duration in ms (default: 3000)
+     *                                   options.label - Button label (optional)
+     *                                   options.action - Callback function (optional)
      */
-    static showToast(message, type = 'success', duration = 3000) {
+    static showToast(message, type = 'success', options = {}) {
+        // Handle backwards compatibility: third param could be duration (number)
+        let duration = 3000;
+        let label = null;
+        let action = null;
+
+        if (typeof options === 'number') {
+            duration = options;
+        } else if (typeof options === 'object') {
+            duration = options.duration ?? 3000;
+            label = options.label;
+            action = options.action;
+        }
+
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.textContent = message;
 
+        // Create content wrapper
+        const contentWrapper = document.createElement('div');
+        contentWrapper.style.display = 'flex';
+        contentWrapper.style.alignItems = 'center';
+        contentWrapper.style.justifyContent = 'space-between';
+        contentWrapper.style.gap = '10px';
+        contentWrapper.style.width = '100%';
+
+        // Create message span
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+
+        contentWrapper.appendChild(messageSpan);
+
+        // Add action button if provided
+        if (label && action) {
+            const actionBtn = document.createElement('button');
+            actionBtn.textContent = label;
+            actionBtn.style.padding = '4px 12px';
+            actionBtn.style.fontSize = '0.9em';
+            actionBtn.style.border = 'none';
+            actionBtn.style.borderRadius = '4px';
+            actionBtn.style.cursor = 'pointer';
+            actionBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+            actionBtn.style.color = 'inherit';
+            actionBtn.style.fontWeight = 'bold';
+            actionBtn.style.whiteSpace = 'nowrap';
+
+            actionBtn.addEventListener('click', () => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+                action();
+            });
+
+            contentWrapper.appendChild(actionBtn);
+            // Don't auto-remove if there's an action (user must click)
+            duration = null;
+        }
+
+        toast.appendChild(contentWrapper);
         container.appendChild(toast);
 
-        // Auto-remove after duration
-        setTimeout(() => {
-            toast.style.animation = 'slideIn 0.3s ease-out reverse';
-            setTimeout(() => toast.remove(), 300);
-        }, duration);
+        // Auto-remove after duration (unless there's an action)
+        if (duration) {
+            setTimeout(() => {
+                if (toast.parentElement) { // Check if still in DOM
+                    toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
     }
 
     /**

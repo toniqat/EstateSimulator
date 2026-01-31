@@ -66,9 +66,53 @@ body {
     gap: 12px;
 }
 
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .status-text {
     color: var(--text-secondary);
     font-size: 12px;
+}
+
+.support-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: help;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.support-indicator.supported {
+    background-color: rgba(78, 201, 176, 0.2);
+    color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.support-indicator.partial {
+    background-color: rgba(220, 220, 170, 0.2);
+    color: var(--warning-color);
+    border-color: var(--warning-color);
+}
+
+.support-indicator.unsupported {
+    background-color: rgba(244, 135, 113, 0.2);
+    color: var(--error-color);
+    border-color: var(--error-color);
+}
+
+.support-indicator:hover {
+    transform: scale(1.15);
 }
 
 /* Main Content Area */
