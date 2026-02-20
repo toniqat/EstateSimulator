@@ -509,6 +509,38 @@ class JSONRenderer {
             keyInput.type = 'text';
             keyInput.value = key;
             keyInput.className = 'json-table-key-input';
+
+            // Handle key renames: when user changes the key name
+            keyInput.addEventListener('change', () => {
+                const newKey = keyInput.value.trim();
+
+                // Only proceed if the key actually changed and is not empty
+                if (newKey && newKey !== key) {
+                    // Check if new key already exists
+                    if (obj.hasOwnProperty(newKey)) {
+                        // Key already exists, show error and revert
+                        keyInput.value = key;
+                        alert(`Key "${newKey}" already exists`);
+                        return;
+                    }
+
+                    // Rename the key: copy value to new key, delete old key
+                    obj[newKey] = obj[key];
+                    delete obj[key];
+
+                    // Notify about change
+                    if (onChange) onChange(obj);
+
+                    // Re-render to reflect the change
+                    container.innerHTML = '';
+                    container.appendChild(this._renderObject(obj, onChange));
+                } else if (newKey === '') {
+                    // Empty key name not allowed
+                    keyInput.value = key;
+                    alert('Key name cannot be empty');
+                }
+            });
+
             keyTd.appendChild(keyInput);
             row.appendChild(keyTd);
 

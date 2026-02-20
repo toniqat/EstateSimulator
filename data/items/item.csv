@@ -8,6 +8,3 @@ steel,Steel,10,rare,Mine,1,"[{""itemId"":""ore"",""count"":3}]"
 cookedmeat,Cooked Meat,10,uncommon,Ranch,1,"[{""itemId"":""meat"",""count"":2}]"
 cannedfish,Canned Fish,10,uncommon,Fishery,1,"[{""itemId"":""fish"",""count"":2}]"
 gold,Gold,999999,legendary,Special,,
-sweetgrass,Sweetgrass,50,common,Farm,1,
-fennel,Fennel,50,common,Farm,1,
-wormwood,Wormwood,50,common,Farm,,

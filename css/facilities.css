@@ -4652,6 +4652,85 @@
     opacity: 0.6;
 }
 
+/* ============================================================================ */
+/* CONSTRUCTION PANEL SECTIONS (Prerequisites vs Required Materials) */
+/* ============================================================================ */
+
+/* Section containers for visual grouping */
+.construction-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.construction-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Prerequisites Section - Blue left border for "conditions to check" */
+.prerequisites-section {
+    border-left: 3px solid #3498db;
+    padding-left: 10px;
+}
+
+/* Required Materials Section - Green left border for "items to consume" */
+.materials-section {
+    border-left: 3px solid #2ecc71;
+    padding-left: 10px;
+}
+
+/* Individual prerequisite items */
+.prerequisite-item {
+    font-size: 0.85em;
+}
+
+/* Individual material items */
+.material-item {
+    font-size: 0.85em;
+}
+
+/* ============================================================================ */
+/* CONSTRUCTION CONFIRMATION MODAL SECTIONS */
+/* ============================================================================ */
+
+/* Modal section containers */
+.construction-modal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+
+.construction-modal-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Prerequisites section in modal */
+.prerequisites-section {
+    border-left: 3px solid #3498db;
+}
+
+/* Materials section in modal */
+.materials-section {
+    border-left: 3px solid #2ecc71;
+}
+
+/* Section header in modal */
+.construction-modal-section .section-header {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #bdc3c7;
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #404040;
+}
+
 /* Cost Items Grid Layout (Required Materials) - Compact style matching order cards */
 .cost-items-grid {
     display: grid;

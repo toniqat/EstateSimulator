@@ -48,7 +48,8 @@
       "Bash(node build_game_data.js:*)",
       "Bash(node test_migration.js:*)",
       "Bash(move \"f:\\\\Python Project\\\\EstateSimulator\\\\css\\\\styles.css\" \"f:\\\\Python Project\\\\EstateSimulator\\\\todo\\\\styles.css\")",
-      "Bash(move \"f:\\\\Python Project\\\\EstateSimulator\\\\data\\\\stashUpgrade.csv\" \"f:\\\\Python Project\\\\EstateSimulator\\\\data\\\\facilities\\\\stashUpgrade.csv\")"
+      "Bash(move \"f:\\\\Python Project\\\\EstateSimulator\\\\data\\\\stashUpgrade.csv\" \"f:\\\\Python Project\\\\EstateSimulator\\\\data\\\\facilities\\\\stashUpgrade.csv\")",
+      "Bash(python3:*)"
     ]
   }
 }

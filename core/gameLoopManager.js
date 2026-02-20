@@ -22,7 +22,7 @@ class GameLoopManager {
         this.navigationManager = new NavigationManager(this.gameState, this.productGridSystem);
         this.uiBuilder = new UIBuilder(this.gameState, this.stashManager, this, this.productGridSystem, this.workerGridSystem, this.facilityStorageManager);
         this.navigationManager.uiBuilder = this.uiBuilder;
-        this.uiUpdater = new UIUpdater(this.gameState, this.stashManager, this.uiBuilder, this.facilityStorageManager, this.navigationManager);
+        this.uiUpdater = new UIUpdater(this.gameState, this.stashManager, this.uiBuilder, this.facilityStorageManager, this.navigationManager, this);
     }
 
     /**
@@ -114,10 +114,15 @@ class GameLoopManager {
 
     /**
      * Hire a pending worker (called from HTML onclick handler)
+     * EVENT-DRIVEN: Immediately refreshes construction modal (worker count changed)
      */
     hireWorker(workerId) {
         if (this.workerSystem.hireWorker(workerId)) {
             this.uiUpdater.updateUI();
+            // Refresh construction modal if open (event-driven update for worker hire)
+            this.refreshConstructionConfirmationIfOpen();
+            // Mark modal as refreshed to prevent redundant polling in next updateUI() call
+            this.uiUpdater.markConstructionModalRefreshed();
             return true;
         }
         return false;
@@ -125,10 +130,15 @@ class GameLoopManager {
 
     /**
      * Dismiss a pending worker from the hiring queue
+     * EVENT-DRIVEN: Immediately refreshes construction modal (worker count changed)
      */
     dismissWorker(workerId) {
         if (this.workerSystem.dismissWorker(workerId)) {
             this.uiUpdater.updateUI();
+            // Refresh construction modal if open (event-driven update for worker dismissal)
+            this.refreshConstructionConfirmationIfOpen();
+            // Mark modal as refreshed to prevent redundant polling in next updateUI() call
+            this.uiUpdater.markConstructionModalRefreshed();
             return true;
         }
         return false;
@@ -1523,38 +1533,74 @@ class GameLoopManager {
 
         let allRequirementsMet = true;
 
-        // Render facility prerequisites first
+        // Render Prerequisites section (facility and worker requirements - NOT consumed)
         if (costDetails.conditions && costDetails.conditions.length > 0) {
+            const prerequisitesSection = document.createElement('div');
+            prerequisitesSection.className = 'construction-modal-section prerequisites-section';
+
+            const prerequisitesLabel = document.createElement('h4');
+            prerequisitesLabel.className = 'section-header';
+            prerequisitesLabel.textContent = 'Prerequisites';
+            prerequisitesSection.appendChild(prerequisitesLabel);
+
             for (const condition of costDetails.conditions) {
                 const conditionItem = document.createElement('div');
-                conditionItem.className = `cost-item ${condition.isSatisfied ? 'sufficient' : 'insufficient'}`;
-                conditionItem.innerHTML = `
-                    <span class="cost-item-name">${condition.facilityName}</span>
-                    <span>
-                        Lv. ${condition.requiredLevel}
-                        <span style="color: #999;">/ Have:</span>
-                        Lv. ${condition.currentLevel}
-                    </span>
-                `;
-                costsContainer.appendChild(conditionItem);
+                conditionItem.className = `cost-item prerequisite-item ${condition.isSatisfied ? 'sufficient' : 'insufficient'}`;
+
+                if (condition.type === 'facility') {
+                    conditionItem.innerHTML = `
+                        <span class="cost-item-name">${condition.facilityName}</span>
+                        <span>
+                            Lv. ${condition.requiredLevel}
+                            <span style="color: #999;">/ Have:</span>
+                            Lv. ${condition.currentLevel}
+                        </span>
+                    `;
+                } else if (condition.type === 'worker') {
+                    const workerCount = condition.have !== undefined && condition.have !== null ? condition.have : 0;
+                    conditionItem.innerHTML = `
+                        <span class="cost-item-name">${condition.gradeName} Workers</span>
+                        <span>
+                            ×${condition.required}
+                            <span style="color: #999;">/ Have:</span>
+                            ×${workerCount}
+                        </span>
+                    `;
+                }
+
+                prerequisitesSection.appendChild(conditionItem);
                 if (!condition.isSatisfied) allRequirementsMet = false;
             }
+
+            costsContainer.appendChild(prerequisitesSection);
         }
 
-        // Render item costs
-        for (const cost of costDetails.costs) {
-            const costItem = document.createElement('div');
-            costItem.className = `cost-item ${cost.isSufficient ? 'sufficient' : 'insufficient'}`;
-            costItem.innerHTML = `
-                <span class="cost-item-name">${cost.itemName}</span>
-                <span>
-                    <span class="cost-item-required">${cost.required}</span>
-                    <span style="color: #999;">/ Have:</span>
-                    <span class="cost-item-current">${cost.have}</span>
-                </span>
-            `;
-            costsContainer.appendChild(costItem);
-            if (!cost.isSufficient) allRequirementsMet = false;
+        // Render Required Materials section (item costs - consumed on construction)
+        if (costDetails.costs && costDetails.costs.length > 0) {
+            const materialsSection = document.createElement('div');
+            materialsSection.className = 'construction-modal-section materials-section';
+
+            const materialsLabel = document.createElement('h4');
+            materialsLabel.className = 'section-header';
+            materialsLabel.textContent = 'Required Materials';
+            materialsSection.appendChild(materialsLabel);
+
+            for (const cost of costDetails.costs) {
+                const costItem = document.createElement('div');
+                costItem.className = `cost-item material-item ${cost.isSufficient ? 'sufficient' : 'insufficient'}`;
+                costItem.innerHTML = `
+                    <span class="cost-item-name">${cost.itemName}</span>
+                    <span>
+                        <span class="cost-item-required">${cost.required}</span>
+                        <span style="color: #999;">/ Have:</span>
+                        <span class="cost-item-current">${cost.have}</span>
+                    </span>
+                `;
+                materialsSection.appendChild(costItem);
+                if (!cost.isSufficient) allRequirementsMet = false;
+            }
+
+            costsContainer.appendChild(materialsSection);
         }
 
         // Update confirm button state
@@ -1583,6 +1629,21 @@ class GameLoopManager {
             modal.classList.add('hidden');
         }
         this.pendingConstructionFacilityId = null;
+    }
+
+    /**
+     * Refresh construction confirmation modal if it's currently shown
+     * Called whenever state changes (worker hired, item collected, etc.)
+     * Ensures requirements display is always up-to-date
+     */
+    refreshConstructionConfirmationIfOpen() {
+        const modal = document.getElementById('constructionConfirmModal');
+        if (!modal || modal.classList.contains('hidden')) return; // Modal not open
+
+        // Modal is open and we need to refresh it
+        if (this.pendingConstructionFacilityId) {
+            this.showConstructionConfirmation(this.pendingConstructionFacilityId);
+        }
     }
 
     /**

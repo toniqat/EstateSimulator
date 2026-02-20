@@ -37,30 +37,40 @@ class CSVParser {
     static serialize(headers, rows) {
         const csvLines = [];
 
-        // Add header row
-        csvLines.push(headers.join(','));
+        // Helper function to properly escape and quote CSV values
+        const escapeCSVValue = (value) => {
+            // Handle null/undefined
+            if (value === null || value === undefined) {
+                return '';
+            }
+
+            // Handle JSON objects
+            if (typeof value === 'object') {
+                const jsonStr = JSON.stringify(value);
+                // Escape quotes by doubling them, then wrap in quotes per RFC 4180
+                return `"${jsonStr.replace(/"/g, '""')}"`;
+            }
+
+            // Convert to string
+            const strValue = String(value);
+
+            // Escape values containing commas, quotes, or newlines per RFC 4180
+            if (strValue.includes(',') || strValue.includes('"') || strValue.includes('\n')) {
+                return `"${strValue.replace(/"/g, '""')}"`;
+            }
+
+            return strValue;
+        };
+
+        // Add header row (properly quote headers if needed)
+        const quotedHeaders = headers.map(escapeCSVValue);
+        csvLines.push(quotedHeaders.join(','));
 
         // Add data rows
         rows.forEach(row => {
             const values = headers.map(header => {
                 const value = row[header] ?? '';
-
-                // Handle JSON values
-                if (typeof value === 'object') {
-                    const jsonStr = JSON.stringify(value);
-                    // Escape quotes by doubling them
-                    return jsonStr.replace(/"/g, '""');
-                }
-
-                // Convert to string
-                const strValue = String(value);
-
-                // Escape values containing commas, quotes, or newlines
-                if (strValue.includes(',') || strValue.includes('"') || strValue.includes('\n')) {
-                    return `"${strValue.replace(/"/g, '""')}"`;
-                }
-
-                return strValue;
+                return escapeCSVValue(value);
             });
 
             csvLines.push(values.join(','));

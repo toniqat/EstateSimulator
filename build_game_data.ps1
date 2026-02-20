@@ -81,6 +81,24 @@ if (Test-Path $facilityPath) {
     Write-Host "✓ Loaded $($facilities.Count) facilities from facility.csv"
 }
 
+# Process workerGrade.csv - Load BEFORE facilityUpgrade validation
+$workerGradePath = Join-Path $DataDir "workers\workerGrade.csv"
+if (Test-Path $workerGradePath) {
+    $gradeRows = Import-Csv $workerGradePath
+    foreach ($row in $gradeRows) {
+        if ($row.id) {
+            $workerGrades += @{
+                id = $row.id
+                name = $row.name
+                maxLevel = [int]($row.maxLevel -replace '[^\d]', '10')
+                baseGold = [int]($row.baseGold -replace '[^\d]', '20')
+                levelGold = [int]($row.levelGold -replace '[^\d]', '10')
+                weight = 1
+            }
+        }
+    }
+    Write-Host "✓ Loaded $($workerGrades.Count) worker grades from workerGrade.csv"
+}
 
 # Process recipe.csv (legacy - recipes now come from item.csv)
 $recipePath = Join-Path $DataDir "items\recipe.csv"
@@ -169,6 +187,23 @@ if (Test-Path $upgradeCheckPath) {
             if ($row.requirements) {
                 try {
                     $requirements = ConvertFrom-Json $row.requirements
+
+                    # VALIDATION: Check worker requirements reference valid worker grades
+                    foreach ($req in $requirements) {
+                        if ($req.type -eq "worker") {
+                            $gradeId = $req.param1
+
+                            # Skip validation for wildcard values (empty string or "all" = total worker count)
+                            if ($gradeId -ne "" -and $gradeId -ne "all") {
+                                $validGrades = $workerGrades | Where-Object { $_.id -eq $gradeId }
+                                if ($validGrades.Count -eq 0) {
+                                    Write-Host "ERROR: Invalid worker grade ID '$gradeId' in facility $facilityId level $level" -ForegroundColor Red
+                                    Write-Host "Valid worker grades are: $($workerGrades.id -join ', '), or use wildcard 'all' or empty string '' for total worker count" -ForegroundColor Red
+                                    exit 1
+                                }
+                            }
+                        }
+                    }
                 } catch {
                     Write-Host "Warning: Failed to parse requirements JSON for $facilityId level $level"
                 }
@@ -361,25 +396,6 @@ if (Test-Path $workerNamePath) {
         }
     }
     Write-Host "✓ Loaded $($workerNames.Count) worker names from workerName.csv"
-}
-
-# Process workerGrade.csv
-$workerGradePath = Join-Path $DataDir "workers\workerGrade.csv"
-if (Test-Path $workerGradePath) {
-    $gradeRows = Import-Csv $workerGradePath
-    foreach ($row in $gradeRows) {
-        if ($row.id) {
-            $workerGrades += @{
-                id = $row.id
-                name = $row.name
-                maxLevel = [int]($row.maxLevel -replace '[^\d]', '10')
-                baseGold = [int]($row.baseGold -replace '[^\d]', '20')
-                levelGold = [int]($row.levelGold -replace '[^\d]', '10')
-                weight = 1
-            }
-        }
-    }
-    Write-Host "✓ Loaded $($workerGrades.Count) worker grades from workerGrade.csv"
 }
 
 # Process workerUpgrade.csv

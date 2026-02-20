@@ -115,19 +115,71 @@ Upgrade requirements use a polymorphic structure that supports both item costs a
    - `param2`: minimum required level (e.g., 2)
    - **Action**: Validate target facility has reached this level (prerequisite gate)
 
+3. **Worker Requirements** (not consumed, only checked):
+   - `type: "worker"` - Worker inventory requirement (by grade or total)
+   - `param1`: gradeId or wildcard
+     - **Specific Grade** (e.g., "common", "uncommon", "rare", "epic", "legendary") - counts only workers of that grade
+     - **Wildcard** (`"all"` or `""` empty string) - counts total workers regardless of grade
+   - `param2`: minimum count required (e.g., 6 or 10)
+   - **Action**: Validate player owns this count of workers (prerequisite gate)
+   - **Dynamic Validation**: Checked in real-time; if workers are dismissed/expelled, requirement immediately becomes unsatisfied
+   - **Validation during BuildData**: Specific grades are validated against valid grade IDs; wildcards are always valid
+
+#### Worker Requirement: Grade-Specific vs. Wildcard
+
+The system supports two modes for worker requirements:
+
+**Grade-Specific (Exact Match):**
+```json
+{"type":"worker","param1":"rare","param2":3}
+```
+- Counts ONLY workers with the "rare" grade
+- Ignores workers of other grades (common, uncommon, epic, legendary)
+- Example: If player has [5 common, 2 rare, 1 epic], this requirement checks only the 2 rare workers
+- **Data Validation:** The grade ID "rare" must be valid in `workerGrade.csv` or BuildData will error
+
+**Wildcard (Total Count):**
+```json
+{"type":"worker","param1":"all","param2":10}
+```
+or
+```json
+{"type":"worker","param1":"","param2":10}
+```
+- Counts ALL workers regardless of grade
+- Empty string (`""`) and `"all"` are equivalent
+- Example: If player has [5 common, 2 rare, 1 epic], this requirement checks all 8 workers
+- **Data Validation:** Wildcard values always pass validation (no grade ID lookup)
+
 **Example Requirements JSON:**
 ```javascript
-// Item only (current implementation)
+// Item only
 [
   { type: "item", param1: "gold", param2: 500 },
   { type: "item", param1: "ore", param2: 20 }
 ]
 
-// Mixed requirements (for future Facility Construction System)
+// Mixed with facility and specific-grade worker requirements
 [
-  { type: "facility", param1: "stash", param2: 2 },   // Stash must be level 2+
-  { type: "item", param1: "gold", param2: 1000 },     // AND costs 1000 gold
-  { type: "item", param1: "steel", param2: 50 }       // AND costs 50 steel
+  { type: "facility", param1: "stash", param2: 2 },   // Stash must be level 2+ (prerequisite)
+  { type: "worker", param1: "common", param2: 6 },    // AND must own 6 common workers (prerequisite)
+  { type: "item", param1: "gold", param2: 1000 },     // AND costs 1000 gold (consumed)
+  { type: "item", param1: "steel", param2: 50 }       // AND costs 50 steel (consumed)
+]
+
+// Worker requirement with specific grade
+[
+  { type: "worker", param1: "uncommon", param2: 4 }   // Requires 4 uncommon workers
+]
+
+// Worker requirement with wildcard (total count, any grade)
+[
+  { type: "worker", param1: "all", param2: 10 }       // Requires 10 workers (any grade)
+]
+
+// Another wildcard variant (empty string also works)
+[
+  { type: "worker", param1: "", param2: 8 }           // Requires 8 workers (any grade)
 ]
 ```
 
@@ -166,7 +218,20 @@ for (req of facilityRequirements) {
     return req.param1 + " must be level " + req.param2
 }
 
-// STEP 2: Then check ITEM requirements (only if facility prerequisites are met)
+// STEP 2: Check WORKER requirements (owned workers must meet count requirement)
+for (req of workerRequirements) {
+  // Wildcard support: "" or "all" = count all workers regardless of grade
+  let workerCount
+  if (req.param1 === "" || req.param1 === "all") {
+    workerCount = gameState.workers.length  // Total workers
+  } else {
+    workerCount = gameState.workers.filter(w => w.grade === req.param1).length  // Specific grade
+  }
+  if (workerCount < req.param2)
+    return "Need " + req.param2 + " workers"  // Omit grade for clarity
+}
+
+// STEP 3: Then check ITEM requirements (only if facility & worker prerequisites are met)
 for (req of itemRequirements) {
   if (stash[req.param1] < req.param2)
     return "Missing " + req.param1
@@ -177,10 +242,11 @@ for (req of itemRequirements) {
 
 **Requirement Resolution:**
 - **Facility** requirements are checked FIRST (hard prerequisites that cannot be bypassed)
-- **Item** requirements are checked SECOND (resources to consume on upgrade)
-- Both types must be satisfied for upgrade button to turn green
+- **Worker** requirements are checked SECOND (inventory-based gates, checked dynamically in real-time)
+- **Item** requirements are checked THIRD (resources to consume on upgrade)
+- All types must be satisfied for upgrade button to turn green
 - **Item** requirements will be consumed on successful upgrade
-- **Facility** requirements are NOT consumed (only validated as prerequisites)
+- **Facility** and **Worker** requirements are NOT consumed (only validated as prerequisites)
 
 ### Upgrade Application
 
@@ -189,6 +255,7 @@ On successful validation:
 1. **Consume Item Requirements Only**:
    - Items with `type: "item"` are removed from stash (param1=itemId, param2=quantity)
    - Facility requirements with `type: "facility"` are NOT consumed (only validated as prerequisites)
+   - Worker requirements with `type: "worker"` are NOT consumed (only validated as prerequisites)
    - Gold is treated as an item requirement
 
 2. **Update Facility Level**:
@@ -288,12 +355,14 @@ Stores facility progression:
 
 **Polymorphic Requirement Handling:**
 - `_normalizeRequirements(requirements)` - Handle legacy {value: [...]} wrapping
-- `_checkRequirement(requirement)` - Validate single requirement (item or facility type)
+- `_checkRequirement(requirement)` - Validate single requirement (item, facility, or worker type)
+- `_countWorkersByGrade(gradeId)` - Count owned workers of a specific grade
+- `_getWorkerGradeName(gradeId)` - Get display name for worker grade
 
 **Main Methods:**
 - `canUpgrade(facilityId)` - Check if all requirements satisfied, return details on failure
-- `getUpgradeCostDetails(facilityId)` - Get costs (items) and conditions (facilities) for modal display
-- `upgradeFacility(facilityId)` - Execute upgrade: consume item requirements only, check facility requirements
+- `getUpgradeCostDetails(facilityId)` - Get costs (items) and conditions (facilities, workers) for modal display
+- `upgradeFacility(facilityId)` - Execute upgrade: consume item requirements only, check facility & worker requirements
 - `getUpgradeCost(facilityId, level)` - Get raw upgrade data from dataLoader
 
 ### upgradeStatistics.js

@@ -705,8 +705,9 @@ class DataInspector {
     }
 
     /**
-     * Propagate JSON schema changes to all rows in the column
-     * If a new key is added to a JSON object in one row, it's applied to all other rows
+     * Propagate JSON schema changes to selected rows only
+     * If a new key is added to a JSON object in one row, it's applied to other SELECTED rows
+     * This prevents accidental schema propagation to unselected rows
      * @private
      */
     _propagateJSONSchema(columnName, newValue) {
@@ -730,8 +731,12 @@ class DataInspector {
 
         const newKeys = Object.keys(newObj);
 
-        // Go through all rows and check if they're missing any keys
-        this.rows.forEach(row => {
+        // Go through ONLY SELECTED rows and check if they're missing any keys
+        // This prevents unintended schema propagation to the entire column
+        this.selectedIndices.forEach(selectedIndex => {
+            const row = this.rows[selectedIndex];
+            if (!row) return;
+
             const currentValue = row[columnName];
             let currentObj = {};
 

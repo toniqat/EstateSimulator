@@ -1450,12 +1450,16 @@ class UIBuilder {
             header.className = 'construction-panel-header';
             header.innerHTML = `<div class="construction-panel-name">${facility.name}</div>`;
 
-            // Check facility prerequisites
+            // Check ALL facility and worker prerequisites (strict AND logic)
+            // Prerequisites are met only if ALL conditions are satisfied
             const facilityPrerequisitesMet = !costDetails.conditions ||
                 costDetails.conditions.every(c => c.isSatisfied);
+
+            // Check ALL material requirements (strict AND logic)
+            // Materials are sufficient only if ALL items are available
             const itemRequirementsMet = costDetails.costs.every(c => c.isSufficient);
 
-            // If facility prerequisites are NOT met, disable the entire panel
+            // Disable entire panel if ANY facility/worker prerequisite is missing
             if (!facilityPrerequisitesMet) {
                 panel.classList.add('disabled');
             }
@@ -1464,38 +1468,62 @@ class UIBuilder {
             const costsDiv = document.createElement('div');
             costsDiv.className = 'construction-panel-costs';
 
-            // Render facility prerequisites section with label
+            // Render Prerequisites section (facility and worker requirements - NOT consumed)
             if (costDetails.conditions && costDetails.conditions.length > 0) {
+                const prerequisitesSection = document.createElement('div');
+                prerequisitesSection.className = 'construction-section prerequisites-section';
+
                 const prerequisitesLabel = document.createElement('div');
                 prerequisitesLabel.className = 'construction-section-label';
                 prerequisitesLabel.textContent = 'Prerequisites';
-                costsDiv.appendChild(prerequisitesLabel);
+                prerequisitesSection.appendChild(prerequisitesLabel);
 
                 for (const condition of costDetails.conditions) {
                     const conditionItem = document.createElement('div');
-                    conditionItem.className = `construction-panel-cost-item ${condition.isSatisfied ? 'sufficient' : 'insufficient'}`;
-                    conditionItem.innerHTML = `
-                        <span>${condition.facilityName}</span>
-                        <span class="construction-cost-amount">
-                            Lv. ${condition.requiredLevel}
-                            <span style="color: #95a5a6;">/ Have:</span>
-                            Lv. ${condition.currentLevel}
-                        </span>
-                    `;
-                    costsDiv.appendChild(conditionItem);
+                    conditionItem.className = `construction-panel-cost-item prerequisite-item ${condition.isSatisfied ? 'sufficient' : 'insufficient'}`;
+
+                    if (condition.type === 'facility') {
+                        conditionItem.innerHTML = `
+                            <span>${condition.facilityName}</span>
+                            <span class="construction-cost-amount">
+                                Lv. ${condition.requiredLevel}
+                                <span style="color: #95a5a6;">/ Have:</span>
+                                Lv. ${condition.currentLevel}
+                            </span>
+                        `;
+                    } else if (condition.type === 'worker') {
+                        const workerCount = condition.have !== undefined && condition.have !== null ? condition.have : 0;
+                        conditionItem.innerHTML = `
+                            <span>${condition.gradeName} Workers</span>
+                            <span class="construction-cost-amount">
+                                ×${condition.required}
+                                <span style="color: #95a5a6;">/ Have:</span>
+                                ×${workerCount}
+                            </span>
+                        `;
+                    }
+
+                    prerequisitesSection.appendChild(conditionItem);
                 }
+
+                costsDiv.appendChild(prerequisitesSection);
             }
 
-            // Render item costs section with label
+            // Render Required Materials section (item costs - consumed on construction)
             if (costDetails.costs && costDetails.costs.length > 0) {
+                const materialsSection = document.createElement('div');
+                materialsSection.className = 'construction-section materials-section';
+
                 const materialsLabel = document.createElement('div');
                 materialsLabel.className = 'construction-section-label';
                 materialsLabel.textContent = 'Required Materials';
-                costsDiv.appendChild(materialsLabel);
+                materialsSection.appendChild(materialsLabel);
 
                 // Use grid layout for required materials
                 const costGridContainer = this.renderCostItemsGridContainer(costDetails.costs);
-                costsDiv.appendChild(costGridContainer);
+                materialsSection.appendChild(costGridContainer);
+
+                costsDiv.appendChild(materialsSection);
             }
 
             // Actions section with Construct button
@@ -1504,7 +1532,8 @@ class UIBuilder {
             const constructBtn = document.createElement('button');
             constructBtn.className = 'btn btn-construct';
             constructBtn.textContent = 'Construct';
-            // Disable button if facility prerequisites are missing OR item requirements are missing
+            // CRITICAL: Strict AND logic - button ONLY enabled if BOTH prerequisites AND materials are met
+            // Disabled if ANY facility prerequisite missing OR ANY worker requirement missing OR ANY item missing
             constructBtn.disabled = !facilityPrerequisitesMet || !itemRequirementsMet;
             constructBtn.addEventListener('click', () => {
                 window.game.showConstructionConfirmation(facility.id);

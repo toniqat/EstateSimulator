@@ -8,36 +8,36 @@
 const GAME_DATA = {
     "stashUpgrades":  {
                           "3":  {
-                                    "capacity":  35,
+                                    "capacity":  20,
                                     "level":  3
                                 },
                           "2":  {
-                                    "capacity":  25,
+                                    "capacity":  10,
                                     "level":  2
                                 },
                           "1":  {
-                                    "capacity":  20,
+                                    "capacity":  5,
                                     "level":  1
                                 },
                           "4":  {
-                                    "capacity":  50,
+                                    "capacity":  30,
                                     "level":  4
                                 },
                           "6":  {
-                                    "capacity":  80,
+                                    "capacity":  70,
                                     "level":  6
                                 },
                           "5":  {
-                                    "capacity":  65,
+                                    "capacity":  50,
                                     "level":  5
                                 }
                       },
     "productAreas":  [
                          {
-                             "workers":  1,
-                             "id":  "farm_basic",
+                             "workers":  2,
+                             "id":  "small_farm",
                              "gridX":  2,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -58,101 +58,9 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  3,
-                             "id":  "farm_medium1",
+                             "id":  "medium_farm",
                              "gridX":  3,
-                             "cooltime":  10,
-                             "requiredLevel":  0,
-                             "facility_id":  null,
-                             "productItem":  {
-                                                 "itemId":  "wheat",
-                                                 "itemProductCount":  1
-                                             },
-                             "requiredStat":  [
-                                                  {
-                                                      "statId":  "str",
-                                                      "rate":  3
-                                                  },
-                                                  {
-                                                      "statId":  "int",
-                                                      "rate":  1
-                                                  }
-                                              ],
-                             "gridY":  2
-                         },
-                         {
-                             "workers":  3,
-                             "id":  "farm_medium2",
-                             "gridX":  2,
-                             "cooltime":  10,
-                             "requiredLevel":  0,
-                             "facility_id":  null,
-                             "productItem":  {
-                                                 "itemId":  "wheat",
-                                                 "itemProductCount":  1
-                                             },
-                             "requiredStat":  [
-                                                  {
-                                                      "statId":  "str",
-                                                      "rate":  3
-                                                  },
-                                                  {
-                                                      "statId":  "int",
-                                                      "rate":  1
-                                                  }
-                                              ],
-                             "gridY":  3
-                         },
-                         {
-                             "workers":  3,
-                             "id":  "farm_advanced1",
-                             "gridX":  4,
-                             "cooltime":  10,
-                             "requiredLevel":  0,
-                             "facility_id":  null,
-                             "productItem":  {
-                                                 "itemId":  "wheat",
-                                                 "itemProductCount":  1
-                                             },
-                             "requiredStat":  [
-                                                  {
-                                                      "statId":  "str",
-                                                      "rate":  3
-                                                  },
-                                                  {
-                                                      "statId":  "int",
-                                                      "rate":  1
-                                                  }
-                                              ],
-                             "gridY":  4
-                         },
-                         {
-                             "workers":  2,
-                             "id":  "farm_advanced2",
-                             "gridX":  2,
-                             "cooltime":  10,
-                             "requiredLevel":  0,
-                             "facility_id":  null,
-                             "productItem":  {
-                                                 "itemId":  "wheat",
-                                                 "itemProductCount":  1
-                                             },
-                             "requiredStat":  [
-                                                  {
-                                                      "statId":  "str",
-                                                      "rate":  3
-                                                  },
-                                                  {
-                                                      "statId":  "int",
-                                                      "rate":  1
-                                                  }
-                                              ],
-                             "gridY":  4
-                         },
-                         {
-                             "workers":  2,
-                             "id":  "farm_advanced3",
-                             "gridX":  4,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -172,57 +80,80 @@ const GAME_DATA = {
                              "gridY":  2
                          },
                          {
-                             "workers":  2,
-                             "id":  "mine_basic",
-                             "gridX":  2,
-                             "cooltime":  10,
-                             "requiredLevel":  0,
-                             "facility_id":  null,
-                             "productItem":  {
-                                                 "itemId":  "ore",
-                                                 "itemProductCount":  1
-                                             },
-                             "requiredStat":  [
-                                                  {
-                                                      "statId":  "str",
-                                                      "rate":  4
-                                                  }
-                                              ],
-                             "gridY":  2
-                         },
-                         {
                              "workers":  3,
-                             "id":  "mine_medium",
+                             "id":  "big_farm",
                              "gridX":  3,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
-                                                 "itemId":  "ore",
-                                                 "itemProductCount":  2
-                                             },
-                             "requiredStat":  [
-                                                  {
-                                                      "statId":  "str",
-                                                      "rate":  4
-                                                  }
-                                              ],
-                             "gridY":  3
-                         },
-                         {
-                             "workers":  4,
-                             "id":  "mine_advanced",
-                             "gridX":  4,
-                             "cooltime":  8,
-                             "requiredLevel":  0,
-                             "facility_id":  null,
-                             "productItem":  {
-                                                 "itemId":  "ore",
+                                                 "itemId":  "wheat",
                                                  "itemProductCount":  3
                                              },
                              "requiredStat":  [
                                                   {
                                                       "statId":  "str",
+                                                      "rate":  3
+                                                  },
+                                                  {
+                                                      "statId":  "int",
+                                                      "rate":  1
+                                                  }
+                                              ],
+                             "gridY":  3
+                         },
+                         {
+                             "workers":  2,
+                             "id":  "small_mine",
+                             "gridX":  2,
+                             "cooltime":  60,
+                             "requiredLevel":  0,
+                             "facility_id":  null,
+                             "productItem":  {
+                                                 "itemId":  "ore",
+                                                 "itemProductCount":  1
+                                             },
+                             "requiredStat":  [
+                                                  {
+                                                      "statId":  "str",
+                                                      "rate":  4
+                                                  }
+                                              ],
+                             "gridY":  3
+                         },
+                         {
+                             "workers":  3,
+                             "id":  "medium_mine",
+                             "gridX":  4,
+                             "cooltime":  60,
+                             "requiredLevel":  0,
+                             "facility_id":  null,
+                             "productItem":  {
+                                                 "itemId":  "ore",
+                                                 "itemProductCount":  2
+                                             },
+                             "requiredStat":  [
+                                                  {
+                                                      "statId":  "str",
+                                                      "rate":  4
+                                                  }
+                                              ],
+                             "gridY":  2
+                         },
+                         {
+                             "workers":  4,
+                             "id":  "big_mine",
+                             "gridX":  4,
+                             "cooltime":  60,
+                             "requiredLevel":  0,
+                             "facility_id":  null,
+                             "productItem":  {
+                                                 "itemId":  "ore",
+                                                 "itemProductCount":  4
+                                             },
+                             "requiredStat":  [
+                                                  {
+                                                      "statId":  "str",
                                                       "rate":  4
                                                   }
                                               ],
@@ -230,9 +161,9 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  2,
-                             "id":  "ranch_basic",
+                             "id":  "small_ranch",
                              "gridX":  2,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -253,9 +184,9 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  3,
-                             "id":  "ranch_medium",
+                             "id":  "medium_ranch",
                              "gridX":  3,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -276,9 +207,9 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  4,
-                             "id":  "ranch_advanced",
+                             "id":  "big_ranch",
                              "gridX":  4,
-                             "cooltime":  8,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -299,9 +230,9 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  2,
-                             "id":  "fishery_basic",
+                             "id":  "small_fishery",
                              "gridX":  2,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -322,9 +253,9 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  3,
-                             "id":  "fishery_medium",
+                             "id":  "medium_fishery",
                              "gridX":  3,
-                             "cooltime":  10,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
@@ -345,14 +276,14 @@ const GAME_DATA = {
                          },
                          {
                              "workers":  4,
-                             "id":  "fishery_advanced",
-                             "gridX":  4,
-                             "cooltime":  8,
+                             "id":  "big_fishery",
+                             "gridX":  2,
+                             "cooltime":  60,
                              "requiredLevel":  0,
                              "facility_id":  null,
                              "productItem":  {
                                                  "itemId":  "fish",
-                                                 "itemProductCount":  3
+                                                 "itemProductCount":  4
                                              },
                              "requiredStat":  [
                                                   {
@@ -364,7 +295,7 @@ const GAME_DATA = {
                                                       "rate":  2
                                                   }
                                               ],
-                             "gridY":  4
+                             "gridY":  6
                          }
                      ],
     "config":  {
@@ -784,27 +715,6 @@ const GAME_DATA = {
                       "name":  "Gold",
                       "id":  "gold",
                       "stacks":  999999
-                  },
-                  {
-                      "type":  "Farm",
-                      "grade":  "common",
-                      "name":  "Sweetgrass",
-                      "id":  "sweetgrass",
-                      "stacks":  50
-                  },
-                  {
-                      "type":  "Farm",
-                      "grade":  "common",
-                      "name":  "Fennel",
-                      "id":  "fennel",
-                      "stacks":  50
-                  },
-                  {
-                      "type":  "Farm",
-                      "grade":  "common",
-                      "name":  "Wormwood",
-                      "id":  "wormwood",
-                      "stacks":  50
                   }
               ],
     "workerGrades":  [
@@ -1513,7 +1423,9 @@ const GAME_DATA = {
                             "2":  {
                                       "processList":  [
                                                           "bread",
-                                                          "steel"
+                                                          "steel",
+                                                          "cookedmeat",
+                                                          "cannedfish"
                                                       ],
                                       "level":  2
                                   },
@@ -1537,7 +1449,8 @@ const GAME_DATA = {
                                   },
                             "1":  {
                                       "processList":  [
-                                                          "bread"
+                                                          "bread",
+                                                          "steel"
                                                       ],
                                       "level":  1
                                   },
@@ -1545,7 +1458,8 @@ const GAME_DATA = {
                                       "processList":  [
                                                           "bread",
                                                           "steel",
-                                                          "cookedmeat"
+                                                          "cookedmeat",
+                                                          "cannedfish"
                                                       ],
                                       "level":  3
                                   }
@@ -1555,7 +1469,8 @@ const GAME_DATA = {
                                       "2":  {
                                                 "Grid":  6,
                                                 "productAreas":  {
-                                                                     "ranch_basic":  -1
+                                                                     "small_ranch":  -1,
+                                                                     "medium_ranch":  -1
                                                                  },
                                                 "gridX":  null,
                                                 "level":  2,
@@ -1579,9 +1494,9 @@ const GAME_DATA = {
                                       "4":  {
                                                 "Grid":  8,
                                                 "productAreas":  {
-                                                                     "ranch_basic":  -1,
-                                                                     "ranch_medium":  -1,
-                                                                     "ranch_advanced":  -1
+                                                                     "small_ranch":  -1,
+                                                                     "medium_ranch":  -1,
+                                                                     "big_ranch":  -1
                                                                  },
                                                 "gridX":  null,
                                                 "level":  4,
@@ -1605,9 +1520,9 @@ const GAME_DATA = {
                                       "5":  {
                                                 "Grid":  9,
                                                 "productAreas":  {
-                                                                     "ranch_basic":  -1,
-                                                                     "ranch_medium":  -1,
-                                                                     "ranch_advanced":  -1
+                                                                     "small_ranch":  -1,
+                                                                     "medium_ranch":  -1,
+                                                                     "big_ranch":  -1
                                                                  },
                                                 "gridX":  null,
                                                 "level":  5,
@@ -1631,7 +1546,7 @@ const GAME_DATA = {
                                       "1":  {
                                                 "Grid":  5,
                                                 "productAreas":  {
-                                                                     "ranch_basic":  -1
+                                                                     "small_ranch":  -1
                                                                  },
                                                 "gridX":  null,
                                                 "level":  1,
@@ -1660,8 +1575,9 @@ const GAME_DATA = {
                                       "3":  {
                                                 "Grid":  7,
                                                 "productAreas":  {
-                                                                     "ranch_basic":  -1,
-                                                                     "ranch_medium":  -1
+                                                                     "small_ranch":  -1,
+                                                                     "medium_ranch":  -1,
+                                                                     "big_ranch":  -1
                                                                  },
                                                 "gridX":  null,
                                                 "level":  3,
@@ -1687,7 +1603,8 @@ const GAME_DATA = {
                                         "2":  {
                                                   "Grid":  6,
                                                   "productAreas":  {
-                                                                       "fishery_basic":  -1
+                                                                       "small_fishery":  -1,
+                                                                       "medium_fishery":  -1
                                                                    },
                                                   "gridX":  null,
                                                   "level":  2,
@@ -1711,9 +1628,9 @@ const GAME_DATA = {
                                         "4":  {
                                                   "Grid":  8,
                                                   "productAreas":  {
-                                                                       "fishery_basic":  -1,
-                                                                       "fishery_medium":  -1,
-                                                                       "fishery_advanced":  -1
+                                                                       "small_fishery":  -1,
+                                                                       "medium_fishery":  -1,
+                                                                       "big_fishery":  -1
                                                                    },
                                                   "gridX":  null,
                                                   "level":  4,
@@ -1737,9 +1654,9 @@ const GAME_DATA = {
                                         "5":  {
                                                   "Grid":  9,
                                                   "productAreas":  {
-                                                                       "fishery_basic":  -1,
-                                                                       "fishery_medium":  -1,
-                                                                       "fishery_advanced":  -1
+                                                                       "small_fishery":  -1,
+                                                                       "medium_fishery":  -1,
+                                                                       "big_fishery":  -1
                                                                    },
                                                   "gridX":  null,
                                                   "level":  5,
@@ -1763,7 +1680,7 @@ const GAME_DATA = {
                                         "1":  {
                                                   "Grid":  5,
                                                   "productAreas":  {
-                                                                       "fishery_basic":  -1
+                                                                       "small_fishery":  -1
                                                                    },
                                                   "gridX":  null,
                                                   "level":  1,
@@ -1792,8 +1709,9 @@ const GAME_DATA = {
                                         "3":  {
                                                   "Grid":  7,
                                                   "productAreas":  {
-                                                                       "fishery_basic":  -1,
-                                                                       "fishery_medium":  -1
+                                                                       "small_fishery":  -1,
+                                                                       "medium_fishery":  -1,
+                                                                       "big_fishery":  -1
                                                                    },
                                                   "gridX":  null,
                                                   "level":  3,
@@ -1824,12 +1742,22 @@ const GAME_DATA = {
                                                      "requirements":  {
                                                                           "value":  [
                                                                                         {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "farm",
+                                                                                            "param2":  2
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "mine",
+                                                                                            "param2":  2
+                                                                                        },
+                                                                                        {
                                                                                             "type":  "item",
                                                                                             "param1":  "gold",
-                                                                                            "param2":  100
+                                                                                            "param2":  1000
                                                                                         }
                                                                                     ],
-                                                                          "Count":  1
+                                                                          "Count":  3
                                                                       },
                                                      "storageSlots":  null,
                                                      "materials":  [
@@ -1846,12 +1774,32 @@ const GAME_DATA = {
                                                      "requirements":  {
                                                                           "value":  [
                                                                                         {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "farm",
+                                                                                            "param2":  3
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "mine",
+                                                                                            "param2":  3
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "ranch",
+                                                                                            "param2":  2
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "fishery",
+                                                                                            "param2":  2
+                                                                                        },
+                                                                                        {
                                                                                             "type":  "item",
                                                                                             "param1":  "gold",
-                                                                                            "param2":  400
+                                                                                            "param2":  4000
                                                                                         }
                                                                                     ],
-                                                                          "Count":  1
+                                                                          "Count":  5
                                                                       },
                                                      "storageSlots":  null,
                                                      "materials":  [
@@ -1868,12 +1816,32 @@ const GAME_DATA = {
                                                      "requirements":  {
                                                                           "value":  [
                                                                                         {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "farm",
+                                                                                            "param2":  4
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "mine",
+                                                                                            "param2":  4
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "ranch",
+                                                                                            "param2":  3
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "fishery",
+                                                                                            "param2":  3
+                                                                                        },
+                                                                                        {
                                                                                             "type":  "item",
                                                                                             "param1":  "gold",
-                                                                                            "param2":  800
+                                                                                            "param2":  8000
                                                                                         }
                                                                                     ],
-                                                                          "Count":  1
+                                                                          "Count":  5
                                                                       },
                                                      "storageSlots":  null,
                                                      "materials":  [
@@ -1898,9 +1866,19 @@ const GAME_DATA = {
                                                                                             "type":  "facility",
                                                                                             "param1":  "mine",
                                                                                             "param2":  1
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "item",
+                                                                                            "param1":  "wheat",
+                                                                                            "param2":  5
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "item",
+                                                                                            "param1":  "ore",
+                                                                                            "param2":  5
                                                                                         }
                                                                                     ],
-                                                                          "Count":  2
+                                                                          "Count":  4
                                                                       },
                                                      "storageSlots":  null,
                                                      "materials":  [
@@ -1917,12 +1895,27 @@ const GAME_DATA = {
                                                      "requirements":  {
                                                                           "value":  [
                                                                                         {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "ranch",
+                                                                                            "param2":  1
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "facility",
+                                                                                            "param1":  "fishery",
+                                                                                            "param2":  1
+                                                                                        },
+                                                                                        {
                                                                                             "type":  "item",
                                                                                             "param1":  "gold",
-                                                                                            "param2":  200
+                                                                                            "param2":  2000
+                                                                                        },
+                                                                                        {
+                                                                                            "type":  "item",
+                                                                                            "param1":  "cooked",
+                                                                                            "param2":  ""
                                                                                         }
                                                                                     ],
-                                                                          "Count":  1
+                                                                          "Count":  4
                                                                       },
                                                      "storageSlots":  null,
                                                      "materials":  [
@@ -1948,7 +1941,7 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  150
+                                                                                       "param2":  1000
                                                                                    }
                                                                                ],
                                                                      "Count":  2
@@ -1975,7 +1968,7 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  400
+                                                                                       "param2":  5000
                                                                                    }
                                                                                ],
                                                                      "Count":  2
@@ -2002,7 +1995,7 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  800
+                                                                                       "param2":  8000
                                                                                    }
                                                                                ],
                                                                      "Count":  2
@@ -2051,7 +2044,7 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  200
+                                                                                       "param2":  2000
                                                                                    }
                                                                                ],
                                                                      "Count":  2
@@ -2068,13 +2061,8 @@ const GAME_DATA = {
                                      "2":  {
                                                "Grid":  6,
                                                "productAreas":  {
-                                                                    "farm_basic":  -1,
-                                                                    "farm_basic2":  -1,
-                                                                    "farm_basic3":  -1,
-                                                                    "farm_basic4":  -1,
-                                                                    "farm_basic5":  -1,
-                                                                    "farm_basic6":  -1,
-                                                                    "farm_basic7":  -1
+                                                                    "small_farm":  -1,
+                                                                    "medium_farm":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  2,
@@ -2098,15 +2086,9 @@ const GAME_DATA = {
                                      "4":  {
                                                "Grid":  8,
                                                "productAreas":  {
-                                                                    "farm_basic":  -1,
-                                                                    "farm_basic2":  -1,
-                                                                    "farm_basic3":  -1,
-                                                                    "farm_basic4":  -1,
-                                                                    "farm_basic5":  -1,
-                                                                    "farm_basic6":  -1,
-                                                                    "farm_basic7":  -1,
-                                                                    "farm_medium":  -1,
-                                                                    "farm_advanced":  -1
+                                                                    "small_farm":  -1,
+                                                                    "medium_farm":  -1,
+                                                                    "big_farm":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  4,
@@ -2130,15 +2112,9 @@ const GAME_DATA = {
                                      "5":  {
                                                "Grid":  9,
                                                "productAreas":  {
-                                                                    "farm_basic":  -1,
-                                                                    "farm_basic2":  -1,
-                                                                    "farm_basic3":  -1,
-                                                                    "farm_basic4":  -1,
-                                                                    "farm_basic5":  -1,
-                                                                    "farm_basic6":  -1,
-                                                                    "farm_basic7":  -1,
-                                                                    "farm_medium":  -1,
-                                                                    "farm_advanced":  -1
+                                                                    "small_farm":  -1,
+                                                                    "medium_farm":  -1,
+                                                                    "big_farm":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  5,
@@ -2162,12 +2138,7 @@ const GAME_DATA = {
                                      "1":  {
                                                "Grid":  5,
                                                "productAreas":  {
-                                                                    "farm_basic":  -1,
-                                                                    "farm_medium1":  -1,
-                                                                    "farm_medium2":  -1,
-                                                                    "farm_advanced1":  -1,
-                                                                    "farm_advanced2":  -1,
-                                                                    "farm_advanced3":  -1
+                                                                    "small_farm":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  1,
@@ -2177,9 +2148,14 @@ const GAME_DATA = {
                                                                                       "type":  "facility",
                                                                                       "param1":  "lodge",
                                                                                       "param2":  1
+                                                                                  },
+                                                                                  {
+                                                                                      "type":  "worker",
+                                                                                      "param1":  "",
+                                                                                      "param2":  2
                                                                                   }
                                                                               ],
-                                                                    "Count":  1
+                                                                    "Count":  2
                                                                 },
                                                "storageSlots":  10,
                                                "materials":  [
@@ -2191,14 +2167,9 @@ const GAME_DATA = {
                                      "3":  {
                                                "Grid":  7,
                                                "productAreas":  {
-                                                                    "farm_basic":  -1,
-                                                                    "farm_basic2":  -1,
-                                                                    "farm_basic3":  -1,
-                                                                    "farm_basic4":  -1,
-                                                                    "farm_basic5":  -1,
-                                                                    "farm_basic6":  -1,
-                                                                    "farm_basic7":  -1,
-                                                                    "farm_medium":  -1
+                                                                    "small_farm":  -1,
+                                                                    "medium_farm":  -1,
+                                                                    "big_farm":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  3,
@@ -2224,7 +2195,8 @@ const GAME_DATA = {
                                      "2":  {
                                                "Grid":  6,
                                                "productAreas":  {
-                                                                    "mine_basic":  -1
+                                                                    "small_mine":  -1,
+                                                                    "medium_mine":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  2,
@@ -2234,9 +2206,14 @@ const GAME_DATA = {
                                                                                       "type":  "item",
                                                                                       "param1":  "steel",
                                                                                       "param2":  2
+                                                                                  },
+                                                                                  {
+                                                                                      "type":  "",
+                                                                                      "param1":  "",
+                                                                                      "param2":  ""
                                                                                   }
                                                                               ],
-                                                                    "Count":  1
+                                                                    "Count":  2
                                                                 },
                                                "storageSlots":  15,
                                                "materials":  [
@@ -2248,9 +2225,9 @@ const GAME_DATA = {
                                      "4":  {
                                                "Grid":  8,
                                                "productAreas":  {
-                                                                    "mine_basic":  -1,
-                                                                    "mine_medium":  -1,
-                                                                    "mine_advanced":  -1
+                                                                    "small_mine":  -1,
+                                                                    "medium_mine":  -1,
+                                                                    "big_mine":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  4,
@@ -2274,9 +2251,9 @@ const GAME_DATA = {
                                      "5":  {
                                                "Grid":  9,
                                                "productAreas":  {
-                                                                    "mine_basic":  -1,
-                                                                    "mine_medium":  -1,
-                                                                    "mine_advanced":  -1
+                                                                    "small_mine":  -1,
+                                                                    "medium_mine":  -1,
+                                                                    "big_mine":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  5,
@@ -2300,7 +2277,7 @@ const GAME_DATA = {
                                      "1":  {
                                                "Grid":  5,
                                                "productAreas":  {
-                                                                    "mine_basic":  -1
+                                                                    "small_mine":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  1,
@@ -2310,9 +2287,14 @@ const GAME_DATA = {
                                                                                       "type":  "facility",
                                                                                       "param1":  "lodge",
                                                                                       "param2":  1
+                                                                                  },
+                                                                                  {
+                                                                                      "type":  "worker",
+                                                                                      "param1":  "",
+                                                                                      "param2":  2
                                                                                   }
                                                                               ],
-                                                                    "Count":  1
+                                                                    "Count":  2
                                                                 },
                                                "storageSlots":  10,
                                                "materials":  [
@@ -2324,8 +2306,9 @@ const GAME_DATA = {
                                      "3":  {
                                                "Grid":  7,
                                                "productAreas":  {
-                                                                    "mine_basic":  -1,
-                                                                    "mine_medium":  -1
+                                                                    "small_mine":  -1,
+                                                                    "medium_mine":  -1,
+                                                                    "big_mine":  -1
                                                                 },
                                                "gridX":  null,
                                                "level":  3,
@@ -2363,7 +2346,7 @@ const GAME_DATA = {
                                                                                      {
                                                                                          "type":  "item",
                                                                                          "param1":  "gold",
-                                                                                         "param2":  100
+                                                                                         "param2":  1000
                                                                                      }
                                                                                  ],
                                                                        "Count":  2
@@ -2390,7 +2373,7 @@ const GAME_DATA = {
                                                                                      {
                                                                                          "type":  "item",
                                                                                          "param1":  "gold",
-                                                                                         "param2":  100
+                                                                                         "param2":  5000
                                                                                      }
                                                                                  ],
                                                                        "Count":  2
@@ -2417,7 +2400,7 @@ const GAME_DATA = {
                                                                                      {
                                                                                          "type":  "item",
                                                                                          "param1":  "gold",
-                                                                                         "param2":  100
+                                                                                         "param2":  10000
                                                                                      }
                                                                                  ],
                                                                        "Count":  2
@@ -2443,11 +2426,16 @@ const GAME_DATA = {
                                                                                      },
                                                                                      {
                                                                                          "type":  "item",
-                                                                                         "param1":  "gold",
-                                                                                         "param2":  100
+                                                                                         "param1":  "bread",
+                                                                                         "param2":  5
+                                                                                     },
+                                                                                     {
+                                                                                         "type":  "item",
+                                                                                         "param1":  "steel",
+                                                                                         "param2":  5
                                                                                      }
                                                                                  ],
-                                                                       "Count":  2
+                                                                       "Count":  3
                                                                    },
                                                   "storageSlots":  null,
                                                   "materials":  [
@@ -2471,10 +2459,20 @@ const GAME_DATA = {
                                                                                      {
                                                                                          "type":  "item",
                                                                                          "param1":  "gold",
-                                                                                         "param2":  100
+                                                                                         "param2":  2000
+                                                                                     },
+                                                                                     {
+                                                                                         "type":  "item",
+                                                                                         "param1":  "cookedmeat",
+                                                                                         "param2":  3
+                                                                                     },
+                                                                                     {
+                                                                                         "type":  "item",
+                                                                                         "param1":  "cannedfish",
+                                                                                         "param2":  3
                                                                                      }
                                                                                  ],
-                                                                       "Count":  2
+                                                                       "Count":  4
                                                                    },
                                                   "storageSlots":  null,
                                                   "materials":  [
@@ -2517,10 +2515,15 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  400
+                                                                                       "param2":  2500
+                                                                                   },
+                                                                                   {
+                                                                                       "type":  "worker",
+                                                                                       "param1":  "epic",
+                                                                                       "param2":  1
                                                                                    }
                                                                                ],
-                                                                     "Count":  1
+                                                                     "Count":  2
                                                                  },
                                                 "storageSlots":  null,
                                                 "materials":  [
@@ -2539,10 +2542,15 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  800
+                                                                                       "param2":  6000
+                                                                                   },
+                                                                                   {
+                                                                                       "type":  "worker",
+                                                                                       "param1":  "legendary",
+                                                                                       "param2":  1
                                                                                    }
                                                                                ],
-                                                                     "Count":  1
+                                                                     "Count":  2
                                                                  },
                                                 "storageSlots":  null,
                                                 "materials":  [
@@ -2576,10 +2584,15 @@ const GAME_DATA = {
                                                                                    {
                                                                                        "type":  "item",
                                                                                        "param1":  "gold",
-                                                                                       "param2":  200
+                                                                                       "param2":  1000
+                                                                                   },
+                                                                                   {
+                                                                                       "type":  "worker",
+                                                                                       "param1":  "rare",
+                                                                                       "param2":  1
                                                                                    }
                                                                                ],
-                                                                     "Count":  1
+                                                                     "Count":  2
                                                                  },
                                                 "storageSlots":  null,
                                                 "materials":  [
